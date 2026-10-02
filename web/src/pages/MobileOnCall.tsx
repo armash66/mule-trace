@@ -123,7 +123,7 @@ export const MobileOnCall: React.FC = () => {
               Urgent Incident #{activeRing}
             </div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
-              Fan-In/Out Mule Syndicate
+              Collect and split ring
             </div>
             <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginTop: '4px' }}>
               Detected 14 min ago • 11 victim complaints aggregated.

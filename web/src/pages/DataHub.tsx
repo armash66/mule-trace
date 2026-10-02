@@ -31,7 +31,7 @@ const TRANSACTION_FIELDS = [
 
 const ACCOUNT_FIELDS = [
   { field: 'account_id', label: 'Account ID', required: true, description: 'Unique account identifier.' },
-  { field: 'opened_date', label: 'Opened Date', required: false, description: 'Account creation date for dormancy/age heuristics.' },
+  { field: 'opened_date', label: 'Opened Date', required: false, description: 'Account creation date for dormancy and age rules.' },
   { field: 'kyc_phone', label: 'KYC Phone', required: false, description: 'Customer phone number (masked in UI/logs).' },
   { field: 'kyc_address', label: 'KYC Address', required: false, description: 'Residential address (masked in UI/logs).' },
   { field: 'kyc_id_hash', label: 'KYC ID Hash', required: false, description: 'Hashed Aadhaar/PAN identifier.' },

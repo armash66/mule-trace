@@ -477,11 +477,11 @@ Section 12 of the Prevention of Money Laundering Act (PMLA), 2002.
 Reporting Entity: FinTech Bank Fraud Ops Unit
 
 SUBJECT OF REPORT:
-Mule Account Syndicate identified under Ring Identifier [fan_1]. Primary nexus account: ACC_05001.
+Mule ring identified under Ring Identifier [fan_1]. Primary nexus account: ACC_05001.
 
 NARRATIVE SUMMARY:
 Between 2026-10-01 10:14:00 UTC and 10:35:00 UTC, account ACC_05001 received 11 rapid inbound credits totaling ₹4,24,089.49 from disparate sender accounts across multiple jurisdictions. In less than 15 minutes following receipt, approximately 94.2% (₹3,99,620.00) was systematically fragmented and layered out to 6 secondary beneficiary accounts.
-Taint tracking confirms funds originated from unauthorized access/social engineering complaints.
+Money tracing confirms funds originated from unauthorized access/social engineering complaints.
 Graph cut optimization identifies ACC_05001 as the pivotal min-cut bottleneck.
 
 RECOMMENDED ACTION:

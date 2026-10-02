@@ -64,7 +64,7 @@ export const RulesLab: React.FC = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-        {/* Left Column: Detector Calibration Sliders */}
+        {/* Left Column: Detector Rule Sliders */}
         <div
           style={{
             backgroundColor: 'var(--surface)',
@@ -115,8 +115,8 @@ export const RulesLab: React.FC = () => {
             {/* Forward Ratio */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Fan Min Forward Ratio (R)</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{forwardRatio}%</span>
+                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Collect and split min send ratio</span>
+                <span className="mono" style={{ fontWeight: 600, color: 'var(--ink)' }}>{forwardRatio}%</span>
               </div>
               <input
                 type="range"
@@ -124,15 +124,15 @@ export const RulesLab: React.FC = () => {
                 max={99}
                 value={forwardRatio}
                 onChange={(e) => setForwardRatio(Number(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--ink)' }}
               />
             </div>
 
             {/* Chain Forward Ratio */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Quick relay Ratio</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{chainRatio}%</span>
+                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Quick relay send ratio</span>
+                <span className="mono" style={{ fontWeight: 600, color: 'var(--ink)' }}>{chainRatio}%</span>
               </div>
               <input
                 type="range"

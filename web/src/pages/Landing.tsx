@@ -60,7 +60,7 @@ export const Landing: React.FC = () => {
               fontWeight: 500,
             }}
           >
-            Typology Guide
+            How it works
           </button>
           <button
             onClick={() => navigate('/performance')}
@@ -73,7 +73,7 @@ export const Landing: React.FC = () => {
               fontWeight: 500,
             }}
           >
-            Model Performance
+            Accuracy
           </button>
           <button
             onClick={() => navigate('/workspace')}
@@ -121,7 +121,7 @@ export const Landing: React.FC = () => {
             marginBottom: '16px',
           }}
         >
-          Follow the Money.<br />Stop the Syndicate.
+          Follow the money.<br />Stop the ring.
         </h1>
 
         <p
@@ -133,7 +133,7 @@ export const Landing: React.FC = () => {
             lineHeight: '1.6',
           }}
         >
-          MuleTrace detects multi-hop money mule networks across Indian banking channels (UPI, IMPS, NEFT), quantifies stolen funds taint in rupees, and computes optimal min-cut freeze interventions before cash-out.
+          MuleTrace detects multi-hop money mule networks across Indian banking channels, quantifies traced money in rupees, and computes the cheapest set of accounts to freeze.
         </p>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>

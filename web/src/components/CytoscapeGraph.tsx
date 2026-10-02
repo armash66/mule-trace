@@ -10,6 +10,7 @@ interface CytoscapeGraphProps {
   selectedId?: string | null;
   recommendedFreezeId?: string | null;
   onNodeClick?: (nodeId: string) => void;
+  onEdgeClick?: (edge: NetworkEdge) => void;
   height?: string | number;
   savedAmountFormatted?: string;
 }
@@ -20,6 +21,7 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
   selectedId,
   recommendedFreezeId,
   onNodeClick,
+  onEdgeClick,
   height = '100%',
   savedAmountFormatted = '₹4.1L',
 }) => {
@@ -79,6 +81,8 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
           id: `e_${e.src}_${e.dst}_${idx}`,
           source: e.src,
           target: e.dst,
+          edgeIndex: idx,
+          isTainted: e.isTainted ? 1 : 0,
         },
       });
     });
@@ -158,6 +162,15 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
             'transition-duration': 0.25,
           },
         },
+        {
+          selector: 'edge[isTainted = 1]',
+          style: {
+            'line-color': '#b42318',
+            'target-arrow-color': '#b42318',
+            width: 2.5,
+            opacity: 0.95,
+          },
+        },
       ],
       layout: {
         name: 'cose',
@@ -232,6 +245,11 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
       }
     });
 
+    cy.on('tap', 'edge', (evt) => {
+      const edge = edges[evt.target.data('edgeIndex') as number];
+      if (edge && onEdgeClick) onEdgeClick(edge);
+    });
+
     cy.on('tap', (evt) => {
       if (evt.target === cy) {
         cy.elements().removeClass('faded neighbor');
@@ -251,7 +269,7 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
     return () => {
       cy.destroy();
     };
-  }, [nodes, edges, selectedId, recommendedFreezeId, onNodeClick]);
+  }, [nodes, edges, selectedId, recommendedFreezeId, onNodeClick, onEdgeClick]);
 
   return (
     <div

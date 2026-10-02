@@ -62,6 +62,7 @@ export interface NetworkEdge {
   total_amount: number;
   count: number;
   first_time: string;
+  isTainted?: boolean;
 }
 
 export interface NetworkResponse {

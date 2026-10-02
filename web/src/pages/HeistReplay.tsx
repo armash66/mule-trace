@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
-import type { ReplayResponse, ReplayEvent } from '../api/types';
+import type { FreezePlanResponse, ReplayResponse, ReplayEvent, NetworkEdge } from '../api/types';
 import { formatLakhs, formatDateTime } from '../lib/utils';
 import { CytoscapeGraph } from '../components/CytoscapeGraph';
 import {
@@ -24,15 +24,22 @@ export const HeistReplay: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
+  const [freezePlan, setFreezePlan] = useState<FreezePlanResponse | null>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<NetworkEdge | null>(null);
 
   const timerRef = useRef<any>(null);
 
   useEffect(() => {
-    api.getRingReplay(activeRing, applyFreeze ? 'ACC_05001' : undefined).then((data) => {
-      setReplay(data);
-      setCurrentStep(0);
-      setIsPlaying(false);
-    });
+    Promise.all([api.getRingReplay(activeRing, applyFreeze ? 'ACC_05001' : undefined), api.getRingFreezePlan(activeRing)])
+      .then(([data, plan]) => {
+        setReplay(data);
+        setFreezePlan(plan);
+        setCurrentStep(0);
+        setSelectedNode(null);
+        setSelectedEdge(null);
+        setIsPlaying(false);
+      });
   }, [activeRing, applyFreeze]);
 
   // Animation player loop
@@ -57,10 +64,19 @@ export const HeistReplay: React.FC = () => {
 
   const events: ReplayEvent[] = replay?.events || [];
   const currentEvent = events[currentStep] || null;
-  const eventGaps = events.slice(1).map((event, index) => Math.max(0, new Date(event.timestamp).getTime() - new Date(events[index].timestamp).getTime()));
+  const replayTime = (value: string) => {
+    const parsed = Date.parse(value);
+    if (!Number.isNaN(parsed)) return parsed;
+    const match = value.match(/(\d{2})-(\d{2})-(\d{4}).*?(\d{2}):(\d{2})\s*([AP]M)/i);
+    if (!match) return 0;
+    let hour = Number(match[4]) % 12;
+    if (match[6].toUpperCase() === 'PM') hour += 12;
+    return Date.UTC(Number(match[3]), Number(match[2]) - 1, Number(match[1]), hour, Number(match[5]));
+  };
+  const eventGaps = events.slice(1).map((event, index) => Math.max(0, replayTime(event.timestamp) - replayTime(events[index].timestamp)));
   const sortedGaps = [...eventGaps].sort((a, b) => a - b);
   const percentile = (value: number) => sortedGaps.length ? sortedGaps[Math.min(sortedGaps.length - 1, Math.floor(sortedGaps.length * value))] : 0;
-  const replayDuration = events.length > 1 ? Math.max(1, new Date(events[events.length - 1].timestamp).getTime() - new Date(events[0].timestamp).getTime()) : 1;
+  const replayDuration = events.length > 1 ? Math.max(1, replayTime(events[events.length - 1].timestamp) - replayTime(events[0].timestamp)) : 1;
   const throughput = events.length / (replayDuration / 1000);
 
   // Build active network up to current step
@@ -77,7 +93,31 @@ export const HeistReplay: React.FC = () => {
     total_amount: e.amount,
     count: 1,
     first_time: e.timestamp,
+    isTainted: e.tainted_amount > 0,
   }));
+
+  const riskOrder = [...activeNodes].sort((a, b) => b.score - a.score).slice(0, 3).map((node) => node.id);
+  const baselineIntercepted = events
+    .filter((event) => riskOrder.includes(event.dst))
+    .reduce((sum, event) => sum + event.tainted_amount, 0);
+  const stolenAmount = replay?.total_tainted || 0;
+  const freezeAccounts = freezePlan?.recommended_freeze_accounts || [];
+  const freezeSeconds = events.length && currentEvent
+    ? Math.max(0, (replayTime(currentEvent.timestamp) - replayTime(events[0].timestamp)) / 1000)
+    : 0;
+
+  const balances = new Map<string, number>();
+  const latestRecipients = new Map<string, { recipient: string; timestamp: string }>();
+  events.slice(0, currentStep + 1).forEach((event) => {
+    const taint = event.tainted_amount || 0;
+    balances.set(event.src, Math.max(0, (balances.get(event.src) || 0) - taint));
+    balances.set(event.dst, (balances.get(event.dst) || 0) + taint);
+    if (taint > 0) latestRecipients.set(event.src, { recipient: event.dst, timestamp: event.timestamp });
+  });
+  const watchlist = [...balances.entries()]
+    .filter(([, exposure]) => exposure > 0.01)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
 
   // Calculations for stopped vs escaped
   const totalVolume = replay?.total_amount || 424089.49;
@@ -156,12 +196,14 @@ export const HeistReplay: React.FC = () => {
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         {/* Left: Replay Graph View */}
         <div style={{ flex: 2, position: 'relative', height: '100%', backgroundColor: 'var(--paper)' }}>
-          <CytoscapeGraph
+            <CytoscapeGraph
             nodes={activeNodes}
             edges={activeEdges}
             selectedId={currentEvent ? currentEvent.src : undefined}
             recommendedFreezeId={applyFreeze ? 'ACC_05001' : undefined}
-          />
+            onNodeClick={(nodeId) => { setSelectedNode(nodeId); setSelectedEdge(null); }}
+            onEdgeClick={(edge) => { setSelectedEdge(edge); setSelectedNode(null); }}
+            />
         </div>
 
         {/* Right: Step Ledger & Event Details */}
@@ -176,6 +218,34 @@ export const HeistReplay: React.FC = () => {
             flexDirection: 'column',
           }}
         >
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--rule)', backgroundColor: 'var(--paper-2)' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, marginBottom: '8px' }}>Case result</div>
+            <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginBottom: '8px' }}>Synthetic injected case · observed replay, not prediction</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '11px' }}>
+              <span>Stolen amount <b className="mono">{formatLakhs(stolenAmount)}</b></span>
+              <span>Freeze set <b className="mono">{formatLakhs(freezePlan?.rupees_stopped || 0)} / {freezeAccounts.length}</b></span>
+              <span>Top-3 baseline <b className="mono">{formatLakhs(baselineIntercepted)}</b></span>
+              <span>Victim → recommendation <b className="mono">{freezeSeconds.toFixed(1)}s</b></span>
+            </div>
+            {freezePlan && freezePlan.rupees_stopped <= baselineIntercepted && (
+              <div style={{ marginTop: '8px', color: 'var(--signal)', fontSize: '11px' }}>Min-cut did not beat the top-3 baseline on this case.</div>
+            )}
+          </div>
+
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--rule)' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700 }}>Evidence panel</div>
+            {selectedNode && <div style={{ marginTop: '6px', fontSize: '11px' }}>Account <b className="mono">{selectedNode}</b> · click an edge to inspect its transaction.</div>}
+            {selectedEdge && <div style={{ marginTop: '6px', fontSize: '11px' }}><b className="mono">{selectedEdge.src} → {selectedEdge.dst}</b><br />Observed transaction: {formatLakhs(selectedEdge.total_amount)} at {selectedEdge.first_time}</div>}
+            {!selectedNode && !selectedEdge && <div style={{ marginTop: '6px', color: 'var(--ink-2)', fontSize: '11px' }}>Click a node for account evidence or an edge for its transaction.</div>}
+          </div>
+
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--rule)' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700 }}>Next-hop watchlist</div>
+            <div style={{ fontSize: '10px', color: 'var(--ink-2)', margin: '4px 0 8px' }}>based on observed flows, not prediction · at current replay time</div>
+            {watchlist.length === 0 && <div style={{ fontSize: '11px', color: 'var(--ink-2)' }}>No tainted balance observed yet.</div>}
+            {watchlist.map(([account, exposure]) => <div key={account} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', padding: '3px 0' }}><span className="mono">{account} → {latestRecipients.get(account)?.recipient || 'no observed recipient'}</span><b className="mono">{formatLakhs(exposure)}</b></div>)}
+          </div>
+
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--rule)' }}>
             <div style={{ fontSize: '11px', color: 'var(--ink-2)', fontWeight: 600, }}>
               Chronological Transfer Ledger

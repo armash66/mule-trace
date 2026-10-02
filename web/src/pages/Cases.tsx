@@ -69,7 +69,7 @@ export const Cases: React.FC = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-3)' }}>SELECT CASE RING:</span>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-2)' }}>SELECT CASE RING:</span>
           {['fan_1', 'cycle_1', 'chain_1', 'cluster_1', 'dormancy_1'].map((rid) => (
             <button
               key={rid}
@@ -77,9 +77,9 @@ export const Cases: React.FC = () => {
               style={{
                 padding: '4px 10px',
                 fontSize: '12px',
-                backgroundColor: activeRingId === rid ? 'var(--accent)' : 'var(--surface)',
+                backgroundColor: activeRingId === rid ? 'var(--signal)' : 'var(--paper)',
                 color: activeRingId === rid ? 'var(--paper)' : 'var(--ink)',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--rule)',
                 fontWeight: 600,
                 cursor: 'pointer',
               }}
@@ -97,8 +97,8 @@ export const Cases: React.FC = () => {
               alignItems: 'center',
               gap: '6px',
               padding: '6px 12px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -116,7 +116,7 @@ export const Cases: React.FC = () => {
               alignItems: 'center',
               gap: '6px',
               padding: '6px 12px',
-              backgroundColor: 'var(--accent)',
+              backgroundColor: 'var(--signal)',
               color: 'var(--paper)',
               border: 'none',
               fontSize: '12px',
@@ -125,7 +125,7 @@ export const Cases: React.FC = () => {
             }}
           >
             <Printer size={14} />
-            <span>Export / Print Case File</span>
+            <span>Export / Print case</span>
           </button>
         </div>
       </div>
@@ -133,25 +133,25 @@ export const Cases: React.FC = () => {
       {/* Printable Case Dossier Container */}
       <div
         style={{
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--line)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
           padding: '36px',
           }}
       >
         {/* Document Header */}
-        <div style={{ borderBottom: '2px solid var(--line-strong)', paddingBottom: '18px', marginBottom: '24px' }}>
+        <div style={{ borderBottom: '2px solid var(--rule)', paddingBottom: '18px', marginBottom: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-2)', fontWeight: 600, }}>
                 FIU-IND Suspicious Transaction Investigation Report
               </div>
               <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ink)', marginTop: '4px' }}>
-                Case File: Ring #{caseReport?.ring_id || activeRingId}
+                Case: Ring #{caseReport?.ring_id || activeRingId}
               </h1>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>CONFIDENTIAL / PRIVILEGED</div>
+              <div style={{ fontSize: '11px', color: 'var(--ink-2)' }}>CONFIDENTIAL / PRIVILEGED</div>
               <div className="mono" style={{ fontSize: '12px', color: 'var(--ink-2)', marginTop: '2px' }}>
                 {formatDateTime(new Date().toISOString())}
               </div>
@@ -171,17 +171,17 @@ export const Cases: React.FC = () => {
 
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
             <thead>
-              <tr style={{ backgroundColor: 'var(--surface-raised)', borderBottom: '1px solid var(--line)' }}>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>ACCOUNT ID</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>MASKED PHONE</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>MASKED ADDRESS</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>KYC HASH</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>CUT STATUS</th>
+              <tr style={{ backgroundColor: 'var(--paper-2)', borderBottom: '1px solid var(--rule)' }}>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>ACCOUNT ID</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>MASKED PHONE</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>MASKED ADDRESS</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>KYC HASH</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>CUT STATUS</th>
               </tr>
             </thead>
             <tbody>
               {caseReport?.accounts.map((acc, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid var(--line)' }}>
+                <tr key={idx} style={{ borderBottom: '1px solid var(--rule)' }}>
                   <td className="mono" style={{ padding: '10px 12px', fontWeight: 600, color: 'var(--ink)' }}>
                     {acc.account_id}
                   </td>
@@ -189,7 +189,7 @@ export const Cases: React.FC = () => {
                     {acc.kyc_phone_masked}
                   </td>
                   <td style={{ padding: '10px 12px', color: 'var(--ink)' }}>{acc.kyc_address_masked}</td>
-                  <td className="mono" style={{ padding: '10px 12px', color: 'var(--ink-3)' }}>
+                  <td className="mono" style={{ padding: '10px 12px', color: 'var(--ink-2)' }}>
                     {acc.kyc_id_hash_masked}
                   </td>
                   <td style={{ padding: '10px 12px' }}>
@@ -199,14 +199,14 @@ export const Cases: React.FC = () => {
                           fontSize: '10px',
                           fontWeight: 700,
                           color: 'var(--paper)',
-                          backgroundColor: 'var(--risk-high)',
+                          backgroundColor: 'var(--signal)',
                           padding: '2px 6px',
                           }}
                       >
                         MIN-CUT BOTTLENECK
                       </span>
                     ) : (
-                      <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>Layer Node</span>
+                      <span style={{ fontSize: '11px', color: 'var(--ink-2)' }}>Layer Node</span>
                     )}
                   </td>
                 </tr>
@@ -223,17 +223,17 @@ export const Cases: React.FC = () => {
 
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
             <thead>
-              <tr style={{ backgroundColor: 'var(--surface-raised)', borderBottom: '1px solid var(--line)' }}>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>TIMESTAMP (UTC)</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>SOURCE</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>DESTINATION</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>AMOUNT</th>
-                <th style={{ padding: '8px 12px', color: 'var(--ink-3)' }}>CHANNEL</th>
+              <tr style={{ backgroundColor: 'var(--paper-2)', borderBottom: '1px solid var(--rule)' }}>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>TIMESTAMP (UTC)</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>SOURCE</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>DESTINATION</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>AMOUNT</th>
+                <th style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>CHANNEL</th>
               </tr>
             </thead>
             <tbody>
               {caseReport?.transfer_timeline.map((tx, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid var(--line)' }}>
+                <tr key={idx} style={{ borderBottom: '1px solid var(--rule)' }}>
                   <td className="mono" style={{ padding: '8px 12px', color: 'var(--ink-2)' }}>
                     {formatDateTime(tx.timestamp)}
                   </td>
@@ -260,11 +260,11 @@ export const Cases: React.FC = () => {
           </h3>
           <pre
             style={{
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
               padding: '16px',
               fontSize: '12px',
-              fontFamily: 'var(--font-mono)',
+              fontFamily: ''JetBrains Mono'',
               color: 'var(--ink)',
               whiteSpace: 'pre-wrap',
               lineHeight: '1.6',

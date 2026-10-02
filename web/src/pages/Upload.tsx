@@ -36,7 +36,7 @@ export const Upload: React.FC = () => {
   };
 
   const handleRunPipeline = () => {
-    showToast('Pipeline execution complete. Redirecting to Alerts queue.');
+    showToast('Run complete. Redirecting to Alerts.');
     navigate('/alerts');
   };
 
@@ -56,15 +56,15 @@ export const Upload: React.FC = () => {
         style={{
           marginBottom: '24px',
           padding: '16px 20px',
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--accent)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--signal)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Database size={20} color="var(--accent)" />
+          <Database size={20} color="var(--signal)" />
           <div>
             <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)' }}>
               1-Click Demo Seeded Dataset
@@ -80,7 +80,7 @@ export const Upload: React.FC = () => {
           disabled={isProcessing}
           style={{
             padding: '8px 16px',
-            backgroundColor: 'var(--accent)',
+            backgroundColor: 'var(--signal)',
             color: 'var(--paper)',
             border: 'none',
             fontSize: '13px',
@@ -97,8 +97,8 @@ export const Upload: React.FC = () => {
         {/* Transactions CSV Dropzone */}
         <div
           style={{
-            backgroundColor: 'var(--surface)',
-            border: '2px dashed var(--line-strong)',
+            backgroundColor: 'var(--paper)',
+            border: '2px dashed var(--rule)',
             padding: '24px',
             textAlign: 'center',
             display: 'flex',
@@ -107,18 +107,18 @@ export const Upload: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <UploadCloud size={32} color="var(--ink-3)" style={{ marginBottom: '10px' }} />
+          <UploadCloud size={32} color="var(--ink-2)" style={{ marginBottom: '10px' }} />
           <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px' }}>
             transactions.csv
           </div>
-          <div style={{ fontSize: '12px', color: 'var(--ink-3)', marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginBottom: '12px' }}>
             Columns: txn_id, timestamp, src_account, dst_account, amount, channel
           </div>
           <label
             style={{
               padding: '6px 14px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -138,8 +138,8 @@ export const Upload: React.FC = () => {
         {/* Accounts CSV Dropzone */}
         <div
           style={{
-            backgroundColor: 'var(--surface)',
-            border: '2px dashed var(--line-strong)',
+            backgroundColor: 'var(--paper)',
+            border: '2px dashed var(--rule)',
             padding: '24px',
             textAlign: 'center',
             display: 'flex',
@@ -148,18 +148,18 @@ export const Upload: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <FileSpreadsheet size={32} color="var(--ink-3)" style={{ marginBottom: '10px' }} />
+          <FileSpreadsheet size={32} color="var(--ink-2)" style={{ marginBottom: '10px' }} />
           <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px' }}>
             accounts.csv
           </div>
-          <div style={{ fontSize: '12px', color: 'var(--ink-3)', marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginBottom: '12px' }}>
             Columns: account_id, opened_date, kyc_phone, kyc_address, kyc_id_hash
           </div>
           <label
             style={{
               padding: '6px 14px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -181,8 +181,8 @@ export const Upload: React.FC = () => {
       {healthReport && (
         <div
           style={{
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--paper)',
+            border: '1px solid var(--rule)',
             padding: '20px',
             marginBottom: '24px',
           }}
@@ -201,29 +201,29 @@ export const Upload: React.FC = () => {
               gap: '12px',
             }}
           >
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Duplicates Dropped</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--paper-2)', border: '1px solid var(--rule)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-2)', }}>Duplicates Dropped</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.duplicates_removed}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Out-of-Order Fixed</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--paper-2)', border: '1px solid var(--rule)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-2)', }}>Out-of-Order Fixed</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.out_of_order_fixed}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Missing Device/IP</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--paper-2)', border: '1px solid var(--rule)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-2)', }}>Missing Device/IP</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.missing_device_pct}% / {healthReport.missing_ip_pct}%
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Self-Transfers Dropped</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--paper-2)', border: '1px solid var(--rule)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-2)', }}>Self-Transfers Dropped</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.self_transfers_dropped}
               </div>

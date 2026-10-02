@@ -50,7 +50,7 @@ export const MobileOnCall: React.FC = () => {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: 'var(--bg)',
+        backgroundColor: 'var(--paper)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -62,8 +62,8 @@ export const MobileOnCall: React.FC = () => {
         style={{
           width: '100%',
           maxWidth: '400px',
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--line-strong)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -73,11 +73,11 @@ export const MobileOnCall: React.FC = () => {
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid var(--line)',
+            borderBottom: '1px solid var(--rule)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: 'var(--surface-raised)',
+            backgroundColor: 'var(--paper-2)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -85,7 +85,7 @@ export const MobileOnCall: React.FC = () => {
               style={{
                 width: 8,
                 height: 8,
-                backgroundColor: 'var(--risk-high)',
+                backgroundColor: 'var(--signal)',
                 animation: 'subtlePulse 1s infinite',
               }}
             />
@@ -98,8 +98,8 @@ export const MobileOnCall: React.FC = () => {
             className="mono"
             style={{
               fontSize: '11px',
-              backgroundColor: 'var(--accent-muted)',
-              color: 'var(--accent)',
+              backgroundColor: 'var(--paper-2)',
+              color: 'var(--signal)',
               padding: '2px 6px',
               fontWeight: 600,
             }}
@@ -114,12 +114,12 @@ export const MobileOnCall: React.FC = () => {
           <div
             style={{
               padding: '16px',
-              backgroundColor: 'var(--accent-muted)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
               marginBottom: '16px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>
+            <div style={{ fontSize: '11px', color: 'var(--ink-2)', fontWeight: 600 }}>
               Urgent Incident #{activeRing}
             </div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
@@ -139,15 +139,15 @@ export const MobileOnCall: React.FC = () => {
               marginBottom: '20px',
             }}
           >
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>At Risk</div>
-              <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--risk-high)', marginTop: '2px' }}>
+            <div style={{ padding: '12px', backgroundColor: 'var(--paper-2)', border: '1px solid var(--rule)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>At Risk</div>
+              <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--signal)', marginTop: '2px' }}>
                 ₹4.24 Lakhs
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Bottleneck Node</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--paper-2)', border: '1px solid var(--rule)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>Bottleneck Node</div>
               <div className="mono" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginTop: '4px' }}>
                 ACC_05001
               </div>
@@ -158,8 +158,8 @@ export const MobileOnCall: React.FC = () => {
           <div
             style={{
               padding: '12px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
               fontSize: '12px',
               color: 'var(--ink-2)',
               marginBottom: '20px',
@@ -195,7 +195,7 @@ export const MobileOnCall: React.FC = () => {
               style={{
                 width: '100%',
                 padding: '14px',
-                backgroundColor: 'var(--accent)',
+                backgroundColor: 'var(--signal)',
                 color: 'var(--paper)',
                 border: 'none',
                 fontSize: '14px',
@@ -248,7 +248,7 @@ export const MobileOnCall: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '320px',
-              backgroundColor: 'var(--surface)',
+              backgroundColor: 'var(--paper)',
               padding: '24px',
               textAlign: 'center',
               }}
@@ -257,8 +257,8 @@ export const MobileOnCall: React.FC = () => {
               style={{
                 width: '64px',
                 height: '64px',
-                backgroundColor: 'var(--accent-muted)',
-                color: 'var(--accent)',
+                backgroundColor: 'var(--paper-2)',
+                color: 'var(--signal)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -281,7 +281,7 @@ export const MobileOnCall: React.FC = () => {
               style={{
                 width: '100%',
                 padding: '12px',
-                backgroundColor: 'var(--accent)',
+                backgroundColor: 'var(--signal)',
                 color: 'var(--paper)',
                 border: 'none',
                 fontSize: '13px',

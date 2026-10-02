@@ -81,8 +81,8 @@ export const GlobalDropOverlay: React.FC = () => {
         style={{
           width: '560px',
           padding: '48px 36px',
-          backgroundColor: 'var(--surface)',
-          border: '2px dashed var(--accent)',
+          backgroundColor: 'var(--paper)',
+          border: '2px dashed var(--signal)',
           textAlign: 'center',
           transform: 'scale(1.02)',
           transition: 'all 0.12s ease',
@@ -92,14 +92,14 @@ export const GlobalDropOverlay: React.FC = () => {
           style={{
             width: '64px',
             height: '64px',
-            backgroundColor: 'var(--accent-muted)',
+            backgroundColor: 'var(--paper-2)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 20px auto',
           }}
         >
-          <UploadCloud size={32} color="var(--accent)" />
+          <UploadCloud size={32} color="var(--signal)" />
         </div>
         <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
           Drop to add data

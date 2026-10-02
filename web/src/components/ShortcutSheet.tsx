@@ -11,7 +11,7 @@ export const ShortcutSheet: React.FC = () => {
     { key: 'J / ↓', desc: 'Select next alert in queue' },
     { key: 'K / ↑', desc: 'Select previous alert in queue' },
     { key: 'Enter', desc: 'Inspect account in 3-pane Investigate' },
-    { key: 'C', desc: 'Confirm Mule (triggers risk uplift via PageRank)' },
+    { key: 'C', desc: 'Mark as mule (updates the risk)' },
     { key: 'X', desc: 'Not a mule (benign / false positive)' },
     { key: 'F', desc: 'Generate Min-Cut Freeze Plan' },
     { key: 'R', desc: 'Open Replay simulator' },
@@ -40,8 +40,8 @@ export const ShortcutSheet: React.FC = () => {
         style={{
           width: '480px',
           maxWidth: '92vw',
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--line-strong)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
           overflow: 'hidden',
         }}
       >
@@ -51,11 +51,11 @@ export const ShortcutSheet: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '16px 20px',
-            borderBottom: '1px solid var(--line)',
+            borderBottom: '1px solid var(--rule)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Command size={16} color="var(--accent)" />
+            <Command size={16} color="var(--signal)" />
             <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)' }}>Keyboard Shortcuts</h3>
           </div>
           <button
@@ -63,7 +63,7 @@ export const ShortcutSheet: React.FC = () => {
             style={{
               background: 'transparent',
               border: 'none',
-              color: 'var(--ink-3)',
+              color: 'var(--ink-2)',
               cursor: 'pointer',
               padding: '4px',
             }}
@@ -90,8 +90,8 @@ export const ShortcutSheet: React.FC = () => {
                   style={{
                     fontSize: '11px',
                     fontWeight: 600,
-                    backgroundColor: 'var(--surface-raised)',
-                    border: '1px solid var(--line)',
+                    backgroundColor: 'var(--paper-2)',
+                    border: '1px solid var(--rule)',
                     padding: '3px 8px',
                     color: 'var(--ink)',
                   }}
@@ -106,10 +106,10 @@ export const ShortcutSheet: React.FC = () => {
         <div
           style={{
             padding: '12px 20px',
-            backgroundColor: 'var(--surface-raised)',
-            borderTop: '1px solid var(--line)',
+            backgroundColor: 'var(--paper-2)',
+            borderTop: '1px solid var(--rule)',
             fontSize: '12px',
-            color: 'var(--ink-3)',
+            color: 'var(--ink-2)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',

@@ -15,17 +15,17 @@ export const Landing: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ backgroundColor: 'var(--bg)', color: 'var(--ink)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ backgroundColor: 'var(--paper)', color: 'var(--ink)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navbar */}
       <header
         style={{
           height: '60px',
-          borderBottom: '1px solid var(--line)',
+          borderBottom: '1px solid var(--rule)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 32px',
-          backgroundColor: 'var(--surface)',
+          backgroundColor: 'var(--paper)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -33,14 +33,14 @@ export const Landing: React.FC = () => {
             style={{
               width: '26px',
               height: '26px',
-              backgroundColor: 'var(--accent)',
+              backgroundColor: 'var(--signal)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'var(--paper)',
               fontSize: '12px',
               fontWeight: 700,
-              fontFamily: 'var(--font-mono)',
+              fontFamily: ''JetBrains Mono'',
             }}
           >
             MT
@@ -79,7 +79,7 @@ export const Landing: React.FC = () => {
             onClick={() => navigate('/workspace')}
             style={{
               padding: '7px 14px',
-              backgroundColor: 'var(--accent)',
+              backgroundColor: 'var(--signal)',
               color: 'var(--paper)',
               border: 'none',
               fontSize: '13px',
@@ -100,8 +100,8 @@ export const Landing: React.FC = () => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--paper)',
+            border: '1px solid var(--rule)',
             padding: '4px 12px',
             fontSize: '11px',
             color: 'var(--ink-2)',
@@ -144,7 +144,7 @@ export const Landing: React.FC = () => {
               alignItems: 'center',
               gap: '8px',
               padding: '11px 22px',
-              backgroundColor: 'var(--accent)',
+              backgroundColor: 'var(--signal)',
               color: 'var(--paper)',
               border: 'none',
               fontSize: '14px',
@@ -163,8 +163,8 @@ export const Landing: React.FC = () => {
               alignItems: 'center',
               gap: '8px',
               padding: '11px 20px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               fontSize: '14px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -183,76 +183,76 @@ export const Landing: React.FC = () => {
           {/* Step 1 */}
           <div
             style={{
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--signal)', fontWeight: 700, marginBottom: '8px' }}>
               01 • DETECT
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
-              Graph Typologies & ML Anomaly
+              Four ways stolen money moves
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--ink-2)', lineHeight: '1.5' }}>
-              Pure algorithms detect fan hubs, cycles, pass-through chains, and device clusters. Paired with IsolationForest and SHAP explainability.
+              Four simple patterns reveal money that moves in unusual ways.
             </p>
           </div>
 
           {/* Step 2 */}
           <div
             style={{
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--signal)', fontWeight: 700, marginBottom: '8px' }}>
               02 • QUANTIFY
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
-              Haircut Taint Tracing
+              Trace the money
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--ink-2)', lineHeight: '1.5' }}>
-              Time-respecting haircut propagation tracks stolen funds through partial forwards and mergers, calculating exact rupee exposure per account.
+              Follow stolen money through each account and see the amount at risk.
             </p>
           </div>
 
           {/* Step 3 */}
           <div
             style={{
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--signal)', fontWeight: 700, marginBottom: '8px' }}>
               03 • ACT
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
-              Min-Cut Freeze Optimizer
+              Cut here
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--ink-2)', lineHeight: '1.5' }}>
-              Time-expanded flow network and minimum s-t cut compute the cheapest set of accounts to freeze that stops the maximum money.
+              Find the fewest accounts to freeze and stop the most money.
             </p>
           </div>
 
           {/* Step 4 */}
           <div
             style={{
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--signal)', fontWeight: 700, marginBottom: '8px' }}>
               04 • COMPLY
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
-              Regulatory STR / SAR
+              Case report
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--ink-2)', lineHeight: '1.5' }}>
-              One-click generation of FIU-IND compliant case files with masked PII and evidentiary money flow timelines for law enforcement handoff.
+              Create a clear report with masked details and a money flow timeline.
             </p>
           </div>
         </div>

@@ -19,7 +19,7 @@ export const Performance: React.FC = () => {
           Accuracy
         </h1>
         <p style={{ fontSize: '15px', color: 'var(--ink-2)', marginTop: '4px' }}>
-          Measured on synthetic data with planted rings and decoy behaviors.
+          Measured on test data with known rings and decoy behavior.
         </p>
       </div>
 

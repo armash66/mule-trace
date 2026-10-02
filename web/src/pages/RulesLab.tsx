@@ -67,13 +67,13 @@ export const RulesLab: React.FC = () => {
         {/* Left Column: Detector Rule Sliders */}
         <div
           style={{
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--paper)',
+            border: '1px solid var(--rule)',
             padding: '20px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <Sliders size={18} color="var(--accent)" />
+            <Sliders size={18} color="var(--signal)" />
             <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)' }}>
               Detector Threshold Parameters
             </h3>
@@ -83,8 +83,8 @@ export const RulesLab: React.FC = () => {
             {/* Fan Senders */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Fan-In Min Senders (N)</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{fanSenders} senders</span>
+                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Minimum senders (N)</span>
+                <span className="mono" style={{ fontWeight: 600, color: 'var(--signal)' }}>{fanSenders} senders</span>
               </div>
               <input
                 type="range"
@@ -92,7 +92,7 @@ export const RulesLab: React.FC = () => {
                 max={15}
                 value={fanSenders}
                 onChange={(e) => setFanSenders(Number(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--signal)' }}
               />
             </div>
 
@@ -100,7 +100,7 @@ export const RulesLab: React.FC = () => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                 <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Fan-Out Min Receivers (M)</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{fanReceivers} receivers</span>
+                <span className="mono" style={{ fontWeight: 600, color: 'var(--signal)' }}>{fanReceivers} receivers</span>
               </div>
               <input
                 type="range"
@@ -108,7 +108,7 @@ export const RulesLab: React.FC = () => {
                 max={10}
                 value={fanReceivers}
                 onChange={(e) => setFanReceivers(Number(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--signal)' }}
               />
             </div>
 
@@ -140,7 +140,7 @@ export const RulesLab: React.FC = () => {
                 max={100}
                 value={chainRatio}
                 onChange={(e) => setChainRatio(Number(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--signal)' }}
               />
             </div>
 
@@ -148,7 +148,7 @@ export const RulesLab: React.FC = () => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                 <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Cluster Max Account Age</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{clusterMaxAge} days</span>
+                <span className="mono" style={{ fontWeight: 600, color: 'var(--signal)' }}>{clusterMaxAge} days</span>
               </div>
               <input
                 type="range"
@@ -156,7 +156,7 @@ export const RulesLab: React.FC = () => {
                 max={90}
                 value={clusterMaxAge}
                 onChange={(e) => setClusterMaxAge(Number(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--signal)' }}
               />
             </div>
 
@@ -164,7 +164,7 @@ export const RulesLab: React.FC = () => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                 <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Dormancy Inactivity Window</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{dormancyDays} days</span>
+                <span className="mono" style={{ fontWeight: 600, color: 'var(--signal)' }}>{dormancyDays} days</span>
               </div>
               <input
                 type="range"
@@ -172,7 +172,7 @@ export const RulesLab: React.FC = () => {
                 max={180}
                 value={dormancyDays}
                 onChange={(e) => setDormancyDays(Number(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--signal)' }}
               />
             </div>
           </div>
@@ -181,15 +181,15 @@ export const RulesLab: React.FC = () => {
         {/* Right Column: Adversarial Red Team Evasion Sensitivity */}
         <div
           style={{
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--paper)',
+            border: '1px solid var(--rule)',
             padding: '20px',
             display: 'flex',
             flexDirection: 'column',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <Shield size={18} color="var(--risk-high)" />
+            <Shield size={18} color="var(--signal)" />
             <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)' }}>
               Adversarial Evasion Curve
             </h3>
@@ -200,10 +200,10 @@ export const RulesLab: React.FC = () => {
           </p>
 
           {/* Interactive Evasion Slider */}
-          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--surface-raised)', }}>
+          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--paper-2)', }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px' }}>
               <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Simulate Evasion Level (ε):</span>
-              <span className="mono" style={{ fontWeight: 700, color: 'var(--risk-high)' }}>
+              <span className="mono" style={{ fontWeight: 700, color: 'var(--signal)' }}>
                 {evasionLevel.toFixed(2)}
               </span>
             </div>
@@ -214,9 +214,9 @@ export const RulesLab: React.FC = () => {
               step={0.25}
               value={evasionLevel}
               onChange={(e) => handleSimulateEvasion(Number(e.target.value))}
-              style={{ width: '100%', accentColor: 'var(--risk-high)' }}
+              style={{ width: '100%', accentColor: 'var(--signal)' }}
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--ink-3)', marginTop: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--ink-2)', marginTop: '4px' }}>
               <span>0.0 (Naive)</span>
               <span>0.5 (Splitting)</span>
               <span>1.0 (Maximum Camouflage)</span>
@@ -232,15 +232,15 @@ export const RulesLab: React.FC = () => {
               marginBottom: '16px',
             }}
           >
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Recall Retention</div>
+            <div style={{ padding: '10px', backgroundColor: 'var(--paper-2)', }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>Recall Retention</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {(simResult.recall * 100).toFixed(1)}%
               </div>
             </div>
 
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Rings Caught</div>
+            <div style={{ padding: '10px', backgroundColor: 'var(--paper-2)', }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>Rings Caught</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ok)', marginTop: '2px' }}>
                 {simResult.detected_rings} / {simResult.active_rings}
               </div>
@@ -251,12 +251,12 @@ export const RulesLab: React.FC = () => {
           <div style={{ flex: 1, minHeight: '180px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={evasionCurveData}>
-                <XAxis dataKey="evasion" stroke="var(--ink-3)" fontSize={10} tickLine={false} />
-                <YAxis stroke="var(--ink-3)" fontSize={10} domain={[30, 100]} tickLine={false} />
+                <XAxis dataKey="evasion" stroke="var(--ink-2)" fontSize={10} tickLine={false} />
+                <YAxis stroke="var(--ink-2)" fontSize={10} domain={[30, 100]} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'var(--surface)',
-                    border: '1px solid var(--line)',
+                    backgroundColor: 'var(--paper)',
+                    border: '1px solid var(--rule)',
                     fontSize: '11px',
                   }}
                 />

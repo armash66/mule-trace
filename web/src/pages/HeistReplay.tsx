@@ -85,8 +85,8 @@ export const HeistReplay: React.FC = () => {
       <div
         style={{
           padding: '14px 24px',
-          backgroundColor: 'var(--surface)',
-          borderBottom: '1px solid var(--line)',
+          backgroundColor: 'var(--paper)',
+          borderBottom: '1px solid var(--rule)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -100,8 +100,8 @@ export const HeistReplay: React.FC = () => {
             <span
               style={{
                 fontSize: '11px',
-                backgroundColor: 'var(--accent-muted)',
-                color: 'var(--accent)',
+                backgroundColor: 'var(--paper-2)',
+                color: 'var(--signal)',
                 padding: '2px 8px',
                 fontWeight: 600,
               }}
@@ -120,8 +120,8 @@ export const HeistReplay: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            backgroundColor: applyFreeze ? 'var(--accent-muted)' : 'var(--surface-raised)',
-            border: `1px solid ${applyFreeze ? 'var(--accent)' : 'var(--line)'}`,
+            backgroundColor: applyFreeze ? 'var(--paper-2)' : 'var(--paper-2)',
+            border: `1px solid ${applyFreeze ? 'var(--signal)' : 'var(--rule)'}`,
             padding: '8px 14px',
             transition: 'all 0.15s ease',
           }}
@@ -131,16 +131,16 @@ export const HeistReplay: React.FC = () => {
               type="checkbox"
               checked={applyFreeze}
               onChange={(e) => setApplyFreeze(e.target.checked)}
-              style={{ accentColor: 'var(--accent)', width: '16px', height: '16px', cursor: 'pointer' }}
+              style={{ accentColor: 'var(--signal)', width: '16px', height: '16px', cursor: 'pointer' }}
             />
             <span>Apply Min-Cut Freeze at ACC_05001</span>
           </label>
 
-          <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>•</span>
+          <span style={{ fontSize: '12px', color: 'var(--ink-2)' }}>•</span>
 
           <div style={{ fontSize: '12px' }}>
-            <span style={{ color: 'var(--ink-3)' }}>Outcome: </span>
-            <span className="mono" style={{ fontWeight: 700, color: applyFreeze ? 'var(--ok)' : 'var(--risk-high)' }}>
+            <span style={{ color: 'var(--ink-2)' }}>Outcome: </span>
+            <span className="mono" style={{ fontWeight: 700, color: applyFreeze ? 'var(--ok)' : 'var(--signal)' }}>
               {applyFreeze ? `Stopped ${formatLakhs(stoppable)} (100%)` : `Lost ${formatLakhs(escaped)} (100%)`}
             </span>
           </div>
@@ -150,7 +150,7 @@ export const HeistReplay: React.FC = () => {
       {/* Main Split: Cytoscape Graph on Left, Events Timeline on Right */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         {/* Left: Replay Graph View */}
-        <div style={{ flex: 2, position: 'relative', height: '100%', backgroundColor: 'var(--bg)' }}>
+        <div style={{ flex: 2, position: 'relative', height: '100%', backgroundColor: 'var(--paper)' }}>
           <CytoscapeGraph
             nodes={activeNodes}
             edges={activeEdges}
@@ -165,14 +165,14 @@ export const HeistReplay: React.FC = () => {
             flex: 1,
             minWidth: '360px',
             maxWidth: '420px',
-            backgroundColor: 'var(--surface)',
-            borderLeft: '1px solid var(--line)',
+            backgroundColor: 'var(--paper)',
+            borderLeft: '1px solid var(--rule)',
             display: 'flex',
             flexDirection: 'column',
           }}
         >
-          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--line)' }}>
-            <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--rule)' }}>
+            <div style={{ fontSize: '11px', color: 'var(--ink-2)', fontWeight: 600, }}>
               Chronological Transfer Ledger
             </div>
             <div style={{ fontSize: '13px', color: 'var(--ink)', marginTop: '2px' }}>
@@ -191,19 +191,19 @@ export const HeistReplay: React.FC = () => {
                   onClick={() => setCurrentStep(idx)}
                   style={{
                     padding: '10px 12px',
-                    border: '1px solid var(--line)',
+                    border: '1px solid var(--rule)',
                     backgroundColor: isCurrent
-                      ? 'var(--accent-muted)'
+                      ? 'var(--paper-2)'
                       : isPastOrCurrent
-                      ? 'var(--surface-raised)'
+                      ? 'var(--paper-2)'
                       : 'transparent',
                     opacity: isPastOrCurrent ? 1 : 0.4,
-                    borderLeft: isCurrent ? '3px solid var(--accent)' : '1px solid var(--line)',
+                    borderLeft: isCurrent ? '3px solid var(--signal)' : '1px solid var(--rule)',
                     cursor: 'pointer',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px' }}>
-                    <span className="mono" style={{ color: 'var(--ink-3)' }}>{formatDateTime(ev.timestamp)}</span>
+                    <span className="mono" style={{ color: 'var(--ink-2)' }}>{formatDateTime(ev.timestamp)}</span>
                     <span className="mono" style={{ fontWeight: 700, color: 'var(--ink)' }}>
                       {formatLakhs(ev.amount)}
                     </span>
@@ -211,7 +211,7 @@ export const HeistReplay: React.FC = () => {
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
                     <span className="mono" style={{ color: 'var(--ink-2)' }}>{ev.src}</span>
-                    <ArrowRight size={12} color="var(--ink-3)" />
+                    <ArrowRight size={12} color="var(--ink-2)" />
                     <span className="mono" style={{ fontWeight: 600, color: 'var(--ink)' }}>{ev.dst}</span>
                   </div>
 
@@ -242,8 +242,8 @@ export const HeistReplay: React.FC = () => {
       <div
         style={{
           padding: '12px 24px',
-          backgroundColor: 'var(--surface)',
-          borderTop: '1px solid var(--line)',
+          backgroundColor: 'var(--paper)',
+          borderTop: '1px solid var(--rule)',
           display: 'flex',
           alignItems: 'center',
           gap: '20px',
@@ -256,7 +256,7 @@ export const HeistReplay: React.FC = () => {
             style={{
               width: '36px',
               height: '36px',
-              backgroundColor: 'var(--accent)',
+              backgroundColor: 'var(--signal)',
               border: 'none',
               color: 'var(--paper)',
               display: 'flex',
@@ -276,7 +276,7 @@ export const HeistReplay: React.FC = () => {
             title="Reset to Beginning"
             style={{
               background: 'transparent',
-              border: '1px solid var(--line)',
+              border: '1px solid var(--rule)',
               padding: '6px',
               color: 'var(--ink-2)',
               cursor: 'pointer',
@@ -290,16 +290,16 @@ export const HeistReplay: React.FC = () => {
 
         {/* Timeline Slider */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-3)' }}>T=0</span>
+          <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>T=0</span>
           <input
             type="range"
             min={0}
             max={Math.max(0, events.length - 1)}
             value={currentStep}
             onChange={(e) => setCurrentStep(Number(e.target.value))}
-            style={{ flex: 1, accentColor: 'var(--accent)', cursor: 'pointer' }}
+            style={{ flex: 1, accentColor: 'var(--signal)', cursor: 'pointer' }}
           />
-          <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
+          <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>
             Step {currentStep + 1}/{events.length}
           </span>
         </div>
@@ -309,8 +309,8 @@ export const HeistReplay: React.FC = () => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 'var(--surface-raised)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--paper-2)',
+            border: '1px solid var(--rule)',
             padding: '2px',
           }}
         >
@@ -322,7 +322,7 @@ export const HeistReplay: React.FC = () => {
                 padding: '2px 8px',
                 fontSize: '11px',
                 border: 'none',
-                backgroundColor: speed === s ? 'var(--accent)' : 'transparent',
+                backgroundColor: speed === s ? 'var(--signal)' : 'transparent',
                 color: speed === s ? 'var(--paper)' : 'var(--ink-2)',
                 fontWeight: 600,
                 cursor: 'pointer',

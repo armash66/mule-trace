@@ -14,11 +14,11 @@ import {
 } from 'lucide-react';
 
 const COLUMNS: Array<{ id: FreezeRequest['status']; label: string; icon: any; color: string }> = [
-  { id: 'drafted', label: 'Drafted', icon: Clock, color: 'var(--ink-3)' },
-  { id: 'sent', label: 'Sent to Bank/Portal', icon: Send, color: 'var(--accent)' },
-  { id: 'held', label: 'Funds Held / Lien', icon: Lock, color: 'var(--risk-mid)' },
+  { id: 'drafted', label: 'Drafted', icon: Clock, color: 'var(--ink-2)' },
+  { id: 'sent', label: 'Sent to Bank/Portal', icon: Send, color: 'var(--signal)' },
+  { id: 'held', label: 'Funds Held / Lien', icon: Lock, color: 'var(--signal)' },
   { id: 'recovered', label: 'Recovered / Reversed', icon: ShieldCheck, color: 'var(--ok)' },
-  { id: 'missed', label: 'Missed / Cashed Out', icon: XCircle, color: 'var(--risk-high)' },
+  { id: 'missed', label: 'Missed / Cashed Out', icon: XCircle, color: 'var(--signal)' },
 ];
 
 export const FreezeTracker: React.FC = () => {
@@ -90,12 +90,12 @@ export const FreezeTracker: React.FC = () => {
           <div
             style={{
               padding: '8px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               }}
           >
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>In-Flight Freezes</div>
-            <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent)' }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>In-Flight Freezes</div>
+            <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--signal)' }}>
               {formatLakhs(totalInFlight)}
             </div>
           </div>
@@ -103,11 +103,11 @@ export const FreezeTracker: React.FC = () => {
           <div
             style={{
               padding: '8px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               }}
           >
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Total Recovered</div>
+            <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>Total Recovered</div>
             <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ok)' }}>
               {formatLakhs(totalRecovered)}
             </div>
@@ -116,12 +116,12 @@ export const FreezeTracker: React.FC = () => {
           <div
             style={{
               padding: '8px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--rule)',
               }}
           >
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Missed / Cash-Out</div>
-            <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--risk-high)' }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-2)', }}>Missed / Cash-Out</div>
+            <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--signal)' }}>
               {formatLakhs(totalMissed)}
             </div>
           </div>
@@ -147,8 +147,8 @@ export const FreezeTracker: React.FC = () => {
             <div
               key={col.id}
               style={{
-                backgroundColor: 'var(--surface)',
-                border: '1px solid var(--line)',
+                backgroundColor: 'var(--paper)',
+                border: '1px solid var(--rule)',
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
@@ -159,11 +159,11 @@ export const FreezeTracker: React.FC = () => {
               <div
                 style={{
                   padding: '12px 14px',
-                  borderBottom: '1px solid var(--line)',
+                  borderBottom: '1px solid var(--rule)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  backgroundColor: 'var(--surface-raised)',
+                  backgroundColor: 'var(--paper-2)',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -175,8 +175,8 @@ export const FreezeTracker: React.FC = () => {
                   style={{
                     fontSize: '11px',
                     fontWeight: 700,
-                    backgroundColor: 'var(--surface)',
-                    border: '1px solid var(--line)',
+                    backgroundColor: 'var(--paper)',
+                    border: '1px solid var(--rule)',
                     padding: '1px 6px',
                     color: 'var(--ink)',
                   }}
@@ -201,12 +201,12 @@ export const FreezeTracker: React.FC = () => {
                     key={item.id}
                     style={{
                       padding: '12px',
-                      backgroundColor: 'var(--surface-raised)',
-                      border: '1px solid var(--line)',
+                      backgroundColor: 'var(--paper-2)',
+                      border: '1px solid var(--rule)',
                       }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
+                      <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>
                         #{item.id} • {item.ring_id}
                       </span>
                       <span className="mono" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)' }}>
@@ -224,12 +224,12 @@ export const FreezeTracker: React.FC = () => {
                       </p>
                     )}
 
-                    <div style={{ fontSize: '10px', color: 'var(--ink-3)', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '10px', color: 'var(--ink-2)', marginBottom: '8px' }}>
                       {formatDateTime(item.created_at)}
                     </div>
 
                     {/* State Transition Actions */}
-                    <div style={{ display: 'flex', gap: '4px', borderTop: '1px solid var(--line)', paddingTop: '8px' }}>
+                    <div style={{ display: 'flex', gap: '4px', borderTop: '1px solid var(--rule)', paddingTop: '8px' }}>
                       {item.status === 'drafted' && (
                         <button
                           onClick={() => handleUpdateStatus(item.id, 'sent')}
@@ -238,7 +238,7 @@ export const FreezeTracker: React.FC = () => {
                             padding: '4px',
                             fontSize: '11px',
                             fontWeight: 600,
-                            backgroundColor: 'var(--accent)',
+                            backgroundColor: 'var(--signal)',
                             color: 'var(--paper)',
                             border: 'none',
                             cursor: 'pointer',
@@ -256,8 +256,8 @@ export const FreezeTracker: React.FC = () => {
                               flex: 1,
                               padding: '4px',
                               fontSize: '10px',
-                              backgroundColor: 'var(--surface)',
-                              border: '1px solid var(--line)',
+                              backgroundColor: 'var(--paper)',
+                              border: '1px solid var(--rule)',
                               color: 'var(--ok)',
                               cursor: 'pointer',
                               fontWeight: 600,
@@ -271,9 +271,9 @@ export const FreezeTracker: React.FC = () => {
                               flex: 1,
                               padding: '4px',
                               fontSize: '10px',
-                              backgroundColor: 'var(--surface)',
-                              border: '1px solid var(--line)',
-                              color: 'var(--risk-high)',
+                              backgroundColor: 'var(--paper)',
+                              border: '1px solid var(--rule)',
+                              color: 'var(--signal)',
                               cursor: 'pointer',
                             }}
                           >

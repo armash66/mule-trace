@@ -18,10 +18,10 @@ export const Toast: React.FC = () => {
         alignItems: 'center',
         gap: '12px',
         backgroundColor: 'var(--ink)',
-        color: 'var(--ink-inverted)',
+        color: 'var(--paper)',
         padding: '10px 16px',
         fontSize: '13px',
-        border: '1px solid var(--line-strong)',
+        border: '1px solid var(--rule)',
       }}
     >
       <span>{toast.message}</span>
@@ -37,7 +37,7 @@ export const Toast: React.FC = () => {
             gap: '4px',
             backgroundColor: 'transparent',
             border: 'none',
-            color: 'var(--accent)',
+            color: 'var(--signal)',
             fontWeight: 600,
             cursor: 'pointer',
             padding: '2px 6px',
@@ -52,7 +52,7 @@ export const Toast: React.FC = () => {
         style={{
           background: 'transparent',
           border: 'none',
-          color: 'var(--ink-3)',
+          color: 'var(--ink-2)',
           cursor: 'pointer',
           padding: '2px',
           display: 'flex',

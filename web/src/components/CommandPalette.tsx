@@ -69,8 +69,8 @@ export const CommandPalette: React.FC = () => {
         style={{
           width: '560px',
           maxWidth: '90vw',
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--line-strong)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
           overflow: 'hidden',
         }}
       >
@@ -80,11 +80,11 @@ export const CommandPalette: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               padding: '12px 16px',
-              borderBottom: '1px solid var(--line)',
+              borderBottom: '1px solid var(--rule)',
               gap: '10px',
             }}
           >
-            <Search size={16} color="var(--ink-3)" />
+            <Search size={16} color="var(--ink-2)" />
             <Command.Input
               placeholder="Search accounts (ACC_05001), rings, or navigate..."
               style={{
@@ -94,17 +94,17 @@ export const CommandPalette: React.FC = () => {
                 background: 'transparent',
                 color: 'var(--ink)',
                 fontSize: '14px',
-                fontFamily: 'var(--font-sans)',
+                fontFamily: 'Inter',
               }}
               autoFocus
             />
             <span
               style={{
                 fontSize: '11px',
-                color: 'var(--ink-3)',
+                color: 'var(--ink-2)',
                 padding: '2px 6px',
-                border: '1px solid var(--line)',
-                fontFamily: 'var(--font-mono)',
+                border: '1px solid var(--rule)',
+                fontFamily: ''JetBrains Mono'',
               }}
             >
               ESC
@@ -122,14 +122,14 @@ export const CommandPalette: React.FC = () => {
               style={{
                 padding: '24px',
                 textAlign: 'center',
-                color: 'var(--ink-3)',
+                color: 'var(--ink-2)',
                 fontSize: '13px',
               }}
             >
               No matching accounts or screens found.
             </Command.Empty>
 
-            <Command.Group heading="QUICK JUMP TO SCREEN" style={{ color: 'var(--ink-3)', fontSize: '11px', padding: '6px 8px', fontWeight: 600 }}>
+            <Command.Group heading="QUICK JUMP TO SCREEN" style={{ color: 'var(--ink-2)', fontSize: '11px', padding: '6px 8px', fontWeight: 600 }}>
               <Command.Item
                 onSelect={() => navigateTo('/')}
                 style={{
@@ -203,7 +203,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <FileText size={15} color="var(--ink-2)" />
-                <span>Case File & SAR Draft</span>
+                <span>Cases & report draft</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/replay/fan_1')}
@@ -233,7 +233,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <Sliders size={15} color="var(--ink-2)" />
-                <span>Rules Lab & Evasion Curve</span>
+                <span>Rules</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/performance')}
@@ -248,7 +248,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <BarChart2 size={15} color="var(--ink-2)" />
-                <span>Model Performance & Confusion Matrix</span>
+                <span>Accuracy</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/upload')}
@@ -282,7 +282,7 @@ export const CommandPalette: React.FC = () => {
               </Command.Item>
             </Command.Group>
 
-            <Command.Group heading="PLANTED RINGS & HUBS" style={{ color: 'var(--ink-3)', fontSize: '11px', padding: '6px 8px', fontWeight: 600 }}>
+            <Command.Group heading="PLANTED RINGS & HUBS" style={{ color: 'var(--ink-2)', fontSize: '11px', padding: '6px 8px', fontWeight: 600 }}>
               <Command.Item
                 onSelect={() => jumpToAccount('ACC_05001')}
                 style={{
@@ -295,8 +295,8 @@ export const CommandPalette: React.FC = () => {
                   fontSize: '13px',
                 }}
               >
-                <span>ACC_05001 — Fan-In/Fan-Out Hub (11 victims, ₹4.24L)</span>
-                <span className="mono" style={{ color: 'var(--risk-high)', fontWeight: 600 }}>96</span>
+                <span>ACC_05001 — Collect and split (11 accounts, ₹4.24L)</span>
+                <span className="mono" style={{ color: 'var(--signal)', fontWeight: 600 }}>96</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => jumpToAccount('ACC_05008')}
@@ -311,7 +311,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <span>ACC_05008 — 3-Hop Cycle Ring (₹1.62L)</span>
-                <span className="mono" style={{ color: 'var(--risk-high)', fontWeight: 600 }}>94</span>
+                <span className="mono" style={{ color: 'var(--signal)', fontWeight: 600 }}>94</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => jumpToAccount('ACC_05016')}
@@ -326,7 +326,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <span>ACC_05016 — Quick relay (₹2.10L)</span>
-                <span className="mono" style={{ color: 'var(--risk-high)', fontWeight: 600 }}>91</span>
+                <span className="mono" style={{ color: 'var(--signal)', fontWeight: 600 }}>91</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => jumpToAccount('ACC_05026')}
@@ -341,7 +341,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <span>ACC_05026 — Device Collision Cluster (DEV_MULE_99)</span>
-                <span className="mono" style={{ color: 'var(--risk-high)', fontWeight: 600 }}>88</span>
+                <span className="mono" style={{ color: 'var(--signal)', fontWeight: 600 }}>88</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => jumpToAccount('ACC_05044')}
@@ -356,7 +356,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <span>ACC_05044 — Dormancy Sudden Awakening (142d idle)</span>
-                <span className="mono" style={{ color: 'var(--risk-high)', fontWeight: 600 }}>86</span>
+                <span className="mono" style={{ color: 'var(--signal)', fontWeight: 600 }}>86</span>
               </Command.Item>
             </Command.Group>
           </Command.List>

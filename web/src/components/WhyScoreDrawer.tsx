@@ -40,8 +40,8 @@ export const WhyScoreDrawer: React.FC = () => {
           width: '440px',
           maxWidth: '100vw',
           height: '100%',
-          backgroundColor: 'var(--surface)',
-          borderLeft: '1px solid var(--line-strong)',
+          backgroundColor: 'var(--paper)',
+          borderLeft: '1px solid var(--rule)',
           display: 'flex',
           flexDirection: 'column',
           }}
@@ -50,14 +50,14 @@ export const WhyScoreDrawer: React.FC = () => {
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid var(--line)',
+            borderBottom: '1px solid var(--rule)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <HelpCircle size={16} color="var(--accent)" />
+            <HelpCircle size={16} color="var(--signal)" />
             <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)' }}>Explainable AI (SHAP)</h3>
           </div>
           <button
@@ -65,7 +65,7 @@ export const WhyScoreDrawer: React.FC = () => {
             style={{
               background: 'transparent',
               border: 'none',
-              color: 'var(--ink-3)',
+              color: 'var(--ink-2)',
               cursor: 'pointer',
               padding: '4px',
             }}
@@ -85,7 +85,7 @@ export const WhyScoreDrawer: React.FC = () => {
           ) : explain ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <div style={{ fontSize: '12px', color: 'var(--ink-3)', }}>
+                <div style={{ fontSize: '12px', color: 'var(--ink-2)', }}>
                   Target Account
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
@@ -97,7 +97,7 @@ export const WhyScoreDrawer: React.FC = () => {
                     style={{
                       fontSize: '14px',
                       fontWeight: 700,
-                      color: explain.risk_score >= 75 ? 'var(--risk-high)' : 'var(--risk-mid)',
+                      color: explain.risk_score >= 75 ? 'var(--signal)' : 'var(--signal)',
                     }}
                   >
                     Risk {explain.risk_score}/100
@@ -107,7 +107,7 @@ export const WhyScoreDrawer: React.FC = () => {
 
               {/* Feature Importance Table */}
               <div>
-                <div style={{ fontSize: '12px', color: 'var(--ink-3)', marginBottom: '10px', fontWeight: 600 }}>
+                <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginBottom: '10px', fontWeight: 600 }}>
                   TOP SHAP ATTRIBUTIONS
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -118,8 +118,8 @@ export const WhyScoreDrawer: React.FC = () => {
                         key={i}
                         style={{
                           padding: '10px 12px',
-                          backgroundColor: 'var(--surface-raised)',
-                          border: '1px solid var(--line)',
+                          backgroundColor: 'var(--paper-2)',
+                          border: '1px solid var(--rule)',
                         }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px' }}>
@@ -128,7 +128,7 @@ export const WhyScoreDrawer: React.FC = () => {
                             className="mono"
                             style={{
                               fontWeight: 600,
-                              color: isPositive ? 'var(--risk-high)' : 'var(--ok)',
+                              color: isPositive ? 'var(--signal)' : 'var(--ok)',
                             }}
                           >
                             {isPositive ? `+${f.shap_value.toFixed(2)}` : f.shap_value.toFixed(2)}
@@ -138,7 +138,7 @@ export const WhyScoreDrawer: React.FC = () => {
                         <div
                           style={{
                             height: '4px',
-                            backgroundColor: 'var(--line)',
+                            backgroundColor: 'var(--rule)',
                             overflow: 'hidden',
                           }}
                         >
@@ -146,7 +146,7 @@ export const WhyScoreDrawer: React.FC = () => {
                             style={{
                               height: '100%',
                               width: `${Math.min(100, Math.abs(f.shap_value) * 200)}%`,
-                              backgroundColor: isPositive ? 'var(--risk-high)' : 'var(--ok)',
+                              backgroundColor: isPositive ? 'var(--signal)' : 'var(--ok)',
                               }}
                           />
                         </div>
@@ -160,11 +160,11 @@ export const WhyScoreDrawer: React.FC = () => {
               <div
                 style={{
                   padding: '14px',
-                  backgroundColor: 'var(--accent-muted)',
-                  border: '1px solid var(--line)',
+                  backgroundColor: 'var(--paper-2)',
+                  border: '1px solid var(--rule)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--accent)', marginBottom: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--signal)', marginBottom: '6px' }}>
                   <ArrowRight size={14} />
                   Counterfactual What-If
                 </div>
@@ -174,13 +174,13 @@ export const WhyScoreDrawer: React.FC = () => {
               </div>
 
               {/* Synthetic Attribution Note */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--ink-3)' }}>
-                <CheckCircle2 size={13} color="var(--ink-3)" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--ink-2)' }}>
+                <CheckCircle2 size={13} color="var(--ink-2)" />
                 <span>SHAP TreeExplainer run on 5,044 synthetic accounts</span>
               </div>
             </div>
           ) : (
-            <div style={{ color: 'var(--ink-3)', fontSize: '13px' }}>No explanation available for this account.</div>
+            <div style={{ color: 'var(--ink-2)', fontSize: '13px' }}>No explanation available for this account.</div>
           )}
         </div>
       </div>

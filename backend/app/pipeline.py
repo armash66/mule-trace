@@ -28,7 +28,14 @@ from .graph import build_graph, get_ego_network
 from .ingest import ingest_accounts, ingest_transactions
 from .models import AccountResult, AuditLog, Run
 from .reasons import generate_reasons
-from .schemas import Finding, IngestResponse, NetworkEdge, NetworkNode, NetworkResponse, ScoredAccount
+from .schemas import (
+    LegacyFinding as Finding,
+    LegacyIngestResponse as IngestResponse,
+    LegacyNetworkEdge as NetworkEdge,
+    LegacyNetworkNode as NetworkNode,
+    LegacyNetworkResponse as NetworkResponse,
+    LegacyScoredAccount as ScoredAccount,
+)
 from .scoring import score_accounts
 
 logger = logging.getLogger(__name__)

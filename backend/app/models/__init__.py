@@ -16,8 +16,15 @@ sys.modules[_legacy_spec.name] = _legacy_module
 _legacy_spec.loader.exec_module(_legacy_module)
 LegacyBase = _legacy_module.Base
 
+# Keep legacy-only tables visible to callers that create the package Base metadata.
+for _table_name, _table in LegacyBase.metadata.tables.items():
+	if _table_name not in Base.metadata.tables:
+		_table.to_metadata(Base.metadata)
+
 for _name, _value in vars(_legacy_module).items():
 	if not _name.startswith("_") and _name not in globals():
 		globals()[_name] = _value
+
+LegacyAccountResult = _legacy_module.AccountResult
 
 del _legacy_module, _legacy_spec, _legacy_path, _name, _value, sys

@@ -1,6 +1,6 @@
 # MuleTrace Development Makefile
 
-.PHONY: help install test dev seed demo clean evaluate
+.PHONY: help install test test-backend dev dev-web build-web seed demo clean evaluate check-design
 
 help:
 	@echo "MuleTrace Development Commands:"
@@ -17,8 +17,20 @@ install:
 test:
 	pytest backend/tests -v
 
+test-backend:
+	pytest backend/tests -v --tb=short
+
 dev:
 	uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
+
+dev-web:
+	cd web && npm run dev
+
+build-web:
+	cd web && npm install && npm run build
+
+check-design:
+	bash scripts/check-design.sh
 
 seed:
 	python scripts/generate_data.py --seed 42 --evasion 0.0 --output-dir data

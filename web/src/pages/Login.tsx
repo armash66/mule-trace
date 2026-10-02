@@ -23,7 +23,9 @@ export const Login: React.FC = () => {
       setUser({ user_id: '', username: data.username, role: data.role });
       navigate('/');
     } catch (err: any) {
-      const msg = err.response?.data?.detail || 'Invalid credentials';
+      const msg = err.response?.data?.detail
+        || (err.message === 'Network Error' ? 'Cannot connect to the backend. Check that the API is running.' : '')
+        || 'Invalid credentials';
       setError(msg);
     } finally {
       setLoading(false);

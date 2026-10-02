@@ -19,6 +19,11 @@ htmlcov/
 *.sqlite3
 data/*.csv
 
+# Environment files
+.env
+.env.*
+!.env.example
+
 # Node / Frontend
 node_modules/
 dist/

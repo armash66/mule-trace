@@ -41,7 +41,8 @@ import {
   mockCaseReport,
 } from './mockData';
 
-export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Use Vite's same-origin proxy locally and an explicit URL only for deployments.
+export const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export const apiClient = axios.create({
   baseURL: `${API_BASE}/api/v1`,

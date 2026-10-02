@@ -547,3 +547,37 @@ export const api = {
     }
   },
 };
+
+export const authApi = {
+  login: (username: string, password: string) => apiClient.post('/auth/login', { username, password }),
+  refresh: (refresh_token: string) => apiClient.post('/auth/refresh', { refresh_token }),
+  me: () => apiClient.get('/auth/me'),
+};
+
+export const watchlistApi = {
+  list: () => apiClient.get('/watchlist'),
+  add: (data: any) => apiClient.post('/watchlist', data),
+};
+
+export const configApi = {
+  getThresholds: () => apiClient.get('/config/thresholds'),
+  updateThresholds: (data: any) => apiClient.put('/config/thresholds', data),
+  preview: (data: any) => apiClient.post('/config/preview', data),
+};
+
+export const metricsApi = {
+  summary: () => apiClient.get('/metrics/summary'),
+  benchmark: () => apiClient.get('/metrics/benchmark'),
+};
+
+export const weightsApi = {
+  get: () => apiClient.get('/learned-weights'),
+  apply: () => apiClient.post('/learned-weights/apply'),
+  reset: () => apiClient.post('/learned-weights/reset'),
+};
+
+export const ringsApi = {
+  list: (params?: Record<string, any>) => apiClient.get('/rings', { params }),
+  get: (id: string) => apiClient.get(`/rings/${id}`),
+};
+

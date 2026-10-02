@@ -52,6 +52,10 @@ interface AppState {
   stagedFiles: File[];
   setStagedFiles: (files: File[]) => void;
 
+  // User session
+  user: any | null;
+  setUser: (user: any) => void;
+
   // Toast with 5s Undo
   toast: ToastState | null;
   showToast: (message: string, undoAction?: () => void) => void;
@@ -117,6 +121,9 @@ export const useStore = create<AppState>((set, get) => ({
   setGlobalDragActive: (active) => set({ globalDragActive: active }),
   stagedFiles: [],
   setStagedFiles: (files) => set({ stagedFiles: files }),
+
+  user: null,
+  setUser: (user) => set({ user }),
 
   toast: null,
   showToast: (message, undoAction) => {

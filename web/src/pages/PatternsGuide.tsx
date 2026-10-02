@@ -1,131 +1,234 @@
 import React from 'react';
-import { BookOpen, GitFork, RotateCw, ArrowRightLeft, Cpu, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const PatternsGuide: React.FC = () => {
-  const patterns = [
-    {
-      id: 'fan',
-      title: '1. Collect and split',
-      icon: GitFork,
-      color: 'var(--signal)',
-      description:
-        'A central mule account rapidly gathers deposits from 8–15 separate victim accounts within a tight window (e.g. 20 min), then splinters 90%+ of the total balance to multiple downstream mule accounts in under 15 min.',
-      countermeasure:
-        'Excluded Decoys: Payroll distributions only move one way (outward). Busy merchant accounts receive inbound transactions but never forward 90% immediately in parallel. Requiring both coordinated inflow and outflow protects legitimate commerce.',
-      thresholds: 'N ≥ 6 senders in 30m, M ≥ 3 receivers in 60m, Forward Ratio ≥ 80%.',
-    },
-    {
-      id: 'cycle',
-      title: '2. Round trip',
-      icon: RotateCw,
-      color: 'var(--ink-2)',
-      description:
-        'Funds are routed through a closed loop of 3 to 6 intermediary accounts (A → B → C → A) to obscure origin. Transfer amounts shrink predictably by 2–6% at each hop as transaction fees / mule cuts are deducted.',
-      countermeasure:
-        'Excluded Decoys: Legitimate e-commerce refund loops involve exact matching amounts over day-long spans. MuleTrace filters out cycles exceeding 60 minutes and requires chronological time-ordering with monotonic erosion.',
-      thresholds: 'Length 3–6 hops, Total duration ≤ 60 minutes, Shrinkage ≤ 15%.',
-    },
-    {
-      id: 'chain',
-      title: '3. Quick relay',
-      icon: ArrowRightLeft,
-      color: 'var(--ink)',
-      description:
-        'A sequence of 3 or more conduit accounts where each account acts as an instant transit pass-through, forwarding 95–100% of inflow within 2–8 minutes, leaving a near-zero closing balance.',
-      countermeasure:
-        'Excluded Decoys: Legitimate consumer transfers maintain standing balances or delay outbound disbursements. Pass-through detection enforces both low holding latency (< 10m) and near-zero retained balance (< 5%).',
-      thresholds: 'Forwarding ≥ 90%, Transit latency ≤ 10 min, Retained balance ≤ 5%.',
-    },
-    {
-      id: 'cluster',
-      title: '4. Device & Address Collusion Cluster',
-      icon: Cpu,
-      color: 'var(--ok)',
-      description:
-        'Recently opened accounts (under 30 days) operated by the same syndicate, sharing physical hardware device identifiers, residential address hash, or telecom KYC numbers.',
-      countermeasure:
-        'Excluded Decoys: Multi-person family devices or university Wi-Fi subnets involve older, established accounts. MuleTrace weights hardware devices higher than IP and discounts NAT subnets shared by accounts > 180 days old.',
-      thresholds: 'Account age ≤ 30 days, ≥ 3 connected accounts via Union-Find.',
-    },
-    {
-      id: 'dormancy',
-      title: '5. Dormancy Sudden Awakening Burst',
-      icon: Moon,
-      color: 'var(--ink-2)',
-      description:
-        'An account with zero transaction activity for 90+ days suddenly awakens to move high-velocity volumes matching a layered mule profile before falling silent again.',
-      countermeasure:
-        'Excluded Decoys: Salary spike accounts receive funds from an established corporate employer. MuleTrace requires sudden velocity bursts accompanied by high-speed outbound pass-through forwarding.',
-      thresholds: 'Idle days ≥ 90, Concentration ratio ≥ 75% in < 4h, Forwarding ≥ 80%.',
-    },
-  ];
+  const navigate = useNavigate();
 
   return (
-    <div style={{ padding: '24px 32px', maxWidth: '1000px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>
+    <div style={{ padding: '48px 36px', maxWidth: '1080px', margin: '0 auto', backgroundColor: 'var(--paper)' }}>
+      {/* Page Title & Subtitle */}
+      <div style={{ marginBottom: '40px' }}>
+        <h1 className="t-head" style={{ color: 'var(--ink)', fontSize: '28px', marginBottom: '8px' }}>
           Four ways stolen money moves
         </h1>
-        <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
-          Network graph rules and behavioral patterns designed specifically for Indian banking channels (UPI, IMPS, NEFT).
+        <p style={{ fontSize: '15px', color: 'var(--ink-2)' }}>
+          Each one looks normal alone. Together they give it away.
         </p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {patterns.map((p) => {
-          const Icon = p.icon;
-          return (
-            <div
-              key={p.id}
-              style={{
-                backgroundColor: 'var(--surface)',
-                border: '1px solid var(--line)',
-                padding: '20px',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                <div
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    backgroundColor: `${p.color}15`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: p.color,
-                  }}
-                >
-                  <Icon size={18} />
-                </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)' }}>{p.title}</h3>
-              </div>
+      {/* 4 ROWS */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* ROW 1: Collect and split */}
+        <div className="rule-top" style={{ padding: '32px 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 260px', gap: '24px', alignItems: 'start' }}>
+            <div className="t-hero" style={{ color: 'var(--ink)', lineHeight: 0.9 }}>
+              1
+            </div>
 
-              <p style={{ fontSize: '13px', color: 'var(--ink)', lineHeight: '1.5', marginBottom: '12px' }}>
-                {p.description}
+            <div>
+              <h2 className="t-head" style={{ color: 'var(--ink)', marginBottom: '8px' }}>
+                Collect and split
+              </h2>
+              <p style={{ fontSize: '15px', color: 'var(--ink)', lineHeight: 1.5, marginBottom: '6px' }}>
+                Many people pay one account. It sends the money on within minutes.
+              </p>
+              <p style={{ fontSize: '15px', color: 'var(--ink-2)', marginBottom: '14px' }}>
+                Not fraud when: It is payroll. Money only goes out.
               </p>
 
-              <div
-                style={{
-                  padding: '12px',
-                  backgroundColor: 'var(--surface-raised)',
-                  border: '1px solid var(--line)',
-                  fontSize: '12px',
-                  color: 'var(--ink-2)',
-                  marginBottom: '10px',
-                  lineHeight: '1.4',
-                }}
-              >
-                <span style={{ fontWeight: 600, color: 'var(--ink)' }}>How False Positives Are Suppressed: </span>
-                {p.countermeasure}
-              </div>
-
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-                <span style={{ fontWeight: 600, }}>Production Rule Calibration: </span>
-                <span className="mono" style={{ color: 'var(--accent)' }}>{p.thresholds}</span>
-              </div>
+              <details className="mono" style={{ color: 'var(--ink-2)', cursor: 'pointer' }}>
+                <summary style={{ outline: 'none' }}>Settings</summary>
+                <div style={{ marginTop: '6px', color: 'var(--ink)' }}>
+                  30 min window · 6 senders minimum · 80% forwarded
+                </div>
+              </details>
             </div>
-          );
-        })}
+
+            <div>
+              <svg viewBox="0 0 240 100" style={{ width: '100%', height: '100px' }}>
+                <defs>
+                  <marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--ink)" />
+                  </marker>
+                </defs>
+                {/* 5 dots left */}
+                {[12, 31, 50, 69, 88].map((y, i) => (
+                  <g key={`in-${i}`}>
+                    <circle cx="30" cy={y} r="5" fill="var(--ink)" />
+                    <line x1="35" y1={y} x2="110" y2="50" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow1)" />
+                  </g>
+                ))}
+                {/* 1 signal dot in middle */}
+                <circle cx="120" cy="50" r="7" fill="var(--signal)" />
+                {/* 4 dots right */}
+                {[20, 40, 60, 80].map((y, i) => (
+                  <g key={`out-${i}`}>
+                    <line x1="128" y1="50" x2="200" y2={y} stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow1)" />
+                    <circle cx="208" cy={y} r="5" fill="var(--ink)" />
+                  </g>
+                ))}
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2: Round trip */}
+        <div className="rule-top" style={{ padding: '32px 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 260px', gap: '24px', alignItems: 'start' }}>
+            <div className="t-hero" style={{ color: 'var(--ink)', lineHeight: 0.9 }}>
+              2
+            </div>
+
+            <div>
+              <h2 className="t-head" style={{ color: 'var(--ink)', marginBottom: '8px' }}>
+                Round trip
+              </h2>
+              <p style={{ fontSize: '15px', color: 'var(--ink)', lineHeight: 1.5, marginBottom: '6px' }}>
+                Money travels in a circle and ends where it started.
+              </p>
+              <p style={{ fontSize: '15px', color: 'var(--ink-2)', marginBottom: '14px' }}>
+                Not fraud when: It is a refund days later.
+              </p>
+
+              <details className="mono" style={{ color: 'var(--ink-2)', cursor: 'pointer' }}>
+                <summary style={{ outline: 'none' }}>Settings</summary>
+                <div style={{ marginTop: '6px', color: 'var(--ink)' }}>
+                  3 to 5 hops · 45 min duration · Shrinking amounts
+                </div>
+              </details>
+            </div>
+
+            <div>
+              <svg viewBox="0 0 240 100" style={{ width: '100%', height: '100px' }}>
+                <defs>
+                  <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--ink)" />
+                  </marker>
+                </defs>
+                {/* 4 dots in a square loop */}
+                <circle cx="70" cy="25" r="7" fill="var(--signal)" />
+                <circle cx="170" cy="25" r="5" fill="var(--ink)" />
+                <circle cx="170" cy="75" r="5" fill="var(--ink)" />
+                <circle cx="70" cy="75" r="5" fill="var(--ink)" />
+
+                <line x1="78" y1="25" x2="160" y2="25" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow2)" />
+                <line x1="170" y1="32" x2="170" y2="66" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow2)" />
+                <line x1="162" y1="75" x2="80" y2="75" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow2)" />
+                <line x1="70" y1="67" x2="70" y2="34" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow2)" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 3: Quick relay */}
+        <div className="rule-top" style={{ padding: '32px 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 260px', gap: '24px', alignItems: 'start' }}>
+            <div className="t-hero" style={{ color: 'var(--ink)', lineHeight: 0.9 }}>
+              3
+            </div>
+
+            <div>
+              <h2 className="t-head" style={{ color: 'var(--ink)', marginBottom: '8px' }}>
+                Quick relay
+              </h2>
+              <p style={{ fontSize: '15px', color: 'var(--ink)', lineHeight: 1.5, marginBottom: '6px' }}>
+                Each account passes nearly all the money on, fast.
+              </p>
+              <p style={{ fontSize: '15px', color: 'var(--ink-2)', marginBottom: '14px' }}>
+                Not fraud when: The account keeps a normal balance.
+              </p>
+
+              <details className="mono" style={{ color: 'var(--ink-2)', cursor: 'pointer' }}>
+                <summary style={{ outline: 'none' }}>Settings</summary>
+                <div style={{ marginTop: '6px', color: 'var(--ink)' }}>
+                  4 hops · 8 min transit · 95% forwarded
+                </div>
+              </details>
+            </div>
+
+            <div>
+              <svg viewBox="0 0 240 100" style={{ width: '100%', height: '100px' }}>
+                <defs>
+                  <marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--ink)" />
+                  </marker>
+                </defs>
+                {/* 5 dots in a row joined by arrows */}
+                <circle cx="28" cy="50" r="7" fill="var(--signal)" />
+                <line x1="36" y1="50" x2="68" y2="50" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow3)" />
+
+                <circle cx="76" cy="50" r="5" fill="var(--ink)" />
+                <line x1="82" y1="50" x2="114" y2="50" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow3)" />
+
+                <circle cx="122" cy="50" r="5" fill="var(--ink)" />
+                <line x1="128" y1="50" x2="160" y2="50" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow3)" />
+
+                <circle cx="168" cy="50" r="5" fill="var(--ink)" />
+                <line x1="174" y1="50" x2="204" y2="50" stroke="var(--ink)" strokeWidth="1.5" markerEnd="url(#arrow3)" />
+
+                <circle cx="212" cy="50" r="5" fill="var(--ink)" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 4: Same-device group */}
+        <div className="rule-top" style={{ padding: '32px 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 260px', gap: '24px', alignItems: 'start' }}>
+            <div className="t-hero" style={{ color: 'var(--ink)', lineHeight: 0.9 }}>
+              4
+            </div>
+
+            <div>
+              <h2 className="t-head" style={{ color: 'var(--ink)', marginBottom: '8px' }}>
+                Same-device group
+              </h2>
+              <p style={{ fontSize: '15px', color: 'var(--ink)', lineHeight: 1.5, marginBottom: '6px' }}>
+                New accounts that share one phone, device or address.
+              </p>
+              <p style={{ fontSize: '15px', color: 'var(--ink-2)', marginBottom: '14px' }}>
+                Not fraud when: It is a family on one home Wi-Fi.
+              </p>
+
+              <details className="mono" style={{ color: 'var(--ink-2)', cursor: 'pointer' }}>
+                <summary style={{ outline: 'none' }}>Settings</summary>
+                <div style={{ marginTop: '6px', color: 'var(--ink)' }}>
+                  Under 30 days old · 3+ linked accounts
+                </div>
+              </details>
+            </div>
+
+            <div>
+              <svg viewBox="0 0 240 100" style={{ width: '100%', height: '100px' }}>
+                {/* 4 dots around rectangle */}
+                <circle cx="120" cy="14" r="5" fill="var(--ink)" />
+                <line x1="120" y1="20" x2="120" y2="34" stroke="var(--ink)" strokeWidth="1.5" />
+
+                <circle cx="120" cy="86" r="5" fill="var(--ink)" />
+                <line x1="120" y1="80" x2="120" y2="66" stroke="var(--ink)" strokeWidth="1.5" />
+
+                <circle cx="44" cy="50" r="5" fill="var(--ink)" />
+                <line x1="50" y1="50" x2="84" y2="50" stroke="var(--ink)" strokeWidth="1.5" />
+
+                <circle cx="196" cy="50" r="5" fill="var(--ink)" />
+                <line x1="190" y1="50" x2="156" y2="50" stroke="var(--ink)" strokeWidth="1.5" />
+
+                {/* Rectangle labelled 1 device in signal */}
+                <rect x="85" y="35" width="70" height="30" fill="transparent" stroke="var(--signal)" strokeWidth="1.5" />
+                <text x="120" y="54" textAnchor="middle" fill="var(--signal)" className="mono" style={{ fontSize: '11px' }}>
+                  1 device
+                </text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Action: Try the demo linking to Overview */}
+        <div className="rule-top" style={{ paddingTop: '28px' }}>
+          <button type="button" className="btn" onClick={() => navigate('/')}>
+            Try the demo
+          </button>
+        </div>
       </div>
     </div>
   );

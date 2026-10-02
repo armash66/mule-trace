@@ -1,17 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../../api/client';
 import { useStore } from '../../store/store';
-import {
-  Clipboard,
-  Database,
-  Sliders,
-  Download,
-  Server,
-  Radio,
-  FileCode,
-  ArrowRight,
-  CheckCircle,
-} from 'lucide-react';
 
 interface IntakeCardsProps {
   onPastedTextSubmit: (text: string) => void;
@@ -24,19 +13,15 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
 }) => {
   const { showToast, fetchRuns } = useStore();
 
-  // Paste CSV Modal / Drawer state
   const [pasteModalOpen, setPasteModalOpen] = useState(false);
   const [pastedContent, setPastedContent] = useState('');
 
-  // Synthetic Generator state
   const [generatorOpen, setGeneratorOpen] = useState(false);
   const [seed, setSeed] = useState(42);
   const [size, setSize] = useState<'small' | 'medium' | 'large'>('small');
   const [evasion, setEvasion] = useState(0.0);
   const [includeDecoys, setIncludeDecoys] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // Demo loading
   const [isResettingDemo, setIsResettingDemo] = useState(false);
 
   const handleUseDemo = async () => {
@@ -44,7 +29,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
     try {
       await api.resetDemo();
       await fetchRuns();
-      showToast('Seeded demo dataset loaded (62,218 transactions, 5 planted rings).');
+      showToast('Seeded demo dataset loaded.');
       onRunCreated('run_seed_42_latest');
     } catch {
       showToast('Failed to load demo dataset.');
@@ -64,7 +49,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
         include_decoys: includeDecoys,
       });
       await fetchRuns();
-      showToast(`Generated ${size.toUpperCase()} synthetic dataset (${res.txn_count || 5000} rows).`);
+      showToast(`Generated synthetic dataset (${res.txn_count || 5000} rows).`);
       setGeneratorOpen(false);
       if (res.run_id) {
         onRunCreated(res.run_id);
@@ -84,71 +69,51 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-3)', }}>
-        Alternative Intake & Data Sources
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '16px' }}>
+      <div className="mono" style={{ color: 'var(--ink-2)' }}>
+        Other data sources
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
         {/* Card 1: Paste CSV */}
         <div
           onClick={() => setPasteModalOpen(true)}
           style={{
             padding: '16px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            border: '1px solid var(--rule)',
+            backgroundColor: 'var(--paper)',
             cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            transition: 'border-color 120ms ease, background-color 120ms ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)')}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Clipboard size={18} color="var(--ink)" />
-            <kbd className="mono" style={{ fontSize: '10px', color: 'var(--ink-3)', padding: '1px 5px', border: '1px solid var(--line)', }}>
-              ⌘V
-            </kbd>
+          <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>
+            Paste CSV ⌘V
           </div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>Paste Raw CSV</div>
-            <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginTop: '2px' }}>
-              Paste tab or comma separated text directly from clipboard.
-            </div>
+          <div style={{ fontSize: '15px', color: 'var(--ink)', fontWeight: 500 }}>
+            Paste raw text
+          </div>
+          <div style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '4px' }}>
+            Directly from clipboard
           </div>
         </div>
 
-        {/* Card 2: 1-Click Demo Dataset */}
+        {/* Card 2: Demo Dataset */}
         <div
           onClick={handleUseDemo}
           style={{
             padding: '16px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            border: '1px solid var(--rule)',
+            backgroundColor: 'var(--paper)',
             cursor: isResettingDemo ? 'wait' : 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            transition: 'border-color 120ms ease, background-color 120ms ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)')}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Database size={18} color="var(--accent)" />
-            <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', }}>
-              Instant
-            </span>
+          <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>
+            Demo
           </div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
-              {isResettingDemo ? 'Loading Demo...' : 'Use Demo Dataset'}
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginTop: '2px' }}>
-              Seed 42 with 62k transactions and 5 planted rings.
-            </div>
+          <div style={{ fontSize: '15px', color: 'var(--ink)', fontWeight: 500 }}>
+            {isResettingDemo ? 'Loading demo...' : 'Use demo dataset'}
+          </div>
+          <div style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '4px' }}>
+            Seed 42 with 62k transactions
           </div>
         </div>
 
@@ -157,26 +122,19 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
           onClick={() => setGeneratorOpen(true)}
           style={{
             padding: '16px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
+            border: '1px solid var(--rule)',
+            backgroundColor: 'var(--paper)',
             cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            transition: 'border-color 120ms ease, background-color 120ms ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)')}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Sliders size={18} color="var(--ink)" />
-            <span style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Parametric</span>
+          <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>
+            Synthetic
           </div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>Generate Synthetic</div>
-            <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginTop: '2px' }}>
-              Configure custom seeds, scale, evasion factor and decoys.
-            </div>
+          <div style={{ fontSize: '15px', color: 'var(--ink)', fontWeight: 500 }}>
+            Generate synthetic
+          </div>
+          <div style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '4px' }}>
+            Configurable seed and scale
           </div>
         </div>
 
@@ -184,124 +142,56 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
         <div
           style={{
             padding: '16px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
+            border: '1px solid var(--rule)',
+            backgroundColor: 'var(--paper)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Download size={18} color="var(--ink)" />
-            <span style={{ fontSize: '10px', color: 'var(--ink-3)' }}>CSV Spec</span>
+          <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>
+            Templates
           </div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>Download Templates</div>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-              <a
-                href={api.getTemplateUrl('transactions')}
-                download="transactions_template.csv"
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 500,
-                  color: 'var(--accent)',
-                  textDecoration: 'none',
-                }}
-              >
-                transactions.csv
-              </a>
-              <span style={{ color: 'var(--line-strong)' }}>•</span>
-              <a
-                href={api.getTemplateUrl('accounts')}
-                download="accounts_template.csv"
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 500,
-                  color: 'var(--accent)',
-                  textDecoration: 'none',
-                }}
-              >
-                accounts.csv
-              </a>
-            </div>
+          <div style={{ fontSize: '15px', color: 'var(--ink)', fontWeight: 500, marginBottom: '6px' }}>
+            Download CSV
+          </div>
+          <div style={{ display: 'flex', gap: '8px', fontSize: '13px' }}>
+            <a
+              href={api.getTemplateUrl('transactions')}
+              download="transactions_template.csv"
+              style={{ color: 'var(--ink)', textDecoration: 'underline' }}
+            >
+              transactions.csv
+            </a>
+            <span style={{ color: 'var(--ink-2)' }}>·</span>
+            <a
+              href={api.getTemplateUrl('accounts')}
+              download="accounts_template.csv"
+              style={{ color: 'var(--ink)', textDecoration: 'underline' }}
+            >
+              accounts.csv
+            </a>
           </div>
         </div>
       </div>
 
       {/* Disabled Roadmap Connectors */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-3)', }}>
-          Direct Feeds & Connectors (Roadmap)
+      <div>
+        <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>
+          Direct connectors (roadmap)
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-          <div
-            style={{
-              padding: '12px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
-              opacity: 0.55,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Server size={16} color="var(--ink-3)" />
-              <div>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Core Banking API</div>
-                <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Finacle, TCS BaNCS, Flexcube</div>
-              </div>
-            </div>
-            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', color: 'var(--ink-3)' }}>
-              ROADMAP
-            </span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div style={{ padding: '12px 16px', border: '1px solid var(--rule)', opacity: 0.5 }}>
+            <div style={{ fontSize: '13px', color: 'var(--ink)', fontWeight: 500 }}>Core banking API</div>
+            <div className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>Roadmap</div>
           </div>
 
-          <div
-            style={{
-              padding: '12px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
-              opacity: 0.55,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <FileCode size={16} color="var(--ink-3)" />
-              <div>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Automated SFTP Ingest</div>
-                <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Scheduled daily batch drop</div>
-              </div>
-            </div>
-            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', color: 'var(--ink-3)' }}>
-              ROADMAP
-            </span>
+          <div style={{ padding: '12px 16px', border: '1px solid var(--rule)', opacity: 0.5 }}>
+            <div style={{ fontSize: '13px', color: 'var(--ink)', fontWeight: 500 }}>Automated SFTP ingest</div>
+            <div className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>Roadmap</div>
           </div>
 
-          <div
-            style={{
-              padding: '12px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
-              opacity: 0.55,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Radio size={16} color="var(--ink-3)" />
-              <div>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Kafka / Event Stream</div>
-                <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Real-time sub-second ingestion</div>
-              </div>
-            </div>
-            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', color: 'var(--ink-3)' }}>
-              ROADMAP
-            </span>
+          <div style={{ padding: '12px 16px', border: '1px solid var(--rule)', opacity: 0.5 }}>
+            <div style={{ fontSize: '13px', color: 'var(--ink)', fontWeight: 500 }}>Kafka stream</div>
+            <div className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>Roadmap</div>
           </div>
         </div>
       </div>
@@ -313,8 +203,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(17, 17, 19, 0.6)',
-            backdropFilter: 'blur(3px)',
+            backgroundColor: 'rgba(17, 17, 17, 0.5)',
             zIndex: 1000,
             display: 'flex',
             alignItems: 'center',
@@ -325,22 +214,23 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '600px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '2px solid var(--ink)',
               padding: '24px',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
-              }}
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)' }}>
-                Paste CSV or Tab-Separated Data
-              </h3>
+              <div className="t-head" style={{ color: 'var(--ink)' }}>
+                Paste CSV data
+              </div>
               <button
                 type="button"
                 onClick={() => setPasteModalOpen(false)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--ink-3)', cursor: 'pointer' }}
+                className="mono"
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px' }}
               >
                 ✕
               </button>
@@ -355,9 +245,8 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               style={{
                 width: '100%',
                 padding: '10px',
-                fontSize: '12px',
-                border: '1px solid var(--line-strong)',
-                backgroundColor: 'var(--surface-raised)',
+                border: '1px solid var(--rule)',
+                backgroundColor: 'var(--paper-2)',
                 color: 'var(--ink)',
                 outline: 'none',
                 resize: 'vertical',
@@ -367,33 +256,19 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
               <button
                 type="button"
+                className="btn-ghost"
                 onClick={() => setPasteModalOpen(false)}
-                style={{
-                  padding: '6px 14px',
-                  backgroundColor: 'transparent',
-                  border: '1px solid var(--line)',
-                  fontSize: '12px',
-                  color: 'var(--ink)',
-                  cursor: 'pointer',
-                }}
+                style={{ padding: '6px 14px', cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 type="button"
+                className="btn"
                 onClick={handlePasteSubmit}
                 disabled={!pastedContent.trim()}
-                style={{
-                  padding: '6px 18px',
-                  backgroundColor: 'var(--accent)',
-                  color: 'var(--paper)',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: !pastedContent.trim() ? 'not-allowed' : 'pointer',
-                }}
               >
-                Parse & Ingest
+                Parse data
               </button>
             </div>
           </div>
@@ -407,8 +282,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(17, 17, 19, 0.6)',
-            backdropFilter: 'blur(3px)',
+            backgroundColor: 'rgba(17, 17, 17, 0.5)',
             zIndex: 1000,
             display: 'flex',
             alignItems: 'center',
@@ -420,30 +294,30 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '520px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+              backgroundColor: 'var(--paper)',
+              border: '2px solid var(--ink)',
               padding: '24px',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
-              }}
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)' }}>
-                Generate Synthetic Benchmark Dataset
-              </h3>
+              <div className="t-head" style={{ color: 'var(--ink)' }}>
+                Generate synthetic dataset
+              </div>
               <button
                 type="button"
                 onClick={() => setGeneratorOpen(false)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--ink-3)', cursor: 'pointer' }}
+                className="mono"
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px' }}
               >
                 ✕
               </button>
             </div>
 
-            {/* Seed */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Random Seed</label>
+              <label className="mono" style={{ color: 'var(--ink-2)' }}>Random seed</label>
               <input
                 type="number"
                 value={seed}
@@ -451,40 +325,34 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 className="mono"
                 style={{
                   padding: '6px 10px',
-                  fontSize: '12px',
-                  border: '1px solid var(--line-strong)',
-                  backgroundColor: 'var(--surface)',
+                  border: '1px solid var(--rule)',
+                  backgroundColor: 'var(--paper-2)',
                   color: 'var(--ink)',
                   outline: 'none',
                 }}
               />
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-                Deterministic seed generates byte-identical dataset reproduction.
-              </div>
             </div>
 
-            {/* Size */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Dataset Size</label>
+              <label className="mono" style={{ color: 'var(--ink-2)' }}>Dataset size</label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                 {(['small', 'medium', 'large'] as const).map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setSize(s)}
+                    className="mono"
                     style={{
                       padding: '8px',
-                      border: size === s ? '2px solid var(--accent)' : '1px solid var(--line)',
-                      backgroundColor: size === s ? 'var(--accent-muted)' : 'var(--surface)',
-                      fontSize: '12px',
-                      fontWeight: size === s ? 600 : 400,
-                      color: 'var(--ink)',
+                      border: size === s ? '2px solid var(--ink)' : '1px solid var(--rule)',
+                      backgroundColor: size === s ? 'var(--ink)' : 'transparent',
+                      color: size === s ? 'var(--paper)' : 'var(--ink)',
                       cursor: 'pointer',
                       textTransform: 'capitalize',
                     }}
                   >
                     <div>{s}</div>
-                    <div className="mono" style={{ fontSize: '10px', color: 'var(--ink-3)' }}>
+                    <div style={{ fontSize: '11px', color: size === s ? 'var(--paper-2)' : 'var(--ink-2)' }}>
                       {s === 'small' ? '5k txns' : s === 'medium' ? '60k txns' : '250k txns'}
                     </div>
                   </button>
@@ -492,16 +360,10 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               </div>
             </div>
 
-            {/* Evasion Slider */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>
-                  Evasion Level: <span className="mono">{evasion.toFixed(2)}</span>
-                </label>
-                <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-                  {evasion === 0 ? 'Standard syndicates' : evasion < 0.5 ? 'Moderate timing jitter' : 'Adversarial evasion'}
-                </span>
-              </div>
+              <label className="mono" style={{ color: 'var(--ink-2)' }}>
+                Evasion level: {evasion.toFixed(2)}
+              </label>
               <input
                 type="range"
                 min="0"
@@ -509,57 +371,38 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 step="0.05"
                 value={evasion}
                 onChange={(e) => setEvasion(parseFloat(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--accent)' }}
+                style={{ width: '100%', accentColor: 'var(--ink)' }}
               />
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-                Higher levels slow hops, split transfer amounts, and rotate device identifiers.
-              </div>
             </div>
 
-            {/* Decoys toggle */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input
                 type="checkbox"
                 id="decoys-toggle"
                 checked={includeDecoys}
                 onChange={(e) => setIncludeDecoys(e.target.checked)}
-                style={{ accentColor: 'var(--accent)' }}
               />
-              <label htmlFor="decoys-toggle" style={{ fontSize: '12px', color: 'var(--ink)', cursor: 'pointer' }}>
-                Include benign decoy traffic (corporate payroll, high-velocity merchant, family devices)
+              <label htmlFor="decoys-toggle" style={{ fontSize: '13px', color: 'var(--ink)', cursor: 'pointer' }}>
+                Include decoy traffic (payroll, merchant, family)
               </label>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
               <button
                 type="button"
+                className="btn-ghost"
                 onClick={() => setGeneratorOpen(false)}
                 disabled={isGenerating}
-                style={{
-                  padding: '6px 14px',
-                  backgroundColor: 'transparent',
-                  border: '1px solid var(--line)',
-                  fontSize: '12px',
-                  color: 'var(--ink)',
-                  cursor: 'pointer',
-                }}
+                style={{ padding: '6px 14px', cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 type="submit"
+                className="btn"
                 disabled={isGenerating}
-                style={{
-                  padding: '6px 18px',
-                  backgroundColor: 'var(--accent)',
-                  color: 'var(--paper)',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: isGenerating ? 'wait' : 'pointer',
-                }}
               >
-                {isGenerating ? 'Generating...' : 'Generate & Run'}
+                {isGenerating ? 'Generating...' : 'Generate & run'}
               </button>
             </div>
           </form>

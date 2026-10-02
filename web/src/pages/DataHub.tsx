@@ -17,16 +17,6 @@ import { RunProgress } from '../components/data-hub/RunProgress';
 import { IntakeCards } from '../components/data-hub/IntakeCards';
 import { RunHistoryTable } from '../components/data-hub/RunHistoryTable';
 import { formatDate } from '../lib/utils';
-import {
-  UploadCloud,
-  Layers,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight,
-  Database,
-  Sliders,
-  RotateCcw,
-} from 'lucide-react';
 
 const TRANSACTION_FIELDS = [
   { field: 'txn_id', label: 'Transaction ID', required: false, description: 'Unique identifier for transaction (auto-generated if omitted).' },
@@ -71,21 +61,18 @@ export const DataHub: React.FC = () => {
   const [isValidating, setIsValidating] = useState(false);
   const [isStartingRun, setIsStartingRun] = useState(false);
 
-  // Timezone and format selections
+  // Timezone
   const [timezone, setTimezone] = useState('IST');
-  const [dateFormat, setDateFormat] = useState('YYYY-MM-DD HH:mm:ss');
 
   // Mappings state
   const [txMapping, setTxMapping] = useState<Record<string, ColumnMappingItem>>({});
   const [acctMapping, setAcctMapping] = useState<Record<string, ColumnMappingItem>>({});
   const [detectedTypes, setDetectedTypes] = useState<Record<string, string>>({});
 
-  // Fetch initial run list
   useEffect(() => {
     fetchRuns();
   }, [fetchRuns]);
 
-  // Handle staged files from global drag-and-drop
   useEffect(() => {
     if (stagedFiles && stagedFiles.length > 0) {
       handleFilesSelected(stagedFiles);
@@ -93,10 +80,8 @@ export const DataHub: React.FC = () => {
     }
   }, [stagedFiles]);
 
-  // Listen for Ctrl+V / Cmd+V paste globally on the page
   useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
-      // Don't intercept if user is typing in an input or textarea
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
@@ -138,10 +123,7 @@ export const DataHub: React.FC = () => {
   };
 
   const handleTypeChange = (filename: string, newType: 'transactions' | 'accounts') => {
-    setDetectedTypes((prev) => ({
-      ...prev,
-      [filename]: newType,
-    }));
+    setDetectedTypes((prev) => ({ ...prev, [filename]: newType }));
   };
 
   const handleRemoveFile = (filename: string) => {
@@ -151,10 +133,7 @@ export const DataHub: React.FC = () => {
       setUploadData(null);
       setStep('select');
     } else {
-      setUploadData({
-        ...uploadData,
-        files: remaining,
-      });
+      setUploadData({ ...uploadData, files: remaining });
     }
   };
 
@@ -162,8 +141,9 @@ export const DataHub: React.FC = () => {
     setTxMapping((prev) => ({
       ...prev,
       [targetField]: {
+        target_field: targetField,
         source_column: sourceCol,
-        confidence: sourceCol ? 'Matched' : 'Unmapped',
+        confidence: 'Matched',
         sample_values: prev[targetField]?.sample_values || [],
       },
     }));
@@ -173,41 +153,34 @@ export const DataHub: React.FC = () => {
     setAcctMapping((prev) => ({
       ...prev,
       [targetField]: {
+        target_field: targetField,
         source_column: sourceCol,
-        confidence: sourceCol ? 'Matched' : 'Unmapped',
+        confidence: 'Matched',
         sample_values: prev[targetField]?.sample_values || [],
       },
     }));
   };
 
-  // Check required transactions mapping
   const isRequiredTxMapped = () => {
-    return (
-      !!txMapping.timestamp?.source_column &&
-      !!txMapping.src_account?.source_column &&
-      !!txMapping.dst_account?.source_column &&
-      !!txMapping.amount?.source_column
-    );
+    const required = ['timestamp', 'src_account', 'dst_account', 'amount'];
+    return required.every((f) => !!txMapping[f]?.source_column);
   };
 
   const handleProceedToValidation = async () => {
     if (!uploadData) return;
     setIsValidating(true);
     try {
-      // 1. Save mapping
       await api.saveMapping(uploadData.upload_id, {
         transactions: txMapping,
-        accounts: uploadData.has_accounts ? acctMapping : {},
+        accounts: acctMapping,
         timezone,
-        date_format: dateFormat,
       });
 
-      // 2. Validate
       const report = await api.validateUpload(uploadData.upload_id);
       setValidationReport(report);
       setStep('validate');
     } catch {
-      showToast('Validation failed. Please verify column selections.');
+      showToast('Validation failed.');
     } finally {
       setIsValidating(false);
     }
@@ -217,22 +190,20 @@ export const DataHub: React.FC = () => {
     setStep('run');
   };
 
-  const handleStartPipeline = async (name: string, configPreset: string) => {
+  const handleStartPipeline = async (runName: string, configPreset: string) => {
     if (!uploadData) return;
     setIsStartingRun(true);
     try {
       const res = await api.createRun({
+        name: runName,
         upload_id: uploadData.upload_id,
-        name,
         config_preset: configPreset,
       });
       setActivePipelineRunId(res.run_id);
       setActiveRunId(res.run_id);
-      await fetchRuns();
       setStep('progress');
-      showToast(`Pipeline "${name}" initiated.`);
     } catch {
-      showToast('Failed to start pipeline execution.');
+      showToast('Failed to start run.');
     } finally {
       setIsStartingRun(false);
     }
@@ -249,101 +220,75 @@ export const DataHub: React.FC = () => {
     setStep('run');
   };
 
-  // Get available columns from files
   const txFile = uploadData?.files.find((f) => (detectedTypes[f.filename] || f.detected_type) === 'transactions');
   const acctFile = uploadData?.files.find((f) => (detectedTypes[f.filename] || f.detected_type) === 'accounts');
 
   const availableTxCols = txFile?.columns || [];
   const availableAcctCols = acctFile?.columns || [];
-
   const defaultRunName = `Upload ${formatDate(new Date().toISOString())}`;
 
   return (
-    <div style={{ padding: '24px 32px', maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', }}>
-            Data & Intake Pipeline
-          </h1>
-          <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
-            Upload transaction logs and account registries, validate data hygiene, and execute graph syndicate detection.
-          </p>
+    <div style={{ padding: '0 36px 48px 36px', maxWidth: '1120px', margin: '0 auto', backgroundColor: 'var(--paper)' }}>
+      {/* Header & Step List */}
+      <div style={{ padding: '32px 0 24px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div>
+            <div className="t-head" style={{ color: 'var(--ink)' }}>
+              Data
+            </div>
+            <p style={{ fontSize: '15px', color: 'var(--ink-2)', marginTop: '4px' }}>
+              Upload bank files, check schema, and run detection.
+            </p>
+          </div>
+
+          {activeRunId && (
+            <div className="mono" style={{ color: 'var(--ink-2)' }}>
+              Active run: <span style={{ color: 'var(--ink)', fontWeight: 600 }}>{runs.find((r) => r.id === activeRunId)?.name || activeRunId}</span>
+            </div>
+          )}
         </div>
 
-        {/* Active Run Chip */}
-        {activeRunId && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
-              padding: '6px 12px',
-              fontSize: '12px',
-            }}
-          >
-            <span style={{ width: 7, height: 7, backgroundColor: 'var(--ok)' }} />
-            <span style={{ color: 'var(--ink-2)' }}>Active Run:</span>
-            <span className="mono" style={{ color: 'var(--ink)', fontWeight: 600 }}>
-              {runs.find((r) => r.id === activeRunId)?.name || activeRunId}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Stepper Navigation Bar */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--line)',
-          padding: '4px',
-        }}
-      >
-        {[
-          { key: 'select', label: '1. Select Data' },
-          { key: 'map', label: '2. Map Columns' },
-          { key: 'validate', label: '3. Validate & Health' },
-          { key: 'run', label: '4. Configure Run' },
-          { key: 'progress', label: '5. Execution & Results' },
-        ].map((s) => {
-          const isActive = currentStep === s.key;
-          return (
-            <button
-              key={s.key}
-              type="button"
-              onClick={() => {
-                if (s.key === 'select') setStep('select');
-                if (s.key === 'map' && uploadData) setStep('map');
-                if (s.key === 'validate' && validationReport) setStep('validate');
-                if (s.key === 'run' && uploadData) setStep('run');
-                if (s.key === 'progress' && activePipelineRunId) setStep('progress');
-              }}
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                border: 'none',
-                backgroundColor: isActive ? 'var(--surface-raised)' : 'transparent',
-                color: isActive ? 'var(--ink)' : 'var(--ink-3)',
-                fontSize: '12px',
-                fontWeight: isActive ? 600 : 500,
-                cursor: 'pointer',
-                transition: 'all 0.12s ease',
-                textAlign: 'center',
-              }}
-            >
-              {s.label}
-            </button>
-          );
-        })}
+        {/* Step list shown as plain text "1 Select  2 Match  3 Check  4 Run" in .mono with current step underlined 2px ink */}
+        <div style={{ display: 'flex', gap: '28px', borderBottom: '1px solid var(--rule)' }}>
+          {[
+            { key: 'select', label: '1 Select' },
+            { key: 'map', label: '2 Match' },
+            { key: 'validate', label: '3 Check' },
+            { key: 'run', label: '4 Run' },
+          ].map((s) => {
+            const isCurrent = currentStep === s.key || (s.key === 'run' && currentStep === 'progress');
+            return (
+              <button
+                key={s.key}
+                type="button"
+                onClick={() => {
+                  if (s.key === 'select') setStep('select');
+                  if (s.key === 'map' && uploadData) setStep('map');
+                  if (s.key === 'validate' && validationReport) setStep('validate');
+                  if (s.key === 'run' && uploadData) setStep('run');
+                }}
+                className="mono"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '8px 0',
+                  color: isCurrent ? 'var(--ink)' : 'var(--ink-2)',
+                  borderBottom: isCurrent ? '2px solid var(--ink)' : '2px solid transparent',
+                  marginBottom: '-1px',
+                  fontSize: '13px',
+                }}
+              >
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* STEP 1: SELECT FILES */}
       {currentStep === 'select' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
           <Dropzone onFilesSelected={handleFilesSelected} isUploading={isUploading} />
 
           {uploadData && (
@@ -359,22 +304,10 @@ export const DataHub: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button
                   type="button"
+                  className="btn"
                   onClick={() => setStep('map')}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 20px',
-                    backgroundColor: 'var(--accent)',
-                    color: 'var(--paper)',
-                    border: 'none',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
                 >
-                  <span>Proceed to Column Mapping</span>
-                  <ArrowRight size={14} />
+                  Continue to match
                 </button>
               </div>
             </div>
@@ -384,8 +317,7 @@ export const DataHub: React.FC = () => {
 
       {/* STEP 2: MAP COLUMNS */}
       {currentStep === 'map' && uploadData && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* File chips summary */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
           <FileChips
             files={uploadData.files}
             detectedTypes={detectedTypes}
@@ -394,47 +326,25 @@ export const DataHub: React.FC = () => {
             hasAccounts={uploadData.has_accounts}
           />
 
-          {/* Timezone and Date Format Configuration */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px',
-              padding: '12px 16px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--line)',
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span className="mono" style={{ color: 'var(--ink-2)' }}>Timezone:</span>
+            <select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              className="mono"
+              style={{
+                padding: '4px 8px',
+                border: '1px solid var(--rule)',
+                backgroundColor: 'var(--paper)',
+                color: 'var(--ink)',
+                outline: 'none',
               }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Source Timezone:</span>
-              <select
-                value={timezone}
-                onChange={(e) => setTimezone(e.target.value)}
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid var(--line-strong)',
-                  backgroundColor: 'var(--surface)',
-                  color: 'var(--ink)',
-                  outline: 'none',
-                }}
-              >
-                <option value="IST">IST (UTC+05:30) [Default Indian Standard Time]</option>
-                <option value="UTC">UTC (+00:00)</option>
-                <option value="EST">EST (UTC-05:00)</option>
-                <option value="PST">PST (UTC-08:00)</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Date Parsing:</span>
-              <span className="mono" style={{ fontSize: '12px', color: 'var(--ink-2)' }}>
-                Auto-detected ISO8601 / DD-MM-YYYY
-              </span>
-            </div>
+            >
+              <option value="IST">IST (UTC+05:30)</option>
+              <option value="UTC">UTC (+00:00)</option>
+            </select>
           </div>
 
-          {/* Transactions Mapping Table */}
           <MappingTable
             type="transactions"
             targetFields={TRANSACTION_FIELDS}
@@ -444,7 +354,6 @@ export const DataHub: React.FC = () => {
             rawSampleRows={uploadData.preview.transactions}
           />
 
-          {/* Accounts Mapping Table (if accounts file uploaded) */}
           {uploadData.has_accounts && (
             <MappingTable
               type="accounts"
@@ -456,59 +365,34 @@ export const DataHub: React.FC = () => {
             />
           )}
 
-          {/* Stepper Navigation Footer */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingTop: '16px',
-              borderTop: '1px solid var(--line)',
-            }}
-          >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--rule)' }}>
             <button
               type="button"
+              className="btn-ghost"
               onClick={() => setStep('select')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'transparent',
-                border: '1px solid var(--line)',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: 'var(--ink)',
-                cursor: 'pointer',
-              }}
+              style={{ padding: '8px 16px', cursor: 'pointer' }}
             >
-              Back to Files
+              Back
             </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               {!isRequiredTxMapped() && (
-                <span style={{ fontSize: '12px', color: 'var(--risk-high)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <AlertTriangle size={14} />
-                  <span>Map all required transaction fields (timestamp, src_account, dst_account, amount).</span>
+                <span className="mono" style={{ color: 'var(--signal)' }}>
+                  Fix: Map all required transaction fields.
                 </span>
               )}
 
               <button
                 type="button"
+                className="btn"
                 onClick={handleProceedToValidation}
                 disabled={!isRequiredTxMapped() || isValidating}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 20px',
-                  backgroundColor: !isRequiredTxMapped() ? 'var(--line-strong)' : 'var(--accent)',
-                  color: 'var(--paper)',
-                  border: 'none',
-                  fontSize: '13px',
-                  fontWeight: 600,
+                  opacity: !isRequiredTxMapped() || isValidating ? 0.4 : 1,
                   cursor: !isRequiredTxMapped() || isValidating ? 'not-allowed' : 'pointer',
                 }}
               >
-                <span>{isValidating ? 'Validating Hygiene...' : 'Validate & Preview'}</span>
-                <ArrowRight size={14} />
+                {isValidating ? 'Validating...' : 'Continue to check'}
               </button>
             </div>
           </div>
@@ -526,13 +410,7 @@ export const DataHub: React.FC = () => {
 
       {/* STEP 4: CONFIGURE RUN */}
       {currentStep === 'run' && (
-        <div
-          style={{
-            padding: '24px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--line)',
-            }}
-        >
+        <div>
           <RunConfigStep
             defaultName={defaultRunName}
             onStart={handleStartPipeline}
@@ -553,7 +431,7 @@ export const DataHub: React.FC = () => {
         />
       )}
 
-      {/* ALTERNATIVE INTAKE CARDS */}
+      {/* INTAKE CARDS */}
       <IntakeCards
         onPastedTextSubmit={handlePastedCsvText}
         onRunCreated={handleRunCreatedFromCard}

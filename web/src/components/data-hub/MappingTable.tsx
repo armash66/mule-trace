@@ -1,6 +1,5 @@
 import React from 'react';
 import type { ColumnMappingItem } from '../../api/types';
-import { Check, AlertCircle, HelpCircle } from 'lucide-react';
 
 interface MappingTableProps {
   type: 'transactions' | 'accounts';
@@ -38,159 +37,109 @@ export const MappingTable: React.FC<MappingTableProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)', textTransform: 'capitalize' }}>
-        {type} Column Schema Mapping
+      <div className="mono" style={{ color: 'var(--ink)', fontWeight: 600 }}>
+        {type === 'transactions' ? 'Transactions column mapping' : 'Accounts column mapping'}
       </div>
 
-      <div
-        style={{
-          border: '1px solid var(--line)',
-          backgroundColor: 'var(--surface)',
-          overflow: 'hidden',
-        }}
-      >
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '12px' }}>
-          <thead>
-            <tr style={{ backgroundColor: 'var(--surface-raised)', borderBottom: '1px solid var(--line)' }}>
-              <th style={{ padding: '8px 12px', fontWeight: 600, color: 'var(--ink-2)', width: '22%' }}>Target Field</th>
-              <th style={{ padding: '8px 12px', fontWeight: 600, color: 'var(--ink-2)', width: '28%' }}>Source Column</th>
-              <th style={{ padding: '8px 12px', fontWeight: 600, color: 'var(--ink-2)', width: '16%' }}>Confidence</th>
-              <th style={{ padding: '8px 12px', fontWeight: 600, color: 'var(--ink-2)' }}>Sample Values (First 3)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {targetFields.map((spec) => {
-              const currentItem = mapping[spec.field];
-              const currentSourceCol = currentItem?.source_column || '';
-              const isMatched = currentItem?.confidence === 'Matched' && currentSourceCol !== '';
-              const isCheck = currentItem?.confidence === 'Check' || (!currentSourceCol && spec.required);
+      <div style={{ borderTop: '2px solid var(--ink)' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '200px 220px 120px 1fr',
+            padding: '10px 16px',
+            alignItems: 'center',
+          }}
+        >
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>Target field</span>
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>Source column</span>
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>Confidence</span>
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>Sample values</span>
+        </div>
 
-              return (
-                <tr
-                  key={spec.field}
+        {targetFields.map((spec) => {
+          const currentItem = mapping[spec.field];
+          const currentSourceCol = currentItem?.source_column || '';
+          const isMatched = currentItem?.confidence === 'Matched' && currentSourceCol !== '';
+          const isCheck = currentItem?.confidence === 'Check' || (!currentSourceCol && spec.required);
+          const samples = getSamplesForCol(currentSourceCol || null);
+
+          return (
+            <div
+              key={spec.field}
+              className="row"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '200px 220px 120px 1fr',
+                alignItems: 'center',
+                padding: '10px 16px',
+              }}
+            >
+              {/* Target field */}
+              <div>
+                <span className="mono" style={{ fontWeight: 600 }}>
+                  {spec.field}
+                </span>
+                {spec.required && (
+                  <span className="mono" style={{ color: 'var(--signal)', marginLeft: '6px' }}>
+                    *
+                  </span>
+                )}
+              </div>
+
+              {/* Source column dropdown */}
+              <div>
+                <select
+                  value={currentSourceCol}
+                  onChange={(e) => onMappingChange(spec.field, e.target.value || null)}
+                  className="mono"
                   style={{
-                    borderBottom: '1px solid var(--line)',
-                    backgroundColor: 'var(--surface)',
+                    padding: '4px 8px',
+                    border: '1px solid var(--rule)',
+                    background: 'var(--paper)',
+                    color: 'var(--ink)',
+                    outline: 'none',
+                    width: '180px',
                   }}
                 >
-                  {/* Field & Requirement */}
-                  <td style={{ padding: '8px 12px', verticalAlign: 'middle' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span className="mono" style={{ fontWeight: 600, color: 'var(--ink)' }}>
-                        {spec.field}
-                      </span>
-                      {spec.required ? (
-                        <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: 600, }}>
-                          Req
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: '10px', color: 'var(--ink-3)' }}>opt</span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '11px', color: 'var(--ink-3)', marginTop: '2px' }}>
-                      {spec.description}
-                    </div>
-                  </td>
+                  <option value="">(None)</option>
+                  {availableColumns.map((col) => (
+                    <option key={col} value={col}>
+                      {col}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                  {/* Dropdown selector */}
-                  <td style={{ padding: '8px 12px', verticalAlign: 'middle' }}>
-                    <select
-                      value={currentSourceCol}
-                      onChange={(e) => onMappingChange(spec.field, e.target.value || null)}
-                      style={{
-                        width: '100%',
-                        padding: '5px 8px',
-                        fontSize: '12px',
-                        border: '1px solid var(--line-strong)',
-                        backgroundColor: 'var(--surface)',
-                        color: 'var(--ink)',
-                        outline: 'none',
-                        fontFamily: 'inherit',
-                      }}
-                    >
-                      <option value="">-- Ignore / Unmapped --</option>
-                      {availableColumns.map((col) => (
-                        <option key={col} value={col}>
-                          {col}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+              {/* Confidence */}
+              <div>
+                {isMatched ? (
+                  <span className="mono" style={{ color: 'var(--ink)' }}>Matched</span>
+                ) : isCheck ? (
+                  <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span className="dot" />
+                    <span>Check</span>
+                  </span>
+                ) : (
+                  <span className="mono" style={{ color: 'var(--ink-2)' }}>—</span>
+                )}
+              </div>
 
-                  {/* Confidence Badge */}
-                  <td style={{ padding: '8px 12px', verticalAlign: 'middle' }}>
-                    {currentSourceCol ? (
-                      isMatched ? (
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            fontSize: '11px',
-                            color: 'var(--ok)',
-                            fontWeight: 500,
-                          }}
-                        >
-                          <Check size={12} />
-                          <span>Matched</span>
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            fontSize: '11px',
-                            color: 'var(--risk-mid)',
-                            fontWeight: 500,
-                          }}
-                        >
-                          <AlertCircle size={12} />
-                          <span>Check</span>
-                        </span>
-                      )
-                    ) : spec.required ? (
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          fontSize: '11px',
-                          color: 'var(--risk-high)',
-                          fontWeight: 500,
-                        }}
-                      >
-                        <AlertCircle size={12} />
-                        <span>Missing</span>
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>Omitted</span>
-                    )}
-                  </td>
-
-                  {/* Sample values */}
-                  <td style={{ padding: '8px 12px', verticalAlign: 'middle' }}>
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: '11px',
-                        color: 'var(--ink-2)',
-                        display: 'block',
-                        maxWidth: '320px',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                      title={getSamplesForCol(currentSourceCol)}
-                    >
-                      {getSamplesForCol(currentSourceCol)}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              {/* Sample values */}
+              <div
+                className="mono"
+                style={{
+                  fontSize: '11px',
+                  color: 'var(--ink-2)',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {samples}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -35,6 +35,9 @@ def append_audit_entry(
     )
     prev_hash = last_entry.hash if last_entry else "0" * 64
 
+    now = datetime.now(timezone.utc)
+    ts_str = now.strftime("%Y-%m-%d %H:%M:%S")
+
     # Build the data payload (no raw PII)
     data = {
         "action": action,
@@ -43,7 +46,7 @@ def append_audit_entry(
         "entity_type": entity_type,
         "entity_id": entity_id,
         "details": details,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": ts_str,
     }
 
     entry_hash = compute_hash(prev_hash, data)
@@ -57,7 +60,7 @@ def append_audit_entry(
         details_json=json.dumps(details, default=str),
         prev_hash=prev_hash,
         hash=entry_hash,
-        created_at=datetime.now(timezone.utc),
+        created_at=now,
     )
     db.add(entry)
     db.commit()
@@ -83,6 +86,7 @@ def verify_audit_chain(db: Session) -> dict[str, Any]:
             broken_at.append(entry.id)
 
         # Recompute hash
+        entry_ts = entry.created_at.strftime("%Y-%m-%d %H:%M:%S") if entry.created_at else ""
         data = {
             "action": entry.action,
             "user_id": entry.user_id,
@@ -90,7 +94,7 @@ def verify_audit_chain(db: Session) -> dict[str, Any]:
             "entity_type": entry.entity_type,
             "entity_id": entry.entity_id,
             "details": json.loads(entry.details_json) if entry.details_json else {},
-            "timestamp": entry.created_at.isoformat() if entry.created_at else "",
+            "timestamp": entry_ts,
         }
         recomputed = compute_hash(entry.prev_hash, data)
         if recomputed != entry.hash:

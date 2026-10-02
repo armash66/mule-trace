@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useStore } from '../store/store';
 import { CommandPalette } from './CommandPalette';
@@ -8,6 +8,7 @@ import { Toast } from './Toast';
 import { GlobalDropOverlay } from './data-hub/GlobalDropOverlay';
 
 export const AppShell: React.FC = () => {
+  const [backendOffline, setBackendOffline] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const {
@@ -22,6 +23,17 @@ export const AppShell: React.FC = () => {
   useEffect(() => {
     fetchRuns();
   }, [fetchRuns]);
+
+  useEffect(() => {
+    const offline = () => setBackendOffline(true);
+    const online = () => setBackendOffline(false);
+    window.addEventListener('muletrace:backend-offline', offline);
+    window.addEventListener('muletrace:backend-online', online);
+    return () => {
+      window.removeEventListener('muletrace:backend-offline', offline);
+      window.removeEventListener('muletrace:backend-online', online);
+    };
+  }, []);
 
   const getPageTitle = (pathname: string) => {
     if (pathname === '/') return 'Overview';
@@ -68,6 +80,11 @@ export const AppShell: React.FC = () => {
       <ShortcutSheet />
       <WhyScoreDrawer />
       <Toast />
+      {backendOffline && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, padding: '8px 16px', background: 'var(--signal)', color: 'var(--paper)', textAlign: 'center', fontSize: 13 }}>
+          Backend offline: mock data
+        </div>
+      )}
 
       {/* LEFT NAV (width 200px, background paper, right border 1px rule) */}
       <aside

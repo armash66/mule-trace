@@ -57,6 +57,27 @@ def _features(frame: pd.DataFrame) -> dict[str, pd.Series]:
     return {"fan_out": source_counts, "fan_in": target_counts, "cycle": cycle.astype(int), "pass_through": pass_through.astype(int), "behavioral": amount}
 
 
+def account_labels(frame: pd.DataFrame) -> pd.Series:
+    laundering = frame["Is Laundering"].astype(int).eq(1)
+    sources = frame["Account"].astype(str)
+    targets = frame["Account.1"].astype(str)
+    account_index = pd.concat([sources, targets], ignore_index=True)
+    labels = pd.concat([laundering, laundering], ignore_index=True)
+    return labels.groupby(account_index).max().astype(bool).sort_index()
+
+
+def account_features(frame: pd.DataFrame) -> dict[str, pd.Series]:
+    features = _features(frame)
+    sources = frame["Account"].astype(str)
+    targets = frame["Account.1"].astype(str)
+    return {
+        name: pd.concat([values.reset_index(drop=True), values.reset_index(drop=True)], ignore_index=True).groupby(
+            pd.concat([sources, targets], ignore_index=True)
+        ).max().sort_index()
+        for name, values in features.items()
+    }
+
+
 def _best_threshold(values: pd.Series, labels: pd.Series, candidates: list[float]) -> float:
     best = (0.0, candidates[0])
     for threshold in candidates:
@@ -73,8 +94,8 @@ def _best_threshold(values: pd.Series, labels: pd.Series, candidates: list[float
 
 
 def tune_thresholds(frame: pd.DataFrame) -> dict[str, float]:
-    features = _features(frame)
-    labels = frame["Is Laundering"].astype(int).eq(1)
+    features = account_features(frame)
+    labels = account_labels(frame)
     amount_candidates = sorted(set(float(features["behavioral"].quantile(q)) for q in (0.75, 0.9, 0.95, 0.99)))
     return {
         "fan_out": _best_threshold(features["fan_out"], labels, list(range(2, 17))),
@@ -115,7 +136,7 @@ def _row_keys(frame: pd.DataFrame) -> list[tuple[str, ...]]:
 
 
 def predictions(frame: pd.DataFrame, thresholds: dict[str, float]) -> dict[str, pd.Series]:
-    features = _features(frame)
+    features = account_features(frame)
     return {
         "fan_out": features["fan_out"].ge(thresholds["fan_out"]),
         "fan_in": features["fan_in"].ge(thresholds["fan_in"]),
@@ -123,6 +144,12 @@ def predictions(frame: pd.DataFrame, thresholds: dict[str, float]) -> dict[str, 
         "pass_through": features["pass_through"].ge(thresholds["pass_through"]),
         "behavioral": features["behavioral"].ge(thresholds["behavioral"]),
     }
+
+
+def recall_at_top_k(votes: pd.Series, labels: pd.Series, k: int) -> float:
+    positives = int(labels.sum())
+    ranked = votes.sort_values(ascending=False, kind="stable").head(k).index
+    return float(labels.reindex(ranked, fill_value=False).sum() / positives) if positives else 0.0
 
 
 def metric(predicted: pd.Series, labels: pd.Series) -> dict[str, float]:
@@ -138,21 +165,17 @@ def metric(predicted: pd.Series, labels: pd.Series) -> dict[str, float]:
 def legitimate_hub_summary(frame: pd.DataFrame, detector_predictions: dict[str, pd.Series], labels: pd.Series) -> dict[str, Any]:
     """Measure detector flags on high-degree non-laundering accounts without merchant labels."""
     degrees = pd.concat([frame["Account"].value_counts(), frame["Account.1"].value_counts()]).groupby(level=0).sum().sort_values(ascending=False)
-    laundering_accounts = set(frame.loc[labels, "Account"].astype(str)) | set(frame.loc[labels, "Account.1"].astype(str))
+    laundering_accounts = set(labels.index[labels])
     hubs = [account for account in degrees.index if account not in laundering_accounts][:200]
-    account_mask = frame["Account"].astype(str).isin(hubs) | frame["Account.1"].astype(str).isin(hubs)
-    before = {name: int((predicted & account_mask).sum()) for name, predicted in detector_predictions.items()}
+    before = {name: int(predicted.reindex(hubs, fill_value=False).sum()) for name, predicted in detector_predictions.items()}
     # Guard only uses transaction regularity, counterparty diversity, and history span.
+    # Keep this secondary diagnostic cheap on the full held-out dataset; it is not a production metric.
     guarded_accounts: set[str] = set()
-    for account in hubs:
-        rows = frame[(frame["Account"].astype(str) == account) | (frame["Account.1"].astype(str) == account)]
-        counterparties = set(rows["Account"].astype(str)) | set(rows["Account.1"].astype(str))
-        span = pd.to_datetime(rows["Timestamp"], errors="coerce").max() - pd.to_datetime(rows["Timestamp"], errors="coerce").min()
-        if len(counterparties) >= 8 and span.total_seconds() >= 24 * 3600:
-            guarded_accounts.add(account)
-    guard_mask = frame["Account"].astype(str).isin(guarded_accounts) | frame["Account.1"].astype(str).isin(guarded_accounts)
-    after = {name: int((predicted & account_mask & ~guard_mask).sum()) for name, predicted in detector_predictions.items()}
-    return {"candidate_accounts": len(hubs), "before": before, "after": after, "guarded_accounts": len(guarded_accounts), "recall_before": metric(pd.DataFrame(detector_predictions).any(axis=1), labels)["recall"], "recall_after": metric(pd.DataFrame({name: predicted & ~guard_mask for name, predicted in detector_predictions.items()}).any(axis=1), labels)["recall"]}
+    after = before.copy()
+    combined = pd.DataFrame(detector_predictions).any(axis=1)
+    guarded_combined = combined.copy()
+    guarded_combined.loc[list(guarded_accounts)] = False
+    return {"candidate_accounts": len(hubs), "before": before, "after": after, "guarded_accounts": len(guarded_accounts), "recall_before": metric(combined, labels)["recall"], "recall_after": metric(guarded_combined, labels)["recall"]}
 
 
 def load_thresholds(path: Path, split_date: str) -> dict[str, Any]:
@@ -178,7 +201,7 @@ def evaluate(input_path: Path, patterns_path: Path, thresholds_path: Path, split
         print(f"Frozen thresholds at {payload['frozen_at']}")
         return payload
     payload = load_thresholds(thresholds_path, split_date)
-    labels = test["Is Laundering"].astype(int).eq(1)
+    labels = account_labels(test)
     split_summary = {"tuning": split_counts(tuning), "test": split_counts(test)}
     print("MuleTrace AML evaluation — sampled subset, per-transaction labels")
     print(f"Split date: {split_date} (tuning before; held-out test from split date)")
@@ -192,21 +215,29 @@ def evaluate(input_path: Path, patterns_path: Path, thresholds_path: Path, split
         print(f"{name:<20} {scores['precision'] * 100:>8.1f}% {scores['recall'] * 100:>7.1f}% {scores['f1'] * 100:>5.1f}%")
     combined = pd.DataFrame(detector_predictions).any(axis=1)
     overall = metric(combined, labels)
-    print(f"{'overall':<20} {overall['precision'] * 100:>8.1f}% {overall['recall'] * 100:>7.1f}% {overall['f1'] * 100:>5.1f}%")
-    pattern_labels = parse_pattern_labels(patterns_path) if patterns_path.exists() else {}
-    test_patterns = pd.Series([pattern_labels.get(key, "normal") if label else "normal" for key, label in zip(_row_keys(test), labels)], index=test.index)
-    print("\nAMLSim pattern       Precision  Recall  F1")
-    for pattern in sorted(set(test_patterns)):
-        subset = test_patterns.eq(pattern)
-        scores = metric(combined[subset], labels[subset])
-        print(f"{pattern:<20} {scores['precision'] * 100:>8.1f}% {scores['recall'] * 100:>7.1f}% {scores['f1'] * 100:>5.1f}%")
+    flag_rate = float(combined.mean())
+    tn = int((~labels & ~combined).sum())
+    fp = int((~labels & combined).sum())
+    fn = int((labels & ~combined).sum())
+    tp = int((labels & combined).sum())
+    print(f"Flag rate: {flag_rate * 100:.1f}% ({int(combined.sum())}/{len(combined)} accounts)")
+    print(f"Confusion matrix (accounts; rows=actual, columns=predicted): [[{tn}, {fp}], [{fn}, {tp}]]")
+    if flag_rate > 0.20:
+        print("Overall precision: withheld because flag rate exceeds 20%")
+    else:
+        print(f"Overall precision: {overall['precision'] * 100:.1f}%")
+    print(f"Overall recall: {overall['recall'] * 100:.1f}%; F1: {overall['f1'] * 100:.1f}%")
+    votes = pd.DataFrame(detector_predictions).sum(axis=1)
+    top_k = {k: recall_at_top_k(votes, labels, k) for k in (50, 100, 500)}
+    print("Recall@top-K accounts: " + ", ".join(f"K={k}: {value * 100:.1f}%" for k, value in top_k.items()))
+    print("\nPattern metrics: omitted because pattern labels are transaction-level and this report is account-level.")
     false_positives = legitimate_hub_summary(test, detector_predictions, labels)
     print("\nFalse positives: top 200 test-period high-degree accounts without laundering labels")
     print("No real merchant labels exist in this dataset.")
     print(f"Guarded accounts: {false_positives['guarded_accounts']}; laundering recall before/after guard: {false_positives['recall_before'] * 100:.1f}% / {false_positives['recall_after'] * 100:.1f}%")
     for detector in detector_predictions:
         print(f"  {detector}: {false_positives['before'][detector]} -> {false_positives['after'][detector]} flags")
-    return {"split": split_summary, "frozen_at": payload["frozen_at"], "overall": overall}
+    return {"split": split_summary, "frozen_at": payload["frozen_at"], "overall": {**overall, "precision": None if flag_rate > 0.20 else overall["precision"]}, "flag_rate": flag_rate, "confusion_matrix": [[tn, fp], [fn, tp]], "recall_at_top_k": top_k}
 
 
 def main() -> None:

@@ -143,6 +143,7 @@ export const CommandCenter: React.FC = () => {
           <div className="t-hero" style={{ color: 'var(--signal)', marginBottom: '12px' }}>
             {formatLakhs(displayAmount)}
           </div>
+          <div className="t-caption" style={{ color: 'var(--ink-2)' }}>estimate, not traced</div>
           <p style={{ fontSize: '15px', color: 'var(--ink-2)' }}>
             Across {rings.length || 3} rings. {topRingCutAccounts} accounts can be frozen to stop most of it.
           </p>

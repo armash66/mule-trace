@@ -15,7 +15,7 @@ from difflib import SequenceMatcher
 from typing import Any
 
 import pandas as pd
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
 from ..schemas import (
@@ -26,6 +26,7 @@ from ..schemas import (
     ValidationIssue,
     ValidationReport,
 )
+from ..core.security import Role, TokenData, require_role
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["uploads"])
@@ -161,7 +162,7 @@ def detect_file_typology(df: pd.DataFrame) -> str:
 
 
 @router.post("/uploads", response_model=UploadResponse)
-async def upload_files(files: list[UploadFile] = File(...)) -> UploadResponse:
+async def upload_files(files: list[UploadFile] = File(...), user: TokenData = Depends(require_role(Role.ANALYST))) -> UploadResponse:
     """Accept multi-file upload (.csv, .tsv, .xlsx, .json, .zip), extract, auto-classify, and suggest mappings."""
     cleanup_expired_uploads()
 
@@ -325,7 +326,7 @@ async def upload_files(files: list[UploadFile] = File(...)) -> UploadResponse:
 
 
 @router.put("/uploads/{upload_id}/mapping")
-def save_mapping(upload_id: str, req: SaveMappingRequest) -> dict[str, Any]:
+def save_mapping(upload_id: str, req: SaveMappingRequest, user: TokenData = Depends(require_role(Role.ANALYST))) -> dict[str, Any]:
     """Save user-confirmed column mapping, date format, and timezone."""
     upload = UPLOAD_STORE.get(upload_id)
     if not upload:
@@ -386,7 +387,7 @@ def _clean_amount_val(val: Any) -> float | None:
 
 
 @router.post("/uploads/{upload_id}/validate", response_model=ValidationReport)
-def validate_upload(upload_id: str) -> ValidationReport:
+def validate_upload(upload_id: str, user: TokenData = Depends(require_role(Role.ANALYST))) -> ValidationReport:
     """Apply mapping, validate transactions and accounts, compute data-health report and rejected rows."""
     upload = UPLOAD_STORE.get(upload_id)
     if not upload:

@@ -109,4 +109,5 @@ def generate_ring_replay(
         total_tainted=round(total_tainted, 2),
         stoppable_rupees=round(stoppable_rupees if freeze_set else total_tainted * 0.85, 2),
         accounts=list(account_set),
+        estimate_note="estimate, not traced" if not freeze_set else None,
     )

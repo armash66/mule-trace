@@ -110,6 +110,17 @@ class Settings(BaseSettings):
     # Data retention
     retention_days: int = Field(default=365, ge=30, description="Data retention in days")
 
+    @field_validator("debug", mode="before")
+    @classmethod
+    def parse_debug(cls, value: object) -> object:
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"release", "production", "prod"}:
+                return False
+            if normalized in {"development", "dev"}:
+                return True
+        return value
+
     @field_validator("cors_origins")
     @classmethod
     def parse_cors(cls, v: str) -> str:

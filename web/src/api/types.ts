@@ -92,6 +92,7 @@ export interface FreezePlanResponse {
   rupees_lost: number;
   total_tainted: number;
   alternatives: FreezeAlternative[];
+  estimate_note?: string;
 }
 
 export interface ReplayEvent {
@@ -111,6 +112,7 @@ export interface ReplayResponse {
   total_tainted: number;
   stoppable_rupees: number;
   accounts: string[];
+  estimate_note?: string;
 }
 
 export interface DiscoveredRing {
@@ -122,6 +124,7 @@ export interface DiscoveredRing {
   density: number;
   estimated_at_risk: number;
   explanation: string;
+  estimate_note?: string;
 }
 
 export interface TopFeature {

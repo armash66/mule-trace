@@ -74,6 +74,7 @@ def list_rings(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
             "account_count": len(accts),
             "accounts": accts,
             "estimated_volume": round(vol if vol > 0 else 480000.0, 2),
+            "estimate_note": "estimate, not traced" if vol <= 0 else None,
             "status": "flagged_for_review",
             "measured_on_synthetic_data": True,
         })
@@ -143,6 +144,7 @@ def get_ring_freeze_plan(ring_id: str) -> FreezePlanResponse:
             rupees_lost=70000.0,
             total_tainted=480000.0,
             alternatives=[],
+            estimate_note="estimate, not traced",
         )
 
     sub_G = pipeline_state.graph.subgraph(accounts)

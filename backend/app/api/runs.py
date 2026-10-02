@@ -22,6 +22,7 @@ from ..config import load_config
 from ..db import SessionLocal, get_db
 from ..models import AccountResult, AuditLog, Decision, FreezeRequest, Run
 from ..pipeline import pipeline_state, run_pipeline
+from ..core.security import Role, TokenData, require_role
 from ..schemas import (
     CreateRunRequest,
     DataHealthReport,
@@ -157,6 +158,7 @@ def _execute_run_pipeline(run_id: str, upload_id: str, config_preset: str) -> No
 def create_run(
     req: CreateRunRequest,
     background_tasks: BackgroundTasks,
+    user: TokenData = Depends(require_role(Role.ANALYST)),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     """Start the detection pipeline as an asynchronous background task."""
@@ -271,7 +273,7 @@ async def get_run_events(run_id: str):
 
 
 @router.post("/runs/{run_id}/cancel")
-def cancel_run(run_id: str, db: Session = Depends(get_db)) -> dict[str, str]:
+def cancel_run(run_id: str, user: TokenData = Depends(require_role(Role.ANALYST)), db: Session = Depends(get_db)) -> dict[str, str]:
     """Cancel an ongoing pipeline run."""
     task = RUN_TASKS.get(run_id)
     if task:
@@ -290,6 +292,7 @@ def cancel_run(run_id: str, db: Session = Depends(get_db)) -> dict[str, str]:
 def update_run(
     run_id: str,
     req: PatchRunRequest,
+    user: TokenData = Depends(require_role(Role.ANALYST)),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     """Rename a run or set it as active."""
@@ -311,7 +314,7 @@ def update_run(
 
 
 @router.delete("/runs/{run_id}")
-def delete_run(run_id: str, db: Session = Depends(get_db)) -> dict[str, str]:
+def delete_run(run_id: str, user: TokenData = Depends(require_role(Role.LEAD)), db: Session = Depends(get_db)) -> dict[str, str]:
     """Delete a run and all associated account results and audit logs."""
     run = db.query(Run).filter(Run.id == run_id).first()
     if not run:
@@ -357,6 +360,7 @@ def export_flagged_csv(run_id: str, db: Session = Depends(get_db)) -> StreamingR
 @router.post("/datasets/generate")
 def generate_dataset_endpoint(
     req: GenerateDatasetRequest,
+    user: TokenData = Depends(require_role(Role.ANALYST)),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     """Synthesize new transaction and account data and execute pipeline."""
@@ -407,6 +411,7 @@ def generate_dataset_endpoint(
 async def ingest_dataset(
     transactions: UploadFile = File(...),
     accounts: UploadFile | None = File(None),
+    user: TokenData = Depends(require_role(Role.ANALYST)),
     db: Session = Depends(get_db),
 ) -> IngestResponse:
     """Upload transactions.csv and optional accounts.csv to trigger detection pipeline."""

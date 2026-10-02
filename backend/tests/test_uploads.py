@@ -14,18 +14,26 @@ from __future__ import annotations
 
 import io
 import zipfile
+from datetime import datetime, timezone
 import pytest
 from fastapi.testclient import TestClient
 
 from backend.app.main import app
 from backend.app.db import init_db
+from backend.app.core.security import Role, TokenData, get_current_user
 
 client = TestClient(app)
 
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_test_db():
+    app.dependency_overrides[get_current_user] = lambda: TokenData(
+        user_id="test-analyst", username="test-analyst", role=Role.ANALYST,
+        exp=datetime.now(timezone.utc),
+    )
     init_db()
+    yield
+    app.dependency_overrides.clear()
 
 
 def test_templates_download():

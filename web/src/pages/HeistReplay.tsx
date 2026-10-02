@@ -224,6 +224,7 @@ export const HeistReplay: React.FC = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '11px' }}>
               <span>Stolen amount <b className="mono">{formatLakhs(stolenAmount)}</b></span>
               <span>Freeze set <b className="mono">{formatLakhs(freezePlan?.rupees_stopped || 0)} / {freezeAccounts.length}</b></span>
+              {freezePlan?.estimate_note && <span style={{ color: 'var(--ink-2)' }}>{freezePlan.estimate_note}</span>}
               <span>Top-3 baseline <b className="mono">{formatLakhs(baselineIntercepted)}</b></span>
               <span>Victim → recommendation <b className="mono">{freezeSeconds.toFixed(1)}s</b></span>
             </div>

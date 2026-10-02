@@ -49,6 +49,17 @@ export const apiClient = axios.create({
   timeout: 5000,
 });
 
+apiClient.interceptors.response.use(
+  (response) => {
+    window.dispatchEvent(new Event('muletrace:backend-online'));
+    return response;
+  },
+  (error) => {
+    if (!error.response) window.dispatchEvent(new Event('muletrace:backend-offline'));
+    return Promise.reject(error);
+  },
+);
+
 export const api = {
   // Stats & KPIs
   getStats: async (): Promise<StatsResponse> => {

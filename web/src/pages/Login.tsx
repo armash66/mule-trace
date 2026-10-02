@@ -24,7 +24,14 @@ export default function Login() {
       setUser({ user_id: '', username: data.username, role: data.role });
       navigate('/app/command-center');
     } catch (err: any) {
-      const msg = err.response?.data?.detail || (err.message === 'Network Error' ? 'Cannot connect to backend server. Please verify backend is running on port 8000.' : err.message) || 'Invalid credentials';
+      let msg = err.response?.data?.detail;
+      if (!msg) {
+        if (err.response?.status === 502 || err.response?.status === 504 || err.message === 'Network Error') {
+          msg = 'Backend server is unreachable (port 8000). Please ensure uvicorn is running.';
+        } else {
+          msg = err.message || 'Invalid credentials';
+        }
+      }
       setError(msg);
     } finally {
       setLoading(false);

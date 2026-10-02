@@ -140,15 +140,14 @@ Never reuse these credentials outside the synthetic demo.
 
 ## Benchmark Results
 
-Measured on the repository's synthetic dataset with planted rings and benign decoys:
+Measured locally on the checked-in AMLSim/HI-Small data on 2026-10-02. These are synthetic-data measurements, not production performance. The evaluator reports per-transaction metrics; this dataset has no real merchant labels, so the high-degree-account check is not a false-positive benchmark.
 
 | Metric | Target | Result |
 |---|---:|---:|
-| Planted ring recall | >= 90% | 97.1% (34 / 35 planted mules) |
-| Cycle and chain recall | >= 90% | 100.0% (21 / 21 accounts) |
-| Decoy false positives | <= 2 | 0 / 9 |
-| Stolen funds stopped | >= 70% | 85.4% via minimum-cut optimization |
-| Ingestion benchmark | < 60s for 100k rows | 14.2s for 62k transactions |
+| Overall test precision / recall / F1 | measured | 0.1% / 98.5% / 0.3% |
+| Highest-degree non-laundering check | measured | No real merchant labels available; not a false-positive rate |
+| Evasion curve overall recall | measured | 94.4% at level 0.0; 70.7% at level 1.0 |
+| 100k-row intake + validation | < 20s | 11.16s local measurement |
 
 These numbers are reference results, not a guarantee for uploaded data. Data quality and detector configuration affect every run.
 

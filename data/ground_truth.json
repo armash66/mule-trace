@@ -1,0 +1,330 @@
+{
+  "planted_rings": [
+    {
+      "ring_id": "fan_1",
+      "pattern": "fan",
+      "accounts": [
+        "ACC_05001",
+        "ACC_05002",
+        "ACC_05003",
+        "ACC_05004",
+        "ACC_05005",
+        "ACC_05006",
+        "ACC_05007"
+      ],
+      "details": {
+        "hub": "ACC_05001",
+        "victims": [
+          "ACC_00327",
+          "ACC_00508",
+          "ACC_00680",
+          "ACC_01173",
+          "ACC_01385",
+          "ACC_01706",
+          "ACC_02927",
+          "ACC_03467",
+          "ACC_04171",
+          "ACC_04366",
+          "ACC_04563"
+        ],
+        "receivers": [
+          "ACC_05002",
+          "ACC_05003",
+          "ACC_05004",
+          "ACC_05005",
+          "ACC_05006",
+          "ACC_05007"
+        ],
+        "total_inflow": 468676.74,
+        "forward_ratio": 0.9389
+      }
+    },
+    {
+      "ring_id": "cycle_1",
+      "pattern": "cycle",
+      "accounts": [
+        "ACC_05008",
+        "ACC_05009",
+        "ACC_05010"
+      ],
+      "details": {
+        "path": [
+          "ACC_05008",
+          "ACC_05009",
+          "ACC_05010",
+          "ACC_05008"
+        ],
+        "amounts": [
+          117562.14,
+          113887.76,
+          110759.22
+        ],
+        "gap_minutes": [
+          12.78,
+          9.53,
+          14.68
+        ],
+        "total_minutes": 36.98
+      }
+    },
+    {
+      "ring_id": "cycle_2",
+      "pattern": "cycle",
+      "accounts": [
+        "ACC_05011",
+        "ACC_05012",
+        "ACC_05013",
+        "ACC_05014"
+      ],
+      "details": {
+        "path": [
+          "ACC_05011",
+          "ACC_05012",
+          "ACC_05013",
+          "ACC_05014",
+          "ACC_05011"
+        ],
+        "amounts": [
+          99724.45,
+          96415.8,
+          92660.97,
+          89604.85
+        ],
+        "gap_minutes": [
+          9.51,
+          4.76,
+          8.6,
+          6.0
+        ],
+        "total_minutes": 28.87
+      }
+    },
+    {
+      "ring_id": "cycle_3",
+      "pattern": "cycle",
+      "accounts": [
+        "ACC_05015",
+        "ACC_05016",
+        "ACC_05017",
+        "ACC_05018",
+        "ACC_05019"
+      ],
+      "details": {
+        "path": [
+          "ACC_05015",
+          "ACC_05016",
+          "ACC_05017",
+          "ACC_05018",
+          "ACC_05019",
+          "ACC_05015"
+        ],
+        "amounts": [
+          145679.78,
+          139788.53,
+          134081.27,
+          130207.69,
+          125672.49
+        ],
+        "gap_minutes": [
+          3.01,
+          8.45,
+          4.59,
+          7.97,
+          5.72
+        ],
+        "total_minutes": 29.75
+      }
+    },
+    {
+      "ring_id": "chain_1",
+      "pattern": "chain",
+      "accounts": [
+        "ACC_05020",
+        "ACC_05021",
+        "ACC_05022",
+        "ACC_05023",
+        "ACC_05024"
+      ],
+      "details": {
+        "chain_order": [
+          "ACC_05020",
+          "ACC_05021",
+          "ACC_05022",
+          "ACC_05023",
+          "ACC_05024"
+        ],
+        "hop_gaps_min": [
+          6.21,
+          7.93,
+          4.69,
+          3.71
+        ],
+        "forward_ratios": [
+          0.9831,
+          0.9726,
+          0.9881,
+          0.9867
+        ]
+      }
+    },
+    {
+      "ring_id": "chain_2",
+      "pattern": "chain",
+      "accounts": [
+        "ACC_05025",
+        "ACC_05026",
+        "ACC_05027",
+        "ACC_05028"
+      ],
+      "details": {
+        "chain_order": [
+          "ACC_05025",
+          "ACC_05026",
+          "ACC_05027",
+          "ACC_05028"
+        ],
+        "hop_gaps_min": [
+          5.55,
+          6.83,
+          3.85
+        ],
+        "forward_ratios": [
+          0.9537,
+          0.9853,
+          0.9792
+        ]
+      }
+    },
+    {
+      "ring_id": "cluster_1",
+      "pattern": "cluster",
+      "accounts": [
+        "ACC_05002",
+        "ACC_05003",
+        "ACC_05029",
+        "ACC_05030",
+        "ACC_05031"
+      ],
+      "details": {
+        "shared_attribute": "device_id"
+      }
+    },
+    {
+      "ring_id": "cluster_2",
+      "pattern": "cluster",
+      "accounts": [
+        "ACC_05024",
+        "ACC_05032",
+        "ACC_05033",
+        "ACC_05034"
+      ],
+      "details": {
+        "shared_attribute": "ip,kyc_phone"
+      }
+    }
+  ],
+  "decoys": [
+    {
+      "decoy_id": "payroll_1",
+      "type": "payroll",
+      "accounts": [
+        "ACC_05035"
+      ],
+      "description": "Payroll account paying 200 employees at once"
+    },
+    {
+      "decoy_id": "merchant_1",
+      "type": "merchant",
+      "accounts": [
+        "ACC_05036"
+      ],
+      "description": "Busy merchant: many inbound, few outbound"
+    },
+    {
+      "decoy_id": "family_1",
+      "type": "family",
+      "accounts": [
+        "ACC_05037",
+        "ACC_05038",
+        "ACC_05039",
+        "ACC_05040"
+      ],
+      "description": "Family sharing one device, inter-member transfers"
+    },
+    {
+      "decoy_id": "refund_loop_1",
+      "type": "refund_loop",
+      "accounts": [
+        "ACC_05041",
+        "ACC_05042"
+      ],
+      "description": "Refund loop: matching amounts reversed days apart"
+    },
+    {
+      "decoy_id": "salary_spike_1",
+      "type": "salary_spike",
+      "accounts": [
+        "ACC_05043"
+      ],
+      "description": "Salary day: 1 big inflow then 15 outgoing bill payments"
+    }
+  ],
+  "all_mule_accounts": [
+    "ACC_05001",
+    "ACC_05002",
+    "ACC_05003",
+    "ACC_05004",
+    "ACC_05005",
+    "ACC_05006",
+    "ACC_05007",
+    "ACC_05008",
+    "ACC_05009",
+    "ACC_05010",
+    "ACC_05011",
+    "ACC_05012",
+    "ACC_05013",
+    "ACC_05014",
+    "ACC_05015",
+    "ACC_05016",
+    "ACC_05017",
+    "ACC_05018",
+    "ACC_05019",
+    "ACC_05020",
+    "ACC_05021",
+    "ACC_05022",
+    "ACC_05023",
+    "ACC_05024",
+    "ACC_05025",
+    "ACC_05026",
+    "ACC_05027",
+    "ACC_05028",
+    "ACC_05029",
+    "ACC_05030",
+    "ACC_05031",
+    "ACC_05032",
+    "ACC_05033",
+    "ACC_05034"
+  ],
+  "all_decoy_accounts": [
+    "ACC_05035",
+    "ACC_05036",
+    "ACC_05037",
+    "ACC_05038",
+    "ACC_05039",
+    "ACC_05040",
+    "ACC_05041",
+    "ACC_05042",
+    "ACC_05043"
+  ],
+  "summary": {
+    "total_accounts": 5043,
+    "total_transactions": 61934,
+    "planted_fan": 1,
+    "planted_cycle": 3,
+    "planted_chain": 2,
+    "planted_cluster": 2,
+    "decoy_count": 5,
+    "mule_account_count": 34,
+    "decoy_account_count": 9
+  }
+}

@@ -230,3 +230,98 @@ class CaseReport(BaseModel):
     draft_str: str
     analyst_notes: list[str] = Field(default_factory=list)
 
+
+# ── Phase 8b Data Hub schemas ───────────────────────────────────────────────────
+
+
+class FileInfo(BaseModel):
+    filename: str
+    size_bytes: int
+    detected_type: Literal["transactions", "accounts", "ambiguous"]
+    row_count: int
+    columns: list[str]
+
+
+class ColumnMappingItem(BaseModel):
+    source_column: str | None
+    confidence: Literal["Matched", "Check", "Unmapped"]
+    sample_values: list[Any] = Field(default_factory=list)
+
+
+class UploadResponse(BaseModel):
+    upload_id: str
+    files: list[FileInfo]
+    detected_file_types: dict[str, str]
+    suggested_mapping: dict[str, dict[str, ColumnMappingItem]]
+    preview: dict[str, list[dict[str, Any]]]
+    has_accounts: bool
+    reduced_mode_note: str | None = None
+
+
+class SaveMappingRequest(BaseModel):
+    transactions_mapping: dict[str, Any] | None = None
+    transactions: dict[str, Any] | None = None
+    accounts_mapping: dict[str, Any] | None = None
+    accounts: dict[str, Any] | None = None
+    timezone: str = "Asia/Kolkata"
+    date_format: str | None = None
+
+
+
+class ValidationIssue(BaseModel):
+    severity: Literal["info", "warn", "error"]
+    field: str | None = None
+    message: str
+    effect: str
+    row_index: int | None = None
+
+
+class ValidationReport(BaseModel):
+    upload_id: str
+    total_rows: int
+    date_range: dict[str, str]
+    unique_accounts: int
+    duplicates_removed: int
+    out_of_order_fixed: int
+    self_transfers_dropped: int
+    missing_device_pct: float
+    missing_ip_pct: float
+    amount_stats: dict[str, float]
+    rejected_rows_count: int
+    issues: list[ValidationIssue]
+    preview_rows: list[dict[str, Any]]
+    cell_issues: list[dict[str, Any]] = Field(default_factory=list)
+    can_proceed: bool
+
+
+class CreateRunRequest(BaseModel):
+    upload_id: str
+    name: str | None = None
+    config_preset: Literal["default", "strict", "sensitive"] = "default"
+
+
+class RunStatusResponse(BaseModel):
+    run_id: str
+    status: Literal["running", "completed", "failed", "cancelled"]
+    stage: Literal["validate", "build_graph", "detect", "score", "trace_money", "completed", "failed"]
+    percent: int
+    elapsed_seconds: float
+    stage_timings: dict[str, float] = Field(default_factory=dict)
+    error: str | None = None
+    summary: dict[str, Any] | None = None
+
+
+class PatchRunRequest(BaseModel):
+    name: str | None = None
+    is_active: bool | None = None
+
+
+class GenerateDatasetRequest(BaseModel):
+    seed: int = 42
+    size: Literal["small", "medium", "large"] = "small"
+    evasion: float | None = None
+    evasion_level: float | None = None
+    decoys: bool | None = None
+    include_decoys: bool | None = None
+
+

@@ -20,6 +20,7 @@
 | **Phase 6** | UI Foundation & Design System | 🟢 | Scandinavian minimalist tokens (`tokens.css`), Indian Lakh formatting (`formatLakhs`), Zustand store, AppShell, CMDK Command Palette, Shortcut Sheet, Toast (5s undo) |
 | **Phase 7** | Alerts Queue & Workspace (Hero) | 🟢 | S1 Alerts queue (`Alerts.tsx`) with rapidpay triage, S2 Hero Workspace (`Workspace.tsx`) with 3-pane layout, Cytoscape graph, SHAP drawer, min-cut freeze plan |
 | **Phase 8** | Overview, Data Connect, & Case File | 🟢 | S3 Command Center (`CommandCenter.tsx`), S4 CSV Upload & Health (`Upload.tsx`), S5 Case File & STR narrative (`Cases.tsx`) with print stylesheet |
+| **Phase 8b** | Data Hub & Multi-Format Ingest Pipeline | 🟢 | Full multi-format intake (.csv, .tsv, .xlsx, .json, .zip up to 100MB), synonym mapping, date/amount cleaning (Lakh format, UTC), 9-box health summary, rejected rows CSV, 5-stage SSE progress, run history table with 5s undo delete, global drag-and-drop, and top bar active run selector |
 | **Phase 9** | Act Screens (Replay, Freezes, Rules) | 🟢 | S6 Freeze Kanban Tracker (`FreezeTracker.tsx`), S7 Heist Replay Simulator (`HeistReplay.tsx`), S8 Rules Lab (`RulesLab.tsx`) with evasion curve |
 | **Phase 10** | Public Site & Mobile On-Call | 🟢 | S9 Model Performance & Audit Log, S10 Landing (`Landing.tsx`), Patterns Guide (`PatternsGuide.tsx`), S11 Mobile On-Call Triage (`MobileOnCall.tsx`) |
 | **Phase 11** | Polish, Design Audit, & Accessibility | 🟢 | WCAG AA contrast, reduced motion, dark theme tokens, zero cartoonish badges |
@@ -41,5 +42,6 @@
   - Refund Loop: 0
   - Salary Spike: 0
 - **Stoppable Tainted Funds (Min-Cut)**: **78.4%** (Target: ≥ 70%)
-- **Backend Test Suite**: **40 / 40 pytest tests passing**
+- **100,000-Row Ingestion Benchmark**: **11.75s** intake & validation (Target: < 20.0s)
+- **Backend Test Suite**: **46 / 46 pytest tests passing**
 - **Frontend Build**: **Vite + React 19 + TypeScript production bundle clean (exit code 0)**

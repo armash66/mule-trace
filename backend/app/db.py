@@ -21,8 +21,26 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db() -> None:
-    """Create all tables if they don't exist."""
+    """Create all tables if they don't exist and ensure schema is up to date."""
     Base.metadata.create_all(bind=engine)
+    with engine.connect() as conn:
+        try:
+            from sqlalchemy import text
+            cursor = conn.execute(text("PRAGMA table_info(runs)"))
+            cols = [row[1] for row in cursor.fetchall()]
+            if "name" not in cols:
+                conn.execute(text("ALTER TABLE runs ADD COLUMN name VARCHAR DEFAULT 'Pipeline Run'"))
+            if "status" not in cols:
+                conn.execute(text("ALTER TABLE runs ADD COLUMN status VARCHAR DEFAULT 'completed'"))
+            if "config_preset" not in cols:
+                conn.execute(text("ALTER TABLE runs ADD COLUMN config_preset VARCHAR DEFAULT 'default'"))
+            if "source" not in cols:
+                conn.execute(text("ALTER TABLE runs ADD COLUMN source VARCHAR DEFAULT 'CSV Upload'"))
+            if "is_active" not in cols:
+                conn.execute(text("ALTER TABLE runs ADD COLUMN is_active INTEGER DEFAULT 1"))
+            conn.commit()
+        except Exception:
+            pass
 
 
 def get_db() -> Generator[Session, None, None]:

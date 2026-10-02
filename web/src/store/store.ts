@@ -3,6 +3,8 @@
  */
 
 import { create } from 'zustand';
+import { api } from '../api/client';
+import type { RunItem } from '../api/types';
 
 interface ToastState {
   id: string;
@@ -36,6 +38,19 @@ interface AppState {
 
   whyScoreDrawerOpen: boolean;
   setWhyScoreDrawerOpen: (open: boolean) => void;
+
+  // Runs & Data Intake
+  runs: RunItem[];
+  activeRunId: string | null;
+  setRuns: (runs: RunItem[]) => void;
+  setActiveRunId: (id: string | null) => void;
+  fetchRuns: () => Promise<void>;
+
+  // Global Drag & Intake files
+  globalDragActive: boolean;
+  setGlobalDragActive: (active: boolean) => void;
+  stagedFiles: File[];
+  setStagedFiles: (files: File[]) => void;
 
   // Toast with 5s Undo
   toast: ToastState | null;
@@ -73,6 +88,36 @@ export const useStore = create<AppState>((set, get) => ({
   whyScoreDrawerOpen: false,
   setWhyScoreDrawerOpen: (open) => set({ whyScoreDrawerOpen: open }),
 
+  // Runs state
+  runs: [],
+  activeRunId: null,
+  setRuns: (runs) => {
+    const active = runs.find((r) => r.is_active)?.id || runs[0]?.id || null;
+    set({ runs, activeRunId: active });
+  },
+  setActiveRunId: (id) => {
+    set({ activeRunId: id });
+    if (id) {
+      api.updateRun(id, { is_active: true }).catch(() => {});
+    }
+  },
+  fetchRuns: async () => {
+    try {
+      const runs = await api.getRuns();
+      const currentActive = get().activeRunId;
+      const serverActive = runs.find((r) => r.is_active)?.id;
+      const active = serverActive || currentActive || runs[0]?.id || null;
+      set({ runs, activeRunId: active });
+    } catch {
+      // fallback
+    }
+  },
+
+  globalDragActive: false,
+  setGlobalDragActive: (active) => set({ globalDragActive: active }),
+  stagedFiles: [],
+  setStagedFiles: (files) => set({ stagedFiles: files }),
+
   toast: null,
   showToast: (message, undoAction) => {
     const id = String(Date.now());
@@ -85,3 +130,4 @@ export const useStore = create<AppState>((set, get) => ({
   },
   clearToast: () => set({ toast: null }),
 }));
+

@@ -186,3 +186,121 @@ export interface CaseReport {
   draft_str: string;
   analyst_notes: string[];
 }
+
+export interface FileInfo {
+  filename: string;
+  size_bytes: number;
+  detected_type: 'transactions' | 'accounts' | 'ambiguous';
+  row_count: number;
+  columns: string[];
+}
+
+export interface ColumnMappingItem {
+  source_column: string | null;
+  confidence: 'Matched' | 'Check' | 'Unmapped';
+  sample_values: any[];
+}
+
+export interface UploadResponse {
+  upload_id: string;
+  files: FileInfo[];
+  detected_file_types: Record<string, string>;
+  suggested_mapping: {
+    transactions: Record<string, ColumnMappingItem>;
+    accounts: Record<string, ColumnMappingItem>;
+  };
+  preview: {
+    transactions: Record<string, any>[];
+    accounts: Record<string, any>[];
+  };
+  has_accounts: boolean;
+  reduced_mode_note?: string | null;
+}
+
+export interface ValidationIssue {
+  severity: 'info' | 'warn' | 'error';
+  field?: string | null;
+  message: string;
+  effect: string;
+  row_index?: number | null;
+}
+
+export interface ValidationReport {
+  upload_id: string;
+  total_rows: number;
+  date_range: { start: string; end: string };
+  unique_accounts: number;
+  duplicates_removed: number;
+  out_of_order_fixed: number;
+  self_transfers_dropped: number;
+  missing_device_pct: number;
+  missing_ip_pct: number;
+  amount_stats: { min: number; median: number; max: number };
+  rejected_rows_count: number;
+  issues: ValidationIssue[];
+  preview_rows: Record<string, any>[];
+  cell_issues: Array<{ row: number; col: string; issue: string }>;
+  can_proceed: boolean;
+}
+
+export interface RunItem {
+  id: string;
+  name: string;
+  created_at: string;
+  source: string;
+  status: 'running' | 'completed' | 'failed' | 'cancelled';
+  is_active: boolean;
+  config_preset: string;
+  txn_count: number;
+  acct_count: number;
+  flagged_count: number;
+  duplicates_removed: number;
+  out_of_order_fixed: number;
+  missing_device_pct: number;
+  missing_ip_pct: number;
+  self_transfers_dropped: number;
+}
+
+export interface RunStatusResponse {
+  run_id: string;
+  status: 'running' | 'completed' | 'failed' | 'cancelled';
+  stage: 'validate' | 'build_graph' | 'detect' | 'score' | 'trace_money' | 'completed' | 'failed';
+  percent: number;
+  elapsed_seconds: number;
+  stage_timings: Record<string, number>;
+  error?: string | null;
+  summary?: {
+    run_id: string;
+    accounts: number;
+    transactions: number;
+    flagged: number;
+    rings_found: number;
+    estimated_at_risk: number;
+  } | null;
+}
+
+export interface SaveMappingRequest {
+  transactions: Record<string, ColumnMappingItem>;
+  accounts?: Record<string, ColumnMappingItem>;
+  timezone?: string;
+  date_format?: string;
+}
+
+export interface CreateRunRequest {
+  upload_id: string;
+  name?: string;
+  config_preset?: string;
+}
+
+export interface PatchRunRequest {
+  name?: string;
+  is_active?: boolean;
+  status?: string;
+}
+
+export interface GenerateDatasetRequest {
+  seed: number;
+  size: 'small' | 'medium' | 'large';
+  evasion_level: number;
+  include_decoys: boolean;
+}

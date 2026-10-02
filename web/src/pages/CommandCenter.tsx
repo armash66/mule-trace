@@ -4,6 +4,7 @@ import { api } from '../api/client';
 import { useStore } from '../store/store';
 import type { DiscoveredRing, StatsResponse } from '../api/types';
 import { formatLakhs } from '../lib/utils';
+import { Dropzone } from '../components/data-hub/Dropzone';
 import {
   ShieldAlert,
   ArrowUpRight,
@@ -13,6 +14,7 @@ import {
   CheckCircle,
   AlertTriangle,
   Zap,
+  Database,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -25,19 +27,80 @@ import {
 
 export const CommandCenter: React.FC = () => {
   const navigate = useNavigate();
-  const { setSelectedAccountId, setSelectedRingId } = useStore();
+  const { setSelectedAccountId, setSelectedRingId, runs, fetchRuns, setStagedFiles, showToast } = useStore();
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [rings, setRings] = useState<DiscoveredRing[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchRuns();
     Promise.all([api.getStats(), api.getDiscoveredRings()])
       .then(([s, r]) => {
         setStats(s);
         setRings(r);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [fetchRuns]);
+
+  // If no runs exist, show empty state with dropzone + use demo dataset
+  if (!loading && runs.length === 0) {
+    return (
+      <div style={{ padding: '48px 28px', maxWidth: '780px', margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>
+            Welcome to MuleTrace
+          </h1>
+          <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '4px' }}>
+            No transaction records or active detection runs found. Drop your bank records to initiate syndicate detection, or load the seeded demo dataset.
+          </p>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <Dropzone
+            onFilesSelected={(files) => {
+              setStagedFiles(files);
+              navigate('/data?step=select');
+            }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>Or explore immediate capabilities:</span>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await api.resetDemo();
+                await fetchRuns();
+                const [s, r] = await Promise.all([api.getStats(), api.getDiscoveredRings()]);
+                setStats(s);
+                setRings(r);
+                showToast('Demo dataset loaded with 62k transactions and 5 rings.');
+              } catch {
+                showToast('Failed to load demo dataset.');
+              }
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              backgroundColor: 'var(--surface)',
+              border: '1px solid var(--accent)',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '12px',
+              fontWeight: 600,
+              color: 'var(--accent)',
+              cursor: 'pointer',
+            }}
+          >
+            <Database size={13} />
+            <span>Use Demo Dataset (Seed 42)</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // 7-day mock trend data
   const trendData = [

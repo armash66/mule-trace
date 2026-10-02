@@ -27,6 +27,11 @@ class Run(Base):
     __tablename__ = "runs"
 
     id: str = Column(String, primary_key=True, default=_uuid)  # type: ignore[assignment]
+    name: str = Column(String, default="Pipeline Run")  # type: ignore[assignment]
+    status: str = Column(String, default="completed")  # "completed" | "running" | "failed" | "cancelled" # type: ignore[assignment]
+    config_preset: str = Column(String, default="default")  # type: ignore[assignment]
+    source: str = Column(String, default="CSV Upload")  # type: ignore[assignment]
+    is_active: int = Column(Integer, default=1)  # type: ignore[assignment]
     created_at: datetime = Column(DateTime, default=_utcnow)  # type: ignore[assignment]
     txn_count: int = Column(Integer, default=0)  # type: ignore[assignment]
     acct_count: int = Column(Integer, default=0)  # type: ignore[assignment]

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useStore } from '../store/store';
 import { api } from '../api/client';
@@ -6,6 +6,7 @@ import { CommandPalette } from './CommandPalette';
 import { ShortcutSheet } from './ShortcutSheet';
 import { WhyScoreDrawer } from './WhyScoreDrawer';
 import { Toast } from './Toast';
+import { GlobalDropOverlay } from './data-hub/GlobalDropOverlay';
 import {
   LayoutDashboard,
   ShieldAlert,
@@ -23,6 +24,8 @@ import {
   Sun,
   Moon,
   RotateCcw,
+  Plus,
+  Database,
 } from 'lucide-react';
 
 export const AppShell: React.FC = () => {
@@ -33,11 +36,20 @@ export const AppShell: React.FC = () => {
     setCommandPaletteOpen,
     setShortcutSheetOpen,
     showToast,
+    runs,
+    activeRunId,
+    setActiveRunId,
+    fetchRuns,
   } = useStore();
+
+  useEffect(() => {
+    fetchRuns();
+  }, [fetchRuns]);
 
   const handleResetDemo = async () => {
     try {
       await api.resetDemo();
+      await fetchRuns();
       showToast('Demo dataset reset to initial state.');
       window.location.reload();
     } catch {
@@ -64,6 +76,7 @@ export const AppShell: React.FC = () => {
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
       {/* Global Modals & Drawers */}
+      <GlobalDropOverlay />
       <CommandPalette />
       <ShortcutSheet />
       <WhyScoreDrawer />
@@ -217,9 +230,9 @@ export const AppShell: React.FC = () => {
                   <FileCheck2 size={15} />
                   <span>Audit Trail</span>
                 </NavLink>
-                <NavLink to="/upload" style={({ isActive }) => getNavStyle(isActive)}>
+                <NavLink to="/data" style={({ isActive }) => getNavStyle(isActive)}>
                   <UploadCloud size={15} />
-                  <span>Ingest CSV</span>
+                  <span>Data Hub</span>
                 </NavLink>
                 <NavLink to="/patterns" style={({ isActive }) => getNavStyle(isActive)}>
                   <BookOpen size={15} />
@@ -321,7 +334,71 @@ export const AppShell: React.FC = () => {
           </div>
 
           {/* Right Header Badges and Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* App-Wide Run Selector */}
+            {runs.length > 0 && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  backgroundColor: 'var(--surface-raised)',
+                  border: '1px solid var(--line)',
+                  padding: '2px 8px',
+                  borderRadius: 'var(--radius-sm)',
+                }}
+              >
+                <Database size={12} color="var(--ink-3)" />
+                <select
+                  value={activeRunId || ''}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setActiveRunId(id);
+                    showToast(`Switched active dataset to ${runs.find((r) => r.id === id)?.name || id}`);
+                  }}
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: 'var(--ink)',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    maxWidth: '160px',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {runs.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Persistent Add Data Button */}
+            <NavLink
+              to="/data?step=select"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                backgroundColor: 'var(--accent)',
+                color: '#ffffff',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '12px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
+              }}
+            >
+              <Plus size={13} />
+              <span>Add data</span>
+            </NavLink>
+
             {/* Synthetic Data Honesty Tag */}
             <div
               style={{

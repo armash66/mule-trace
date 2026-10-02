@@ -1,6 +1,6 @@
 # MuleTrace Development Makefile
 
-.PHONY: help install test test-backend dev dev-web build-web seed demo clean evaluate check-design
+.PHONY: help install test test-backend dev dev-web build-web seed demo clean evaluate eval bench check-design
 
 help:
 	@echo "MuleTrace Development Commands:"
@@ -37,8 +37,14 @@ seed:
 	python scripts/seed_demo.py
 
 evaluate:
+	python scripts/evaluate.py --freeze
 	python scripts/evaluate.py
 	python scripts/evaluate_evasion.py
+
+eval: evaluate
+
+bench:
+	python scripts/benchmark_ingest.py
 
 demo: seed
 	uvicorn backend.app.main:app --host 127.0.0.1 --port 8000

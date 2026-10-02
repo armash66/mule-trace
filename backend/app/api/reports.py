@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from ..db import get_db
+from ..core.security import Role, TokenData, require_role
 from ..models import AccountResult, AuditLog, Decision, FreezeRequest, Run
 from ..pipeline import get_neighbourhood, pipeline_state
 from ..reasons import format_inr
@@ -37,6 +38,7 @@ def _mask(s: Any) -> str:
 @router.post("/freeze-requests", response_model=FreezeRequestOut)
 def create_freeze_request(
     body: FreezeRequestCreate,
+    user: TokenData = Depends(require_role(Role.LEAD)),
     db: Session = Depends(get_db),
 ) -> FreezeRequestOut:
     """Create a new actionable freeze request from a ring freeze plan."""
@@ -77,6 +79,7 @@ def create_freeze_request(
 def update_freeze_request(
     request_id: int,
     body: FreezeRequestUpdate,
+    user: TokenData = Depends(require_role(Role.LEAD)),
     db: Session = Depends(get_db),
 ) -> FreezeRequestOut:
     """Update freeze request state (drafted -> sent -> held -> recovered | missed)."""

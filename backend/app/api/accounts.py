@@ -13,6 +13,7 @@ from ..analytics.explain import explain_account
 from ..analytics.freeze_optimizer import recommend_time_expanded_freeze
 from ..analytics.propagation import compute_risk_propagation
 from ..analytics.taint import propagate_taint, trace_taint
+from ..core.security import Role, TokenData, require_role
 from ..db import get_db
 from ..graph import get_ego_network
 from ..models import AccountResult, AuditLog, Decision, Run
@@ -317,6 +318,7 @@ def get_account_explanation(account_id: str, db: Session = Depends(get_db)) -> E
 def record_account_decision(
     account_id: str,
     body: DecisionIn,
+    user: TokenData = Depends(require_role(Role.ANALYST)),
     db: Session = Depends(get_db),
 ) -> DecisionOut:
 
@@ -331,6 +333,7 @@ def record_account_decision(
         status=body.status,
         note=body.note,
         analyst=body.analyst,
+        user_id=user.user_id,
     )
     db.add(decision)
 

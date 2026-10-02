@@ -264,7 +264,8 @@ class Decision(Base):
     action = Column(String(20), nullable=False)  # CONFIRM, CLEAR, NEEDS_INFO, REOPEN
     status = Column(String(20), nullable=True)
     note = Column(Text, nullable=True)
-    user_id = Column(String(32), ForeignKey("users.id"), nullable=False)
+    # The legacy account decision endpoint has no authenticated user context.
+    user_id = Column(String(32), ForeignKey("users.id"), nullable=True)
     analyst = Column(String(100), nullable=True)
     is_undone = Column(Boolean, default=False)
     undone_at = Column(DateTime, nullable=True)

@@ -25,7 +25,7 @@ from ..schemas import (
     DecisionOut,
     ExplainResponse,
     Finding,
-    NetworkResponse,
+    LegacyNetworkResponse,
     TaintAccountResult,
 )
 from dataclasses import asdict
@@ -232,12 +232,12 @@ def get_account_detail(account_id: str, db: Session = Depends(get_db)) -> Accoun
     )
 
 
-@router.get("/{account_id}/network", response_model=NetworkResponse)
+@router.get("/{account_id}/network", response_model=LegacyNetworkResponse)
 def get_account_network(
     account_id: str,
     hops: int = Query(1, ge=1, le=3),
     max_nodes: int = Query(60, ge=5, le=100),
-) -> NetworkResponse:
+) -> LegacyNetworkResponse:
     """Extract ego-network capping at max_nodes, prioritizing higher-risk neighbors."""
     return get_neighbourhood(account_id=account_id, hops=hops, max_nodes=max_nodes)
 
@@ -327,6 +327,7 @@ def record_account_decision(
     decision = Decision(
         run_id=run_id,
         account_id=account_id,
+        action="CONFIRM" if body.status == "confirmed" else "CLEAR",
         status=body.status,
         note=body.note,
         analyst=body.analyst,

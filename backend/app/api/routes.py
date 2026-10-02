@@ -22,7 +22,7 @@ from ..schemas import (
     DecisionOut,
     Finding,
     IngestResponse,
-    NetworkResponse,
+    LegacyNetworkResponse,
     StatsResponse,
 )
 
@@ -264,7 +264,7 @@ def record_decision(
     )
 
 
-@router.get("/graph/{account_id}", response_model=NetworkResponse)
+@router.get("/graph/{account_id}", response_model=LegacyNetworkResponse)
 def get_graph_neighbourhood(
     account_id: str,
     hops: int = Query(1, ge=1, le=3),

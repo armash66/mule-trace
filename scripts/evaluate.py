@@ -135,6 +135,26 @@ def metric(predicted: pd.Series, labels: pd.Series) -> dict[str, float]:
     return {"precision": precision, "recall": recall, "f1": f1}
 
 
+def legitimate_hub_summary(frame: pd.DataFrame, detector_predictions: dict[str, pd.Series], labels: pd.Series) -> dict[str, Any]:
+    """Measure detector flags on high-degree non-laundering accounts without merchant labels."""
+    degrees = pd.concat([frame["Account"].value_counts(), frame["Account.1"].value_counts()]).groupby(level=0).sum().sort_values(ascending=False)
+    laundering_accounts = set(frame.loc[labels, "Account"].astype(str)) | set(frame.loc[labels, "Account.1"].astype(str))
+    hubs = [account for account in degrees.index if account not in laundering_accounts][:200]
+    account_mask = frame["Account"].astype(str).isin(hubs) | frame["Account.1"].astype(str).isin(hubs)
+    before = {name: int((predicted & account_mask).sum()) for name, predicted in detector_predictions.items()}
+    # Guard only uses transaction regularity, counterparty diversity, and history span.
+    guarded_accounts: set[str] = set()
+    for account in hubs:
+        rows = frame[(frame["Account"].astype(str) == account) | (frame["Account.1"].astype(str) == account)]
+        counterparties = set(rows["Account"].astype(str)) | set(rows["Account.1"].astype(str))
+        span = pd.to_datetime(rows["Timestamp"], errors="coerce").max() - pd.to_datetime(rows["Timestamp"], errors="coerce").min()
+        if len(counterparties) >= 8 and span.total_seconds() >= 24 * 3600:
+            guarded_accounts.add(account)
+    guard_mask = frame["Account"].astype(str).isin(guarded_accounts) | frame["Account.1"].astype(str).isin(guarded_accounts)
+    after = {name: int((predicted & account_mask & ~guard_mask).sum()) for name, predicted in detector_predictions.items()}
+    return {"candidate_accounts": len(hubs), "before": before, "after": after, "guarded_accounts": len(guarded_accounts), "recall_before": metric(pd.DataFrame(detector_predictions).any(axis=1), labels)["recall"], "recall_after": metric(pd.DataFrame({name: predicted & ~guard_mask for name, predicted in detector_predictions.items()}).any(axis=1), labels)["recall"]}
+
+
 def load_thresholds(path: Path, split_date: str) -> dict[str, Any]:
     if not path.exists():
         raise RuntimeError(f"frozen thresholds not found at {path}; run with --freeze first")
@@ -151,7 +171,8 @@ def evaluate(input_path: Path, patterns_path: Path, thresholds_path: Path, split
     tuning, test = split_transactions(frame, split_date)
     thresholds = tune_thresholds(tuning)
     if freeze:
-        payload = {"frozen": True, "frozen_at": datetime.now(timezone.utc).isoformat(), "split_date": split_date, "thresholds": thresholds}
+        existing = json.loads(thresholds_path.read_text(encoding="utf-8")) if thresholds_path.exists() else {}
+        payload = {"frozen": True, "frozen_at": datetime.now(timezone.utc).isoformat(), "split_date": split_date, "thresholds": thresholds, "detector_scales": existing.get("detector_scales", {})}
         thresholds_path.parent.mkdir(parents=True, exist_ok=True)
         thresholds_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         print(f"Frozen thresholds at {payload['frozen_at']}")
@@ -179,6 +200,12 @@ def evaluate(input_path: Path, patterns_path: Path, thresholds_path: Path, split
         subset = test_patterns.eq(pattern)
         scores = metric(combined[subset], labels[subset])
         print(f"{pattern:<20} {scores['precision'] * 100:>8.1f}% {scores['recall'] * 100:>7.1f}% {scores['f1'] * 100:>5.1f}%")
+    false_positives = legitimate_hub_summary(test, detector_predictions, labels)
+    print("\nFalse positives: top 200 test-period high-degree accounts without laundering labels")
+    print("No real merchant labels exist in this dataset.")
+    print(f"Guarded accounts: {false_positives['guarded_accounts']}; laundering recall before/after guard: {false_positives['recall_before'] * 100:.1f}% / {false_positives['recall_after'] * 100:.1f}%")
+    for detector in detector_predictions:
+        print(f"  {detector}: {false_positives['before'][detector]} -> {false_positives['after'][detector]} flags")
     return {"split": split_summary, "frozen_at": payload["frozen_at"], "overall": overall}
 
 

@@ -4,6 +4,7 @@ import { api } from '../api/client';
 export const Performance: React.FC = () => {
   const [, setPerf] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'accuracy' | 'adversarial' | 'false-positive'>('accuracy');
 
   useEffect(() => {
     api.getModelPerformance().then((data) => {
@@ -22,6 +23,15 @@ export const Performance: React.FC = () => {
           Measured on test data with known rings and decoy behavior.
         </p>
       </div>
+
+      <div style={{ display: 'flex', gap: '20px', borderBottom: '1px solid var(--rule)', marginBottom: '20px' }}>
+        {([['accuracy', 'Accuracy'], ['adversarial', 'Adversarial test'], ['false-positive', 'False positives']] as const).map(([tab, label]) => <button key={tab} type="button" onClick={() => setActiveTab(tab)} style={{ border: 0, borderBottom: activeTab === tab ? '2px solid var(--ink)' : '2px solid transparent', background: 'transparent', color: activeTab === tab ? 'var(--ink)' : 'var(--ink-2)', padding: '8px 0', cursor: 'pointer' }}>{label}</button>)}
+      </div>
+
+      {activeTab === 'adversarial' && <div className="rule-top" style={{ padding: '20px 0' }}><div className="mono">Adversarial test · Injected demo case</div><p style={{ color: 'var(--ink-2)', marginTop: '8px' }}>Run <span className="mono">python scripts/adversarial.py</span> to write <span className="mono">reports/adversarial.csv</span> and the chart. The report records where delay, splitting, lower pass-through, and decoys break detection.</p><img src="/reports/adversarial.svg" alt="Adversarial test recall chart" style={{ maxWidth: '100%', marginTop: '16px' }} /></div>}
+      {activeTab === 'false-positive' && <div className="rule-top" style={{ padding: '20px 0' }}><div className="mono">False positives · test-period high-degree accounts</div><p style={{ color: 'var(--ink-2)', marginTop: '8px' }}>No real merchant labels exist in this dataset. Run <span className="mono">python scripts/evaluate.py</span> to print detector flags before and after the innocence guard.</p></div>}
+
+      {activeTab !== 'accuracy' ? null : <>
 
       {/* Top Benchmark Summary */}
       <div
@@ -127,6 +137,7 @@ export const Performance: React.FC = () => {
           ))}
         </div>
       </div>
+      </>}
     </div>
   );
 };

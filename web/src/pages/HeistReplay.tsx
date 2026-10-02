@@ -57,6 +57,11 @@ export const HeistReplay: React.FC = () => {
 
   const events: ReplayEvent[] = replay?.events || [];
   const currentEvent = events[currentStep] || null;
+  const eventGaps = events.slice(1).map((event, index) => Math.max(0, new Date(event.timestamp).getTime() - new Date(events[index].timestamp).getTime()));
+  const sortedGaps = [...eventGaps].sort((a, b) => a - b);
+  const percentile = (value: number) => sortedGaps.length ? sortedGaps[Math.min(sortedGaps.length - 1, Math.floor(sortedGaps.length * value))] : 0;
+  const replayDuration = events.length > 1 ? Math.max(1, new Date(events[events.length - 1].timestamp).getTime() - new Date(events[0].timestamp).getTime()) : 1;
+  const throughput = events.length / (replayDuration / 1000);
 
   // Build active network up to current step
   const activeNodes = (replay?.accounts || []).map((acc) => ({
@@ -95,7 +100,7 @@ export const HeistReplay: React.FC = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)' }}>
-              Replay Simulator: Ring #{activeRing}
+              Replay of historical data: Ring #{activeRing}
             </h2>
             <span
               style={{
@@ -110,7 +115,7 @@ export const HeistReplay: React.FC = () => {
             </span>
           </div>
           <p style={{ fontSize: '12px', color: 'var(--ink-2)', marginTop: '2px' }}>
-            Scrub chronological funds movement to simulate the effect of proactive freeze intervention.
+            Scrub chronological funds movement. Trace depth capped at 8. p50 {percentile(0.5)}ms · p95 {percentile(0.95)}ms · {throughput.toFixed(2)} transactions/sec.
           </p>
         </div>
 

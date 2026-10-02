@@ -22,5 +22,6 @@ html,body{background:var(--paper);color:var(--ink);font:15px/1.5 Inter,system-ui
 .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)} .btn-ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .dot{display:inline-block;width:8px;height:8px;background:var(--ink-2)} .dot.hot{background:var(--signal)}
 .stamp{display:inline-block;border:2px solid var(--signal);color:var(--signal);font:600 13px 'JetBrains Mono',monospace;padding:2px 8px;transform:rotate(-4deg);animation:stampIn 200ms cubic-bezier(.2,0,0,1)}
+.stamp.ok{border-color:var(--ok);color:var(--ok)}
 @keyframes stampIn{from{transform:rotate(-4deg) scale(1.25);opacity:0}to{transform:rotate(-4deg) scale(1);opacity:1}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}

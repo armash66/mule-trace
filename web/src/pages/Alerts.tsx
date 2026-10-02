@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { useStore } from '../store/store';
 import type { AccountListItem } from '../api/types';
-import {
-  Search,
-  Filter,
-  Check,
-  X as CloseIcon,
-  ArrowRight,
-  ShieldAlert,
-  ChevronDown,
-} from 'lucide-react';
+
+function limitWords(text: string, maxWords: number): string {
+  if (!text) return '';
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(' ') + '...';
+}
 
 export const Alerts: React.FC = () => {
   const navigate = useNavigate();
@@ -19,20 +17,15 @@ export const Alerts: React.FC = () => {
 
   const [accounts, setAccounts] = useState<AccountListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [patternFilter, setPatternFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [minScore, setMinScore] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'unreviewed' | 'confirmed' | 'cleared'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const fetchAccounts = useCallback(() => {
     setLoading(true);
     api
       .getAccounts({
-        pattern: patternFilter,
-        status: statusFilter,
-        min_score: minScore,
+        status: statusFilter === 'all' ? undefined : statusFilter,
         q: searchQuery,
       })
       .then((res) => {
@@ -42,7 +35,7 @@ export const Alerts: React.FC = () => {
         }
       })
       .finally(() => setLoading(false));
-  }, [patternFilter, statusFilter, minScore, searchQuery, selectedIndex]);
+  }, [statusFilter, searchQuery, selectedIndex]);
 
   useEffect(() => {
     fetchAccounts();
@@ -61,31 +54,30 @@ export const Alerts: React.FC = () => {
       try {
         await api.submitDecision(accId, {
           status,
-          note: `Analyst triage action from alerts queue.`,
+          note: `Analyst action.`,
           analyst: 'analyst_on_duty',
         });
         showToast(
-          `Account ${accId} marked as ${status.toUpperCase()}`,
+          status === 'confirmed' ? `Marked ${accId} as mule.` : `Marked ${accId} as cleared.`,
           () => {
             api.submitDecision(accId, {
               status: 'unreviewed' as any,
-              note: 'Undo triage action',
+              note: 'Undo action',
               analyst: 'analyst_on_duty',
             }).then(() => fetchAccounts());
           }
         );
         fetchAccounts();
       } catch {
-        showToast(`Failed to update account ${accId}.`);
+        showToast(`Failed to update account.`);
       }
     },
     [fetchAccounts, showToast]
   );
 
-  // Keyboard navigation (J / K / Enter / C / X)
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)) {
         return;
       }
@@ -118,437 +110,154 @@ export const Alerts: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [accounts, selectedIndex, inspectAccount, handleDecision]);
 
-  const toggleSelectRow = (accId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const next = new Set(selectedIds);
-    if (next.has(accId)) next.delete(accId);
-    else next.add(accId);
-    setSelectedIds(next);
-  };
-
-  const handleBulkConfirm = async () => {
-    for (const id of Array.from(selectedIds)) {
-      await api.submitDecision(id, {
-        status: 'confirmed',
-        note: 'Bulk confirmed by analyst',
-        analyst: 'analyst_on_duty',
-      });
-    }
-    showToast(`Bulk confirmed ${selectedIds.size} accounts.`);
-    setSelectedIds(new Set());
-    fetchAccounts();
-  };
-
-  const handleBulkClear = async () => {
-    for (const id of Array.from(selectedIds)) {
-      await api.submitDecision(id, {
-        status: 'cleared',
-        note: 'Bulk cleared by analyst',
-        analyst: 'analyst_on_duty',
-      });
-    }
-    showToast(`Bulk cleared ${selectedIds.size} accounts.`);
-    setSelectedIds(new Set());
-    fetchAccounts();
-  };
-
   return (
-    <div style={{ padding: '24px 28px', maxWidth: '1440px', margin: '0 auto' }}>
-      {/* Header & Shortcut info */}
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', }}>
-            Alerts Triage Queue
-          </h1>
-          <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
-            Rapidpay-style triage queue. Use <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>J</kbd>/<kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>K</kbd> to step, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>Enter</kbd> to inspect, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>C</kbd> confirm, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>X</kbd> clear.
-          </p>
+    <div style={{ padding: '0 36px 48px 36px', maxWidth: '1120px', margin: '0 auto', backgroundColor: 'var(--paper)' }}>
+      {/* Controls row */}
+      <div style={{ padding: '24px 0 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          {(['all', 'unreviewed', 'confirmed', 'cleared'] as const).map((filterKey) => (
+            <button
+              key={filterKey}
+              type="button"
+              onClick={() => setStatusFilter(filterKey)}
+              className="mono"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '4px 0',
+                color: statusFilter === filterKey ? 'var(--ink)' : 'var(--ink-2)',
+                borderBottom: statusFilter === filterKey ? '2px solid var(--ink)' : '2px solid transparent',
+              }}
+            >
+              {filterKey === 'all'
+                ? 'All'
+                : filterKey === 'unreviewed'
+                ? 'Open'
+                : filterKey === 'confirmed'
+                ? 'Marked as mule'
+                : 'Cleared'}
+            </button>
+          ))}
         </div>
 
-        {/* Selected count / Bulk action strip */}
-        {selectedIds.size > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{selectedIds.size} selected</span>
-            <button
-              onClick={handleBulkConfirm}
-              style={{
-                padding: '6px 12px',
-                backgroundColor: 'var(--confirmed)',
-                color: 'var(--paper)',
-                border: 'none',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Bulk Confirm Mule
-            </button>
-            <button
-              onClick={handleBulkClear}
-              style={{
-                padding: '6px 12px',
-                backgroundColor: 'var(--surface-raised)',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Bulk Clear
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          marginBottom: '16px',
-          backgroundColor: 'var(--surface)',
-          padding: '10px 14px',
-          border: '1px solid var(--line)',
-          flexWrap: 'wrap',
-        }}
-      >
-        {/* Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '220px' }}>
-          <Search size={15} color="var(--ink-3)" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <input
             type="text"
-            placeholder="Filter by Account ID or reason..."
+            placeholder="Search account or reason..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="mono"
             style={{
-              width: '100%',
-              border: 'none',
-              background: 'transparent',
-              outline: 'none',
-              fontSize: '13px',
+              padding: '6px 10px',
+              border: '1px solid var(--rule)',
+              background: 'var(--paper)',
               color: 'var(--ink)',
+              outline: 'none',
+              width: '240px',
             }}
           />
-        </div>
-
-        <div style={{ height: '20px', width: '1px', backgroundColor: 'var(--line)' }} />
-
-        {/* Pattern Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>PATTERN:</span>
-          <select
-            value={patternFilter}
-            onChange={(e) => setPatternFilter(e.target.value)}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
-              color: 'var(--ink)',
-              outline: 'none',
-            }}
-          >
-            <option value="all">All Patterns</option>
-            <option value="fan">Collect and split</option>
-            <option value="cycle">Round trip</option>
-            <option value="chain">Quick relay</option>
-            <option value="cluster">Identity Cluster</option>
-            <option value="dormancy">Dormancy Burst</option>
-          </select>
-        </div>
-
-        {/* Status Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>STATUS:</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
-              color: 'var(--ink)',
-              outline: 'none',
-            }}
-          >
-            <option value="all">All Statuses</option>
-            <option value="unreviewed">Unreviewed</option>
-            <option value="confirmed">Confirmed Mule</option>
-            <option value="cleared">Cleared</option>
-          </select>
-        </div>
-
-        {/* Min Score Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>MIN SCORE:</span>
-          <span className="mono" style={{ fontSize: '12px', color: 'var(--ink)', width: '24px' }}>
-            {minScore}
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>
+            J/K step · Enter inspect · C mule · X clear
           </span>
-          <input
-            type="range"
-            min={0}
-            max={90}
-            step={10}
-            value={minScore}
-            onChange={(e) => setMinScore(Number(e.target.value))}
-            style={{ width: '80px', accentColor: 'var(--accent)' }}
-          />
         </div>
       </div>
 
-      {/* Table Container */}
+      {/* Header row in .mono ink-2 */}
       <div
+        className="rule-top"
         style={{
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--line)',
-          overflow: 'hidden',
+          display: 'grid',
+          gridTemplateColumns: '140px 1fr 80px 160px',
+          padding: '12px 16px',
+          alignItems: 'center',
         }}
       >
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-          <thead>
-            <tr style={{ backgroundColor: 'var(--surface-raised)', borderBottom: '1px solid var(--line)' }}>
-              <th style={{ width: '40px', padding: '10px 14px' }}>
-                <input
-                  type="checkbox"
-                  checked={selectedIds.size > 0 && selectedIds.size === accounts.length}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedIds(new Set(accounts.map((a) => a.account_id)));
-                    } else {
-                      setSelectedIds(new Set());
-                    }
+        <div className="mono" style={{ color: 'var(--ink-2)' }}>
+          Account
+        </div>
+        <div className="mono" style={{ color: 'var(--ink-2)' }}>
+          Why
+        </div>
+        <div className="mono" style={{ color: 'var(--ink-2)', textAlign: 'right' }}>
+          Risk
+        </div>
+        <div className="mono" style={{ color: 'var(--ink-2)', textAlign: 'right' }}>
+          Status
+        </div>
+      </div>
+
+      {/* Table rows */}
+      <div>
+        {loading ? (
+          <div style={{ padding: '40px 16px', textAlign: 'center' }} className="mono">
+            <span style={{ color: 'var(--ink-2)' }}>Loading alerts...</span>
+          </div>
+        ) : accounts.length === 0 ? (
+          <div style={{ padding: '40px 16px', textAlign: 'center' }} className="mono">
+            <span style={{ color: 'var(--ink-2)' }}>No alerts found.</span>
+          </div>
+        ) : (
+          accounts.map((acc, idx) => {
+            const isSelected = idx === selectedIndex;
+            const plainReason = limitWords(acc.reason || 'Unusual rapid money movement across accounts.', 14);
+
+            return (
+              <div
+                key={acc.account_id}
+                role="row"
+                aria-selected={isSelected}
+                className="row"
+                onClick={() => {
+                  setSelectedIndex(idx);
+                  inspectAccount(acc.account_id);
+                }}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '140px 1fr 80px 160px',
+                  alignItems: 'center',
+                }}
+              >
+                {/* Account */}
+                <div className="mono" style={{ fontWeight: 600 }}>
+                  {acc.account_id}
+                </div>
+
+                {/* Why (14 words max) */}
+                <div style={{ fontSize: '15px', paddingRight: '20px' }}>
+                  {plainReason}
+                </div>
+
+                {/* Risk */}
+                <div
+                  className="mono"
+                  style={{
+                    textAlign: 'right',
+                    fontWeight: 600,
+                    color: acc.risk_score > 80 && !isSelected ? 'var(--signal)' : 'inherit',
                   }}
-                />
-              </th>
-              <th style={{ padding: '10px 14px', color: 'var(--ink-3)', fontWeight: 600, fontSize: '11px', width: '130px' }}>
-                ACCOUNT ID
-              </th>
-              <th style={{ padding: '10px 14px', color: 'var(--ink-3)', fontWeight: 600, fontSize: '11px', width: '100px' }}>
-                RISK SCORE
-              </th>
-              <th style={{ padding: '10px 14px', color: 'var(--ink-3)', fontWeight: 600, fontSize: '11px', width: '160px' }}>
-                PATTERNS
-              </th>
-              <th style={{ padding: '10px 14px', color: 'var(--ink-3)', fontWeight: 600, fontSize: '11px' }}>
-                PLAIN-LANGUAGE REASON SUMMARY
-              </th>
-              <th style={{ padding: '10px 14px', color: 'var(--ink-3)', fontWeight: 600, fontSize: '11px', width: '120px' }}>
-                STATUS
-              </th>
-              <th style={{ padding: '10px 14px', color: 'var(--ink-3)', fontWeight: 600, fontSize: '11px', textAlign: 'right', width: '160px' }}>
-                ACTIONS
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: 'var(--ink-3)' }}>
-                  Loading flagged accounts...
-                </td>
-              </tr>
-            ) : accounts.length === 0 ? (
-              <tr>
-                <td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: 'var(--ink-3)' }}>
-                  No accounts match the selected filters.
-                </td>
-              </tr>
-            ) : (
-              accounts.map((acc, idx) => {
-                const isSelectedRow = idx === selectedIndex;
-                const isChecked = selectedIds.has(acc.account_id);
-                const scoreColor =
-                  acc.risk_score >= 75 ? 'var(--risk-high)' : acc.risk_score >= 40 ? 'var(--risk-mid)' : 'var(--risk-low)';
+                >
+                  {acc.risk_score}
+                </div>
 
-                return (
-                  <tr
-                    key={acc.account_id}
-                    onClick={() => {
-                      setSelectedIndex(idx);
-                      inspectAccount(acc.account_id);
-                    }}
-                    style={{
-                      borderBottom: '1px solid var(--line)',
-                      cursor: 'pointer',
-                      backgroundColor: isSelectedRow
-                        ? 'var(--surface-hover)'
-                        : isChecked
-                        ? 'var(--accent-muted)'
-                        : 'transparent',
-                      borderLeft: isSelectedRow ? '3px solid var(--accent)' : '3px solid transparent',
-                      transition: 'background-color 0.12s ease',
-                    }}
-                  >
-                    {/* Checkbox */}
-                    <td style={{ padding: '12px 14px' }} onClick={(e) => toggleSelectRow(acc.account_id, e)}>
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => {}}
-                        style={{ cursor: 'pointer' }}
-                      />
-                    </td>
-
-                    {/* Account ID */}
-                    <td className="mono" style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--ink)' }}>
-                      {acc.account_id}
-                    </td>
-
-                    {/* Risk */}
-                    <td style={{ padding: '12px 14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className="mono" style={{ fontWeight: 700, color: scoreColor, width: '24px' }}>
-                          {acc.risk_score}
-                        </span>
-                        <div
-                          style={{
-                            flex: 1,
-                            height: '5px',
-                            backgroundColor: 'var(--line)',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: `${acc.risk_score}%`,
-                              height: '100%',
-                              backgroundColor: scoreColor,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Patterns */}
-                    <td style={{ padding: '12px 14px' }}>
-                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                        {acc.patterns.length > 0 ? (
-                          acc.patterns.map((p, i) => (
-                            <span
-                              key={i}
-                              style={{
-                                fontSize: '10px',
-                                padding: '2px 6px',
-                                backgroundColor: 'var(--surface-raised)',
-                                border: '1px solid var(--line)',
-                                color: 'var(--ink-2)',
-                                fontWeight: 600,
-                              }}
-                            >
-                              {p}
-                            </span>
-                          ))
-                        ) : (
-                          <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>None</span>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Reason Summary */}
-                    <td style={{ padding: '12px 14px', color: 'var(--ink)', lineHeight: '1.4' }}>
-                      {acc.reason}
-                    </td>
-
-                    {/* Status */}
-                    <td style={{ padding: '12px 14px' }}>
-                      {acc.status === 'confirmed' ? (
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            color: 'var(--confirmed)',
-                            fontWeight: 600,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                          }}
-                        >
-                          <Check size={12} /> Confirmed
-                        </span>
-                      ) : acc.status === 'cleared' ? (
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            color: 'var(--ok)',
-                            fontWeight: 600,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                          }}
-                        >
-                          <Check size={12} /> Cleared
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>Flagged for review</span>
-                      )}
-                    </td>
-
-                    {/* Actions */}
-                    <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDecision(acc.account_id, 'confirmed');
-                          }}
-                          title="Confirm as Mule (C)"
-                          style={{
-                            padding: '4px 8px',
-                            fontSize: '11px',
-                            backgroundColor: 'transparent',
-                            border: '1px solid var(--line)',
-                            color: 'var(--confirmed)',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDecision(acc.account_id, 'cleared');
-                          }}
-                          title="Not a mule (X)"
-                          style={{
-                            padding: '4px 8px',
-                            fontSize: '11px',
-                            backgroundColor: 'transparent',
-                            border: '1px solid var(--line)',
-                            color: 'var(--ok)',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          Clear
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            inspectAccount(acc.account_id);
-                          }}
-                          title="Inspect in Investigate (Enter)"
-                          style={{
-                            padding: '4px 8px',
-                            fontSize: '11px',
-                            backgroundColor: 'var(--surface-raised)',
-                            border: '1px solid var(--line)',
-                            color: 'var(--ink)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <ArrowRight size={12} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                {/* Status (.dot + word) */}
+                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                  <span
+                    className={`dot ${acc.status === 'confirmed' ? 'hot' : ''}`}
+                    style={acc.status === 'cleared' ? { background: 'var(--ok)' } : {}}
+                  />
+                  <span style={{ fontSize: '13px' }}>
+                    {acc.status === 'confirmed'
+                      ? 'Marked as mule'
+                      : acc.status === 'cleared'
+                      ? 'Cleared'
+                      : 'Open'}
+                  </span>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

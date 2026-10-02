@@ -6,24 +6,16 @@ import type {
   AccountDetail,
   AccountListItem,
   NetworkResponse,
-  TaintAccountResult,
 } from '../api/types';
 import { CytoscapeGraph } from '../components/CytoscapeGraph';
 import { FreezePlanModal } from '../components/FreezePlanModal';
-import { formatLakhs, formatCurrency } from '../lib/utils';
-import {
-  Search,
-  Lock,
-  PlaySquare,
-  HelpCircle,
-  CheckCircle,
-  XCircle,
-  FileText,
-  Clock,
-  User,
-  ShieldAlert,
-  ArrowRight,
-} from 'lucide-react';
+
+function limitWords(text: string, maxWords: number): string {
+  if (!text) return '';
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(' ') + '...';
+}
 
 export const Investigate: React.FC = () => {
   const { accountId: routeAccountId } = useParams<{ accountId?: string }>();
@@ -34,21 +26,20 @@ export const Investigate: React.FC = () => {
     setSelectedAccountId,
     currentHops,
     setCurrentHops,
-    setWhyScoreDrawerOpen,
     showToast,
   } = useStore();
 
   const activeId = routeAccountId || selectedAccountId || 'ACC_05001';
 
-  // State
   const [accountList, setAccountList] = useState<AccountListItem[]>([]);
   const [listSearch, setListSearch] = useState('');
   const [accountDetail, setAccountDetail] = useState<AccountDetail | null>(null);
   const [network, setNetwork] = useState<NetworkResponse>({ nodes: [], edges: [] });
-  const [taint, setTaint] = useState<TaintAccountResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'evidence' | 'features' | 'history'>('evidence');
+  const [activeTab, setActiveTab] = useState<'evidence' | 'details' | 'history'>('evidence');
   const [freezeModalOpen, setFreezeModalOpen] = useState(false);
+  const [decisionNote, setDecisionNote] = useState('');
+  const [latestDecision, setLatestDecision] = useState<'confirmed' | 'cleared' | null>(null);
 
   // Sync route
   useEffect(() => {
@@ -57,7 +48,7 @@ export const Investigate: React.FC = () => {
     }
   }, [routeAccountId, selectedAccountId, setSelectedAccountId]);
 
-  // Load account list for left pane
+  // Load account list
   useEffect(() => {
     api.getAccounts().then((res) => setAccountList(res.items));
   }, []);
@@ -68,12 +59,16 @@ export const Investigate: React.FC = () => {
     Promise.all([
       api.getAccountDetail(id),
       api.getAccountNetwork(id, hops, 60),
-      api.getAccountTaint(id),
     ])
-      .then(([det, net, tnt]) => {
+      .then(([det, net]) => {
         setAccountDetail(det);
         setNetwork(net);
-        setTaint(tnt);
+        if (det.decisions && det.decisions.length > 0) {
+          const last = det.decisions[det.decisions.length - 1];
+          setLatestDecision(last.status as 'confirmed' | 'cleared');
+        } else {
+          setLatestDecision(null);
+        }
       })
       .finally(() => setLoading(false));
   }, []);
@@ -88,13 +83,15 @@ export const Investigate: React.FC = () => {
   };
 
   const handleDecision = async (status: 'confirmed' | 'cleared') => {
+    const note = decisionNote.trim() || (status === 'confirmed' ? 'Marked as mule by analyst' : 'Cleared by analyst');
     try {
       await api.submitDecision(activeId, {
         status,
-        note: `Analyst triage in Investigate hero view.`,
+        note,
         analyst: 'analyst_on_duty',
       });
-      showToast(`Account ${activeId} marked as ${status.toUpperCase()}`, () => {
+      setLatestDecision(status);
+      showToast(status === 'confirmed' ? `Marked ${activeId} as mule.` : `Marked ${activeId} as cleared.`, () => {
         api.submitDecision(activeId, {
           status: 'unreviewed' as any,
           note: 'Reverted action',
@@ -107,7 +104,7 @@ export const Investigate: React.FC = () => {
     }
   };
 
-  // Keyboard triage (J/K/C/X/F/W/R)
+  // Keyboard triage
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
@@ -131,18 +128,12 @@ export const Investigate: React.FC = () => {
       } else if (e.key.toLowerCase() === 'f') {
         e.preventDefault();
         setFreezeModalOpen(true);
-      } else if (e.key.toLowerCase() === 'w') {
-        e.preventDefault();
-        setWhyScoreDrawerOpen(true);
-      } else if (e.key.toLowerCase() === 'r') {
-        e.preventDefault();
-        navigate(`/replay/fan_1`);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [accountList, activeId, handleDecision, navigate, setWhyScoreDrawerOpen]);
+  }, [accountList, activeId, handleDecision]);
 
   const filteredList = accountList.filter(
     (a) =>
@@ -150,213 +141,141 @@ export const Investigate: React.FC = () => {
       a.reason.toLowerCase().includes(listSearch.toLowerCase())
   );
 
-  const scoreColor =
-    (accountDetail?.risk_score || 0) >= 75
-      ? 'var(--risk-high)'
-      : (accountDetail?.risk_score || 0) >= 40
-      ? 'var(--risk-mid)'
-      : 'var(--risk-low)';
+  const headlineWhy = limitWords(
+    accountDetail?.reasons?.[0] || 'Unusual rapid money movement across accounts.',
+    14
+  );
 
   return (
-    <div style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden', backgroundColor: 'var(--paper)' }}>
       <FreezePlanModal
         ringId="fan_1"
         isOpen={freezeModalOpen}
         onClose={() => setFreezeModalOpen(false)}
       />
 
-      {/* Pane 1: Left Compact Queue (260px) */}
+      {/* Pane 1: Left accounts list (240px) */}
       <div
         style={{
-          width: '260px',
-          minWidth: '260px',
-          backgroundColor: 'var(--surface)',
-          borderRight: '1px solid var(--line)',
+          width: '240px',
+          minWidth: '240px',
+          borderRight: '1px solid var(--rule)',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
+          backgroundColor: 'var(--paper)',
         }}
       >
-        <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--line)' }}>
-          <div
+        <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--rule)' }}>
+          <input
+            type="text"
+            placeholder="Search accounts..."
+            value={listSearch}
+            onChange={(e) => setListSearch(e.target.value)}
+            className="mono"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
+              width: '100%',
               padding: '6px 8px',
+              border: '1px solid var(--rule)',
+              background: 'var(--paper)',
+              color: 'var(--ink)',
+              outline: 'none',
             }}
-          >
-            <Search size={14} color="var(--ink-3)" />
-            <input
-              type="text"
-              placeholder="Search queue..."
-              value={listSearch}
-              onChange={(e) => setListSearch(e.target.value)}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                outline: 'none',
-                fontSize: '12px',
-                color: 'var(--ink)',
-                width: '100%',
-              }}
-            />
-          </div>
+          />
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {filteredList.map((item) => {
             const isSelected = item.account_id === activeId;
-            const itemColor =
-              item.risk_score >= 75 ? 'var(--risk-high)' : item.risk_score >= 40 ? 'var(--risk-mid)' : 'var(--risk-low)';
-
             return (
               <div
                 key={item.account_id}
+                role="row"
+                aria-selected={isSelected}
+                className="row"
                 onClick={() => selectAccount(item.account_id)}
                 style={{
-                  padding: '10px 14px',
-                  borderBottom: '1px solid var(--line)',
-                  cursor: 'pointer',
-                  backgroundColor: isSelected ? 'var(--surface-raised)' : 'transparent',
-                  borderLeft: isSelected ? '3px solid var(--accent)' : '3px solid transparent',
-                  transition: 'background-color 0.12s ease',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className="mono" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>
-                    {item.account_id}
-                  </span>
-                  <span className="mono" style={{ fontSize: '11px', fontWeight: 700, color: itemColor }}>
-                    {item.risk_score}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
-                  {item.patterns.map((p, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        fontSize: '9px',
-                        padding: '1px 5px',
-                        backgroundColor: 'var(--surface)',
-                        border: '1px solid var(--line)',
-                        color: 'var(--ink-2)',
-                      }}
-                    >
-                      {p}
-                    </span>
-                  ))}
-                </div>
+                <span className="mono" style={{ fontWeight: 600 }}>
+                  {item.account_id}
+                </span>
+                <span
+                  className="mono"
+                  style={{
+                    color: item.risk_score > 80 && !isSelected ? 'var(--signal)' : 'inherit',
+                    fontWeight: 600,
+                  }}
+                >
+                  {item.risk_score}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Pane 2: Center Interactive Cytoscape Graph (flex: 1) */}
+      {/* Pane 2: Center Interactive Cytoscape Graph */}
       <div
         style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'var(--bg)',
           position: 'relative',
           height: '100%',
+          backgroundColor: 'var(--paper)',
         }}
       >
-        {/* Top Graph Controls Bar */}
+        {/* Graph top bar */}
         <div
           style={{
             padding: '10px 18px',
-            backgroundColor: 'var(--surface)',
-            borderBottom: '1px solid var(--line)',
+            borderBottom: '1px solid var(--rule)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
-              Network Flow Graph
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span className="mono" style={{ color: 'var(--ink)' }}>
+              Network graph
             </span>
-            <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>•</span>
-            <span className="mono" style={{ fontSize: '12px', color: 'var(--ink-2)' }}>
-              {network.nodes.length} nodes, {network.edges.length} edges
+            <span className="mono" style={{ color: 'var(--ink-2)' }}>
+              {network.nodes.length} nodes · {network.edges.length} edges
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Hops selector */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                backgroundColor: 'var(--surface-raised)',
-                border: '1px solid var(--line)',
-                padding: '2px',
-              }}
-            >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '4px' }}>
               {[1, 2, 3].map((h) => (
                 <button
                   key={h}
+                  type="button"
                   onClick={() => setCurrentHops(h)}
+                  className="mono"
                   style={{
-                    padding: '2px 8px',
-                    fontSize: '11px',
-                    border: 'none',
-                    backgroundColor: currentHops === h ? 'var(--accent)' : 'transparent',
-                    color: currentHops === h ? 'var(--paper)' : 'var(--ink-2)',
-                    fontWeight: 600,
+                    padding: '3px 8px',
+                    border: '1px solid var(--ink)',
+                    background: currentHops === h ? 'var(--ink)' : 'transparent',
+                    color: currentHops === h ? 'var(--paper)' : 'var(--ink)',
                     cursor: 'pointer',
                   }}
                 >
-                  {h} Hop{h > 1 ? 's' : ''}
+                  {h} hop{h > 1 ? 's' : ''}
                 </button>
               ))}
             </div>
 
-            {/* Quick Freeze Button */}
             <button
+              type="button"
+              className="btn"
               onClick={() => setFreezeModalOpen(true)}
-              title="Compute Min-Cut Freeze Plan (F)"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 10px',
-                backgroundColor: 'var(--accent-muted)',
-                border: '1px solid var(--accent)',
-                color: 'var(--accent)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
+              style={{ padding: '4px 10px', fontSize: '13px' }}
             >
-              <Lock size={13} />
-              <span>Freeze Plan (F)</span>
-            </button>
-
-            {/* Replay Button */}
-            <button
-              onClick={() => navigate('/replay/fan_1')}
-              title="Open Replay Simulator (R)"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 10px',
-                backgroundColor: 'var(--surface-raised)',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
-                fontSize: '12px',
-                fontWeight: 500,
-                cursor: 'pointer',
-              }}
-            >
-              <PlaySquare size={13} />
-              <span>Replay</span>
+              Cut plan
             </button>
           </div>
         </div>
@@ -378,271 +297,180 @@ export const Investigate: React.FC = () => {
         style={{
           width: '380px',
           minWidth: '380px',
-          backgroundColor: 'var(--surface)',
-          borderLeft: '1px solid var(--line)',
+          borderLeft: '1px solid var(--rule)',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
           overflowY: 'auto',
+          backgroundColor: 'var(--paper)',
+          padding: '28px 24px',
         }}
       >
-        {/* Header with masked PII */}
-        <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>
-                Account Dossier
-              </div>
-              <h2 className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
-                {activeId}
-              </h2>
-            </div>
-
-            {/* Risk Pill */}
-            <div style={{ textAlign: 'right' }}>
-              <div className="mono" style={{ fontSize: '20px', fontWeight: 800, color: scoreColor }}>
-                {accountDetail?.risk_score || 0}
-              </div>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>
-                Risk / 100
-              </div>
-            </div>
-          </div>
-
-          {/* Masked PII details */}
-          <div
-            style={{
-              marginTop: '12px',
-              padding: '10px 12px',
-              backgroundColor: 'var(--surface-raised)',
-              border: '1px solid var(--line)',
-              fontSize: '11px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--ink-3)' }}>KYC Phone:</span>
-              <span className="mono" style={{ color: 'var(--ink)' }}>+91 98••••12</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--ink-3)' }}>KYC Address:</span>
-              <span style={{ color: 'var(--ink)' }}>Flat 4••, Andheri West, Mumbai</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--ink-3)' }}>Device ID Hash:</span>
-              <span className="mono" style={{ color: 'var(--ink)' }}>a8••••4f</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--ink-3)' }}>Account Age:</span>
-              <span className="mono" style={{ color: 'var(--ink)' }}>
-                {accountDetail?.age_days ? `${accountDetail.age_days} days` : '22 days'}
-              </span>
-            </div>
-          </div>
-
-          {/* Decision Buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '14px' }}>
-            <button
-              onClick={() => handleDecision('confirmed')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                padding: '8px',
-                backgroundColor: 'var(--confirmed)',
-                color: 'var(--paper)',
-                border: 'none',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              <CheckCircle size={14} />
-              <span>Confirm Mule (C)</span>
-            </button>
-            <button
-              onClick={() => handleDecision('cleared')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                padding: '8px',
-                backgroundColor: 'var(--surface-raised)',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              <XCircle size={14} />
-              <span>Not a mule (X)</span>
-            </button>
-          </div>
+        {/* Plain sentence in .t-head at the top (largest text on the panel) */}
+        <div className="t-head" style={{ color: 'var(--ink)', marginBottom: '16px' }}>
+          {headlineWhy}
         </div>
 
-        {/* Plain-Language Reason Card */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, }}>
-              Plain-Language Reason
-            </span>
-            <button
-              onClick={() => setWhyScoreDrawerOpen(true)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                fontSize: '11px',
-                color: 'var(--accent)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              <HelpCircle size={12} />
-              <span>Why this risk? (W)</span>
-            </button>
-          </div>
+        {/* Account ID & Stamp */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+          <span className="mono" style={{ color: 'var(--ink-2)', fontSize: '14px' }}>
+            {activeId}
+          </span>
+          {latestDecision === 'confirmed' && (
+            <span className="stamp">MARKED AS MULE</span>
+          )}
+          {latestDecision === 'cleared' && (
+            <span className="stamp ok">Cleared</span>
+          )}
+        </div>
 
-          <div
+        {/* Risk as "Risk 94" in .t-hero at 56px signal colour */}
+        <div className="t-hero" style={{ fontSize: '56px', color: 'var(--signal)', margin: '12px 0 20px 0' }}>
+          Risk {accountDetail?.risk_score ?? 85}
+        </div>
+
+        {/* Action input & two buttons */}
+        <div style={{ marginBottom: '28px' }}>
+          <input
+            type="text"
+            placeholder="Reason note (required)..."
+            value={decisionNote}
+            onChange={(e) => setDecisionNote(e.target.value)}
+            className="mono"
             style={{
-              padding: '12px',
-              backgroundColor: 'var(--accent-muted)',
-              border: '1px solid var(--line)',
-              fontSize: '12px',
+              width: '100%',
+              padding: '6px 10px',
+              border: '1px solid var(--rule)',
+              background: 'var(--paper)',
               color: 'var(--ink)',
-              lineHeight: '1.5',
+              outline: 'none',
+              marginBottom: '10px',
             }}
-          >
-            {accountDetail?.reasons?.[0] ||
-              'Received ₹4.24L from 11 victim accounts in 18 min window; forwarded 94.2% within 14 min to 6 layered receivers.'}
+          />
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => handleDecision('confirmed')}
+              style={{ flex: 1 }}
+            >
+              Mark as mule
+            </button>
+            <button
+              type="button"
+              className="btn-ghost"
+              onClick={() => handleDecision('cleared')}
+              style={{ flex: 1, padding: '8px 14px', cursor: 'pointer' }}
+            >
+              Not a mule
+            </button>
           </div>
         </div>
 
-        {/* Taint Tracking Rupee Box */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, marginBottom: '10px' }}>
-            Stolen Funds Taint Tracing
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '10px',
-            }}
-          >
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Tainted Inflow</div>
-              <div className="mono" style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
-                {formatLakhs(taint?.tainted_in || 424089.49)}
-              </div>
-            </div>
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Trapped Balance</div>
-              <div className="mono" style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ok)', marginTop: '2px' }}>
-                {formatLakhs(taint?.tainted_balance_remaining || 24469.49)}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Navigation: Evidence / Features / History */}
-        <div style={{ borderBottom: '1px solid var(--line)', display: 'flex', backgroundColor: 'var(--surface-raised)' }}>
-          {(['evidence', 'features', 'history'] as const).map((tab) => (
+        {/* Three plain text tabs: Evidence, Details, History with 2px ink underline */}
+        <div style={{ display: 'flex', gap: '20px', borderBottom: '1px solid var(--rule)', marginBottom: '18px' }}>
+          {(['evidence', 'details', 'history'] as const).map((tab) => (
             <button
               key={tab}
+              type="button"
               onClick={() => setActiveTab(tab)}
               style={{
-                flex: 1,
-                padding: '8px 0',
+                background: 'none',
                 border: 'none',
-                backgroundColor: 'transparent',
-                borderBottom: activeTab === tab ? '2px solid var(--accent)' : '2px solid transparent',
-                color: activeTab === tab ? 'var(--ink)' : 'var(--ink-3)',
-                fontSize: '11px',
-                fontWeight: 600,
+                padding: '6px 0',
                 cursor: 'pointer',
+                fontSize: '15px',
+                color: activeTab === tab ? 'var(--ink)' : 'var(--ink-2)',
+                borderBottom: activeTab === tab ? '2px solid var(--ink)' : '2px solid transparent',
+                marginBottom: '-1px',
+                textTransform: 'capitalize',
               }}
             >
-              {tab}
+              {tab === 'evidence' ? 'Evidence' : tab === 'details' ? 'Details' : 'History'}
             </button>
           ))}
         </div>
 
-        {/* Tab Content */}
-        <div style={{ padding: '16px 20px', flex: 1 }}>
+        {/* Tab contents */}
+        <div>
           {activeTab === 'evidence' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {accountDetail?.findings?.map((f, i) => (
-                <div
-                  key={i}
-                  style={{
-                    padding: '10px 12px',
-                    border: '1px solid var(--line)',
-                    fontSize: '12px',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <span style={{ fontWeight: 600, color: 'var(--ink)' }}>
-                      {f.pattern} Pattern
-                    </span>
-                    <span className="mono" style={{ color: 'var(--accent)', fontWeight: 600 }}>
-                      Strength: {(f.strength * 100).toFixed(0)}%
-                    </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {accountDetail?.findings && accountDetail.findings.length > 0 ? (
+                accountDetail.findings.map((f, i) => (
+                  <div key={i} style={{ borderTop: '1px solid var(--rule)', paddingTop: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{f.pattern}</span>
+                      <span className="mono" style={{ color: 'var(--ink-2)' }}>
+                        {(f.strength * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <pre
+                      className="mono"
+                      style={{
+                        fontSize: '11px',
+                        background: 'var(--paper-2)',
+                        padding: '8px',
+                        overflowX: 'auto',
+                        color: 'var(--ink-2)',
+                        whiteSpace: 'pre-wrap',
+                      }}
+                    >
+                      {JSON.stringify(f.evidence, null, 2)}
+                    </pre>
                   </div>
-                  <pre
-                    className="mono"
-                    style={{
-                      fontSize: '11px',
-                      backgroundColor: 'var(--surface-raised)',
-                      padding: '8px',
-                      overflowX: 'auto',
-                      color: 'var(--ink-2)',
-                    }}
-                  >
-                    {JSON.stringify(f.evidence, null, 2)}
-                  </pre>
+                ))
+              ) : (
+                <div className="mono" style={{ color: 'var(--ink-2)' }}>
+                  No findings recorded.
                 </div>
-              ))}
+              )}
             </div>
           )}
 
-          {activeTab === 'features' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {Object.entries(accountDetail?.features || {}).map(([k, v]) => (
-                <div
-                  key={k}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '12px',
-                    padding: '6px 0',
-                    borderBottom: '1px solid var(--line)',
-                  }}
-                >
-                  <span style={{ color: 'var(--ink-2)' }}>{k.replace(/_/g, ' ')}</span>
-                  <span className="mono" style={{ fontWeight: 600, color: 'var(--ink)' }}>
-                    {typeof v === 'number' && v > 1000 ? formatCurrency(v) : String(v)}
-                  </span>
-                </div>
-              ))}
+          {activeTab === 'details' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--ink-2)' }}>KYC phone</span>
+                <span className="mono">+91 98••••12</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--ink-2)' }}>KYC address</span>
+                <span className="mono">Flat 4••, Andheri West, Mumbai</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--ink-2)' }}>Device hash</span>
+                <span className="mono">a8••••4f</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--ink-2)' }}>Account age</span>
+                <span className="mono">
+                  {accountDetail?.age_days ? `${accountDetail.age_days} days` : '22 days'}
+                </span>
+              </div>
             </div>
           )}
 
           {activeTab === 'history' && (
-            <div style={{ fontSize: '12px', color: 'var(--ink-3)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                <Clock size={13} />
-                <span>Audit trail for this account</span>
-              </div>
-              <p>No previous analyst flags recorded for this account. Decision will be logged in append-only audit trail.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {accountDetail?.decisions && accountDetail.decisions.length > 0 ? (
+                accountDetail.decisions.map((d, i) => (
+                  <div key={i} style={{ borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                      <span className="mono" style={{ fontWeight: 600 }}>
+                        {d.status === 'confirmed' ? 'Marked as mule' : 'Cleared'}
+                      </span>
+                      <span className="mono" style={{ color: 'var(--ink-2)' }}>
+                        {d.analyst}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{d.note}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="mono" style={{ color: 'var(--ink-2)' }}>
+                  No previous decisions recorded.
+                </div>
+              )}
             </div>
           )}
         </div>

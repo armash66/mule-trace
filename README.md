@@ -120,3 +120,12 @@ make dev
 - **Scandinavian Minimalism**: Linear/Stripe restraint. Soft white surface (`#FFFFFF`), light stone background (`#FAFAF9`), restrained violet accent (`#6D4AFF`), and orange-red (`#E8590C`) reserved strictly for maximum risk.
 - **No Decorative Fluff**: Zero colored pills, no cartoonish glows, no fake badges. Pattern indicators use subtle line icons; scores use a crisp numerical figure with a 2px proportional baseline.
 - **Privacy by Design**: Sensitive PII (phones, national IDs, addresses) is masked by default in the API, UI, and database logs.
+
+## Further Reading
+
+- [Architecture](docs/architecture.md) - runtime flow and investigation stages.
+- [Scoring](docs/scoring.md) - detector signals, guards, and score boundaries.
+- [Security](docs/security.md) - authentication, audit, and production controls.
+- [Assumptions](docs/assumptions.md) - data and storage defaults.
+- [Limitations](docs/limitations.md) - known demo and model boundaries.
+- [Incident runbook](docs/incident-runbook.md) - first steps for API, data, and audit issues.

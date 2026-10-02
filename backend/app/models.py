@@ -22,7 +22,7 @@ class Base(DeclarativeBase):
 
 
 class Run(Base):
-    """A single pipeline run (one CSV upload)."""
+    """A single pipeline run (one CSV upload or demo dataset)."""
 
     __tablename__ = "runs"
 
@@ -31,6 +31,12 @@ class Run(Base):
     txn_count: int = Column(Integer, default=0)  # type: ignore[assignment]
     acct_count: int = Column(Integer, default=0)  # type: ignore[assignment]
     flagged_count: int = Column(Integer, default=0)  # type: ignore[assignment]
+    duplicates_removed: int = Column(Integer, default=0)  # type: ignore[assignment]
+    out_of_order_fixed: int = Column(Integer, default=0)  # type: ignore[assignment]
+    missing_device_pct: float = Column(Float, default=0.0)  # type: ignore[assignment]
+    missing_ip_pct: float = Column(Float, default=0.0)  # type: ignore[assignment]
+    self_transfers_dropped: int = Column(Integer, default=0)  # type: ignore[assignment]
+    health_summary = Column(JSON, default=dict)
 
 
 class AccountResult(Base):
@@ -46,6 +52,12 @@ class AccountResult(Base):
     reasons = Column(JSON, default=list)
     findings = Column(JSON, default=list)
     features = Column(JSON, default=dict)
+    tainted_balance: float = Column(Float, default=0.0)  # type: ignore[assignment]
+    status: str = Column(String, default="unreviewed")  # "unreviewed" | "confirmed" | "cleared" # type: ignore[assignment]
+
+
+# Alias for convenience matching PRD naming
+Account = AccountResult
 
 
 class Decision(Base):
@@ -60,6 +72,22 @@ class Decision(Base):
     note: str = Column(Text)  # type: ignore[assignment]
     analyst: str = Column(String)  # type: ignore[assignment]
     created_at: datetime = Column(DateTime, default=_utcnow)  # type: ignore[assignment]
+
+
+class FreezeRequest(Base):
+    """Actionable freeze request tracked through regulatory workflow."""
+
+    __tablename__ = "freeze_requests"
+
+    id: int = Column(Integer, primary_key=True, autoincrement=True)  # type: ignore[assignment]
+    run_id: str = Column(String, index=True)  # type: ignore[assignment]
+    ring_id: str = Column(String, index=True)  # type: ignore[assignment]
+    account_ids = Column(JSON, default=list)
+    amount: float = Column(Float, default=0.0)  # type: ignore[assignment]
+    status: str = Column(String, default="drafted")  # drafted | sent | held | recovered | missed # type: ignore[assignment]
+    note: str | None = Column(Text, nullable=True)  # type: ignore[assignment]
+    created_at: datetime = Column(DateTime, default=_utcnow)  # type: ignore[assignment]
+    updated_at: datetime = Column(DateTime, default=_utcnow, onupdate=_utcnow)  # type: ignore[assignment]
 
 
 class AuditLog(Base):

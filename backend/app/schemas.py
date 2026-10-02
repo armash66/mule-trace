@@ -19,7 +19,7 @@ class Finding(BaseModel):
     """Single detector finding for one account."""
 
     account_id: str
-    pattern: Literal["fan", "cycle", "chain", "cluster"]
+    pattern: Literal["fan", "cycle", "chain", "cluster", "dormancy", "community"]
     strength: float = Field(ge=0, le=1)
     evidence: dict[str, Any]
     related_accounts: list[str]
@@ -36,6 +36,8 @@ class ScoredAccount(BaseModel):
     patterns: list[str] = Field(default_factory=list)
     reasons: list[str] = Field(default_factory=list)
     findings: list[Finding] = Field(default_factory=list)
+    tainted_balance: float = Field(default=0.0)
+    status: str | None = Field(default=None)
 
 
 # ── API request / response models ───────────────────────────────────────────────
@@ -117,3 +119,114 @@ class StatsResponse(BaseModel):
     cleared_count: int = 0
     precision: float | None = None
     run_id: str | None = None
+
+
+# ── Analytics & Explainability Schemas ─────────────────────────────────────────
+
+
+class TaintAccountResult(BaseModel):
+    account_id: str
+    tainted_in: float
+    tainted_out: float
+    tainted_balance_remaining: float
+    cashed_out: float
+
+
+class FreezeAlternative(BaseModel):
+    account_ids: list[str]
+    rupees_stopped: float
+    rupees_lost: float
+    efficiency: float
+
+
+class FreezePlanResponse(BaseModel):
+    ring_id: str
+    recommended_freeze_accounts: list[str]
+    rupees_stopped: float
+    rupees_lost: float
+    total_tainted: float
+    alternatives: list[FreezeAlternative] = Field(default_factory=list)
+
+
+class ReplayEvent(BaseModel):
+    timestamp: str
+    src: str
+    dst: str
+    amount: float
+    tainted_amount: float
+    status: str = "transferred"
+    is_freeze_point: bool = False
+
+
+class ReplayResponse(BaseModel):
+    ring_id: str
+    events: list[ReplayEvent]
+    total_amount: float
+    total_tainted: float
+    stoppable_rupees: float
+    accounts: list[str]
+
+
+class DiscoveredRing(BaseModel):
+    ring_id: str
+    pattern: str
+    accounts: list[str]
+    mean_risk: float
+    internal_flow_ratio: float
+    density: float
+    estimated_at_risk: float
+    explanation: str
+
+
+class ExplainResponse(BaseModel):
+    account_id: str
+    risk_score: int
+    top_features: list[dict[str, Any]]
+    counterfactual: str
+    shap_values: dict[str, float]
+
+
+class DataHealthReport(BaseModel):
+    run_id: str
+    duplicates_removed: int
+    out_of_order_fixed: int
+    missing_device_pct: float
+    missing_ip_pct: float
+    self_transfers_dropped: int
+    total_transactions: int
+    total_accounts: int
+
+
+class FreezeRequestCreate(BaseModel):
+    ring_id: str
+    account_ids: list[str]
+    amount: float
+    note: str | None = None
+
+
+class FreezeRequestUpdate(BaseModel):
+    status: Literal["drafted", "sent", "held", "recovered", "missed"]
+    note: str | None = None
+
+
+class FreezeRequestOut(BaseModel):
+    id: int
+    ring_id: str
+    account_ids: list[str]
+    amount: float
+    status: str
+    note: str | None = None
+    created_at: str
+    updated_at: str
+
+
+class CaseReport(BaseModel):
+    ring_id: str
+    pattern: str
+    summary_sentence: str
+    accounts: list[dict[str, Any]]
+    transfer_timeline: list[dict[str, Any]]
+    freeze_plan: FreezePlanResponse | None = None
+    draft_str: str
+    analyst_notes: list[str] = Field(default_factory=list)
+

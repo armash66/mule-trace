@@ -33,6 +33,9 @@ class IngestStats:
     dropped_duplicates: int = 0
     dropped_self_transfers: int = 0
     dropped_bad_rows: int = 0
+    out_of_order_fixed: int = 0
+    missing_device_pct: float = 0.0
+    missing_ip_pct: float = 0.0
     final_txn_count: int = 0
     final_acct_count: int = 0
     errors: list[dict[str, Any]] = field(default_factory=list)
@@ -55,7 +58,7 @@ def ingest_transactions(raw: bytes | str | pd.DataFrame) -> tuple[pd.DataFrame, 
         4. Deduplicate on txn_id (keep first)
         5. Drop self-transfers (src == dst)
         6. Drop rows with invalid amounts
-        7. Sort by timestamp
+        7. Measure out-of-order rows and sort by timestamp
 
     Returns:
         (cleaned DataFrame, stats)
@@ -71,6 +74,12 @@ def ingest_transactions(raw: bytes | str | pd.DataFrame) -> tuple[pd.DataFrame, 
 
     stats.raw_txn_count = len(df)
     _validate_columns(df, REQUIRED_TXN_COLS, "transactions.csv")
+
+    # Measure missing metadata
+    if "device_id" in df.columns and len(df) > 0:
+        stats.missing_device_pct = round(float(df["device_id"].isna().sum() / len(df) * 100), 2)
+    if "ip" in df.columns and len(df) > 0:
+        stats.missing_ip_pct = round(float(df["ip"].isna().sum() / len(df) * 100), 2)
 
     # Parse timestamps → UTC
     df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True, errors="coerce")
@@ -102,11 +111,17 @@ def ingest_transactions(raw: bytes | str | pd.DataFrame) -> tuple[pd.DataFrame, 
         logger.info("Dropped %d self-transfer(s)", stats.dropped_self_transfers)
     df = df[~self_mask]
 
+    # Measure out-of-order timestamps
+    if len(df) > 1:
+        time_diffs = df["timestamp"].diff().dt.total_seconds()
+        stats.out_of_order_fixed = int((time_diffs < 0).sum())
+
     # Sort by time
     df = df.sort_values("timestamp").reset_index(drop=True)
 
     stats.final_txn_count = len(df)
     return df, stats
+
 
 
 def ingest_accounts(raw: bytes | str | pd.DataFrame) -> tuple[pd.DataFrame, IngestStats]:

@@ -15,17 +15,17 @@
       "details": {
         "hub": "ACC_05001",
         "victims": [
-          "ACC_00327",
-          "ACC_00508",
-          "ACC_00680",
-          "ACC_01173",
-          "ACC_01385",
-          "ACC_01706",
-          "ACC_02927",
-          "ACC_03467",
-          "ACC_04171",
-          "ACC_04366",
-          "ACC_04563"
+          "ACC_01094",
+          "ACC_01429",
+          "ACC_01592",
+          "ACC_01883",
+          "ACC_02183",
+          "ACC_02613",
+          "ACC_02889",
+          "ACC_03051",
+          "ACC_04028",
+          "ACC_04697",
+          "ACC_04862"
         ],
         "receivers": [
           "ACC_05002",
@@ -35,8 +35,8 @@
           "ACC_05006",
           "ACC_05007"
         ],
-        "total_inflow": 468676.74,
-        "forward_ratio": 0.9389
+        "total_inflow": 424089.49,
+        "forward_ratio": 0.9423
       }
     },
     {
@@ -55,16 +55,16 @@
           "ACC_05008"
         ],
         "amounts": [
-          117562.14,
-          113887.76,
-          110759.22
+          161994.57,
+          156259.64,
+          152775.03
         ],
         "gap_minutes": [
-          12.78,
-          9.53,
-          14.68
+          14.69,
+          9.54,
+          7.06
         ],
-        "total_minutes": 36.98
+        "total_minutes": 31.28
       }
     },
     {
@@ -85,18 +85,18 @@
           "ACC_05011"
         ],
         "amounts": [
-          99724.45,
-          96415.8,
-          92660.97,
-          89604.85
+          117562.14,
+          113887.76,
+          110759.22,
+          106189.21
         ],
         "gap_minutes": [
-          9.51,
-          4.76,
-          8.6,
-          6.0
+          9.72,
+          7.49,
+          11.03,
+          7.36
         ],
-        "total_minutes": 28.87
+        "total_minutes": 35.6
       }
     },
     {
@@ -119,20 +119,20 @@
           "ACC_05015"
         ],
         "amounts": [
-          145679.78,
-          139788.53,
-          134081.27,
-          130207.69,
-          125672.49
+          134110.41,
+          128887.6,
+          124636.67,
+          120580.25,
+          116858.66
         ],
         "gap_minutes": [
-          3.01,
-          8.45,
-          4.59,
-          7.97,
-          5.72
+          4.28,
+          7.07,
+          5.18,
+          4.07,
+          3.01
         ],
-        "total_minutes": 29.75
+        "total_minutes": 23.62
       }
     },
     {
@@ -154,16 +154,16 @@
           "ACC_05024"
         ],
         "hop_gaps_min": [
-          6.21,
-          7.93,
-          4.69,
-          3.71
+          3.59,
+          6.97,
+          4.72,
+          7.06
         ],
         "forward_ratios": [
-          0.9831,
-          0.9726,
-          0.9881,
-          0.9867
+          0.9781,
+          0.9702,
+          0.9876,
+          0.9859
         ]
       }
     },
@@ -184,14 +184,14 @@
           "ACC_05028"
         ],
         "hop_gaps_min": [
-          5.55,
-          6.83,
-          3.85
+          7.93,
+          4.69,
+          3.71
         ],
         "forward_ratios": [
-          0.9537,
-          0.9853,
-          0.9792
+          0.9726,
+          0.9881,
+          0.9867
         ]
       }
     },
@@ -220,6 +220,20 @@
       ],
       "details": {
         "shared_attribute": "ip,kyc_phone"
+      }
+    },
+    {
+      "ring_id": "dormancy_1",
+      "pattern": "dormancy",
+      "accounts": [
+        "ACC_05044"
+      ],
+      "details": {
+        "dormant_days": 450,
+        "awakening_volume": 877500.0,
+        "inflow": 450000.0,
+        "outflow": 427500.0,
+        "forward_ratio": 0.95
       }
     }
   ],
@@ -303,7 +317,8 @@
     "ACC_05031",
     "ACC_05032",
     "ACC_05033",
-    "ACC_05034"
+    "ACC_05034",
+    "ACC_05044"
   ],
   "all_decoy_accounts": [
     "ACC_05035",
@@ -317,14 +332,16 @@
     "ACC_05043"
   ],
   "summary": {
-    "total_accounts": 5043,
-    "total_transactions": 61934,
+    "total_accounts": 5044,
+    "total_transactions": 62218,
     "planted_fan": 1,
     "planted_cycle": 3,
     "planted_chain": 2,
     "planted_cluster": 2,
+    "planted_dormancy": 1,
+    "evasion_level": 0.0,
     "decoy_count": 5,
-    "mule_account_count": 34,
+    "mule_account_count": 35,
     "decoy_account_count": 9
   }
 }

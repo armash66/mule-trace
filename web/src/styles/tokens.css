@@ -1,0 +1,119 @@
+/* MuleTrace Scandinavian Minimalist Design Tokens */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Surface & Background */
+  --bg: #FAFAF9;
+  --surface: #FFFFFF;
+  --surface-raised: #F5F5F4;
+  --surface-hover: #F2F1EE;
+
+  /* Typography / Inks */
+  --ink: #111113;
+  --ink-2: #5B5B62;
+  --ink-3: #8A8A92;
+  --ink-inverted: #FFFFFF;
+
+  /* Borders & Dividers */
+  --line: #E7E5E0;
+  --line-strong: #D6D3CC;
+
+  /* Accent & Signaling Colors (Used with extreme restraint) */
+  --accent: #6D4AFF;         /* Violet: Primary actions, active left-border, focus ring ONLY */
+  --accent-muted: #F2EFFF;   /* Extremely subtle interactive highlight */
+  
+  --risk-high: #E8590C;      /* Orange-red: ONLY highest risk node and top score */
+  --risk-mid: #D9A441;       /* Amber: mid-range scores */
+  --risk-low: #A3A3AB;       /* Grey: low scores */
+  
+  --ok: #2F8F5B;             /* Benign / Cleared */
+  --confirmed: #B42318;      /* Confirmed mule (outline only) */
+
+  /* Spacing & Geometry */
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-pill: 9999px;
+
+  /* Fonts */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #121214;
+  --surface: #1A1A1D;
+  --surface-raised: #222226;
+  --surface-hover: #2A2A30;
+
+  --ink: #EDEDEF;
+  --ink-2: #9B9BA3;
+  --ink-3: #6E6E78;
+  --ink-inverted: #111113;
+
+  --line: #2D2D33;
+  --line-strong: #3D3D45;
+
+  --accent: #8668FF;
+  --accent-muted: #241E3B;
+  
+  --risk-high: #F76B15;
+  --risk-mid: #E5B84B;
+  --risk-low: #6E6E78;
+  
+  --ok: #38A169;
+  --confirmed: #E53E3E;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular mono numbers for financial precision */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Restrained focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Skeleton Loading Pulse */
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.skeleton {
+  background-color: var(--line);
+  border-radius: var(--radius-sm);
+  animation: subtlePulse 1.6s ease-in-out infinite;
+}
+
+/* Respect user motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skeleton {
+    animation: none !important;
+    opacity: 0.5 !important;
+  }
+}

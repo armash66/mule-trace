@@ -9,7 +9,8 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.routes import load_demo_data, router as api_router
+from .api import api_router, api_v1_router
+from .api.simulate import reset_demo
 from .db import SessionLocal, init_db
 from .models import Run
 
@@ -33,7 +34,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         if run_count == 0:
             logger.info("Fresh database detected — auto-loading demo dataset...")
             try:
-                load_demo_data(db)
+                reset_demo(db)
                 logger.info("Demo dataset successfully loaded!")
             except Exception as e:
                 logger.warning("Could not auto-load demo data: %s", e)
@@ -46,7 +47,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title="MuleTrace API",
-    description="High-precision graph and ML detection engine for money-mule networks.",
+    description="High-precision graph and ML detection engine for money-mule networks in India.",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -60,13 +61,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount primary /api/v1 router and legacy /api router
+app.include_router(api_v1_router)
 app.include_router(api_router)
 
 
 @app.get("/health")
+@app.get("/api/v1/health")
 def health_check() -> dict[str, str]:
     """Health check endpoint."""
     return {"status": "ok", "service": "MuleTrace"}
+
 
 
 @app.get("/")
@@ -76,5 +81,6 @@ def root() -> dict[str, str]:
         "name": "MuleTrace Engine",
         "version": "1.0.0",
         "docs": "/docs",
+        "api_v1": "/api/v1",
         "api": "/api",
     }

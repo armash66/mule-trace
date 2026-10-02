@@ -141,10 +141,11 @@ class DataGenerator:
 
     # ── Init ────────────────────────────────────────────────────────────────
 
-    def __init__(self, seed: int, output_dir: Path, config: dict[str, Any]) -> None:
+    def __init__(self, seed: int, output_dir: Path, config: dict[str, Any], evasion: float = 0.0) -> None:
         self.rng = np.random.default_rng(seed)
         self.out = output_dir
         self.cfg: dict[str, Any] = config.get("generator", {})
+        self.evasion = float(evasion)
 
         self._txn_ctr: int = 0
 
@@ -165,6 +166,7 @@ class DataGenerator:
         self.mule_ids: set[str] = set()
         self.decoy_ids: set[str] = set()
         self.ground_truth: dict[str, Any] = {}
+
 
     # ── Tiny helpers ────────────────────────────────────────────────────────
 
@@ -377,8 +379,18 @@ class DataGenerator:
         for i in range(5032, 5035):
             self._make_new_acct(acc_id(i), ip=cluster2_ip, phone=cluster2_phone)
 
+        # ── Dormancy account (sleeper mule: 05044) ──
+        self._make_old_acct(
+            acc_id(5044),
+            min_age=450,
+            max_age=600,
+            balance=1500.0,
+        )
+
         # Register all mule account IDs
         self.mule_ids.update(acc_id(i) for i in range(5001, 5035))
+        self.mule_ids.add(acc_id(5044))
+
 
     # ════════════════════════════════════════════════════════════════════════
     # 3.  Decoy accounts
@@ -629,8 +641,48 @@ class DataGenerator:
             })
 
     # ════════════════════════════════════════════════════════════════════════
+    # 8b. Dormancy ring (sleeper mule awakening)
+    # ════════════════════════════════════════════════════════════════════════
+
+    def _gen_dormancy_ring(self) -> None:
+        """One dormant account (ACC_05044) that awakens to move a large sum."""
+        sleeper = acc_id(5044)
+        base = self.T0 + timedelta(days=3, hours=11, minutes=15)
+
+        # 3 victims send ₹1,50,000 each
+        vic_idxs = self.rng.choice(len(self.normal_ids), size=3, replace=False)
+        victims = [self.normal_ids[int(i)] for i in vic_idxs]
+        inflow = 0.0
+        for i, vic in enumerate(victims):
+            amt = 150_000.0
+            ts = base + timedelta(minutes=float(i * 4))
+            self._txn_default(vic, sleeper, amt, ts, "IMPS")
+            inflow += amt
+
+        # Forward out after a short gap
+        gap = float(self.rng.uniform(20, 40)) * (1.0 + self.evasion * 3.0)
+        out_ts = base + timedelta(minutes=15 + gap)
+        out_amt = round(inflow * 0.95, 2)
+        dst = acc_id(5002)
+        self._txn_default(sleeper, dst, out_amt, out_ts, "NEFT")
+
+        self.rings.append({
+            "ring_id": "dormancy_1",
+            "pattern": "dormancy",
+            "accounts": [sleeper],
+            "details": {
+                "dormant_days": 450,
+                "awakening_volume": round(inflow + out_amt, 2),
+                "inflow": round(inflow, 2),
+                "outflow": round(out_amt, 2),
+                "forward_ratio": 0.95,
+            },
+        })
+
+    # ════════════════════════════════════════════════════════════════════════
     # 9.  Decoy transactions
     # ════════════════════════════════════════════════════════════════════════
+
 
     def _gen_decoy_transactions(self) -> None:
         """Traffic for each decoy pattern."""
@@ -817,6 +869,8 @@ class DataGenerator:
                 "planted_cycle": sum(1 for r in self.rings if r["pattern"] == "cycle"),
                 "planted_chain": sum(1 for r in self.rings if r["pattern"] == "chain"),
                 "planted_cluster": sum(1 for r in self.rings if r["pattern"] == "cluster"),
+                "planted_dormancy": sum(1 for r in self.rings if r["pattern"] == "dormancy"),
+                "evasion_level": self.evasion,
                 "decoy_count": len(self.decoys),
                 "mule_account_count": len(self.mule_ids),
                 "decoy_account_count": len(self.decoy_ids),
@@ -853,6 +907,7 @@ class DataGenerator:
             f"  Planted cycle:     {s['planted_cycle']}",
             f"  Planted chain:     {s['planted_chain']}",
             f"  Planted cluster:   {s['planted_cluster']}",
+            f"  Planted dormancy:  {s.get('planted_dormancy', 0)}",
             f"  Mule accounts:     {s['mule_account_count']}",
             f"  Decoys:            {s['decoy_count']}",
             f"  Decoy accounts:    {s['decoy_account_count']}",
@@ -874,6 +929,7 @@ class DataGenerator:
         self._gen_cycle_rings()
         self._gen_chains()
         self._gen_cluster_activity()
+        self._gen_dormancy_ring()
         self._gen_decoy_transactions()
         self._gen_cover_traffic()
         self._add_noise()
@@ -893,6 +949,8 @@ def main() -> None:
     )
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed for reproducibility (default: 42)")
+    parser.add_argument("--evasion", type=float, default=0.0,
+                        help="Fraudster evasion level 0.0 to 1.0 (default: 0.0)")
     parser.add_argument("--output-dir", type=str, default="data",
                         help="Output directory (default: data)")
     parser.add_argument("--config", type=str, default="config.yaml",
@@ -911,9 +969,11 @@ def main() -> None:
         seed=args.seed,
         output_dir=Path(args.output_dir),
         config=config,
+        evasion=args.evasion,
     )
     gen.generate()
 
 
 if __name__ == "__main__":
     main()
+

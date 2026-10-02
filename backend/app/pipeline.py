@@ -21,6 +21,7 @@ from .config import load_config
 from .detectors.chain import detect_chains
 from .detectors.cluster import detect_clusters
 from .detectors.cycle import detect_cycles
+from .detectors.dormancy import detect_dormancy
 from .detectors.fan import detect_fan
 from .features import extract_features
 from .graph import build_graph, get_ego_network
@@ -91,6 +92,9 @@ def run_pipeline(
     cluster_findings = detect_clusters(G, acct_df, config)
     findings.extend(cluster_findings)
 
+    dormancy_findings = detect_dormancy(G, acct_df, config)
+    findings.extend(dormancy_findings)
+
     # 5. Extract features
     features = extract_features(G, acct_df)
 
@@ -106,10 +110,24 @@ def run_pipeline(
     flag_threshold = config.get("scoring", {}).get("flag_threshold", 50)
     flagged = [a for a in scored.values() if a.risk_score >= flag_threshold or len(a.patterns) > 0]
 
+    duplicates_removed = txn_stats.dropped_duplicates + acct_stats.dropped_duplicates
     run_record = Run(
         txn_count=len(txn_df),
         acct_count=len(acct_df),
         flagged_count=len(flagged),
+        duplicates_removed=duplicates_removed,
+        out_of_order_fixed=txn_stats.out_of_order_fixed,
+        missing_device_pct=txn_stats.missing_device_pct,
+        missing_ip_pct=txn_stats.missing_ip_pct,
+        self_transfers_dropped=txn_stats.dropped_self_transfers,
+        health_summary={
+            "dropped_duplicates": duplicates_removed,
+            "out_of_order_fixed": txn_stats.out_of_order_fixed,
+            "missing_device_pct": txn_stats.missing_device_pct,
+            "missing_ip_pct": txn_stats.missing_ip_pct,
+            "dropped_self_transfers": txn_stats.dropped_self_transfers,
+            "dropped_bad_rows": txn_stats.dropped_bad_rows + acct_stats.dropped_bad_rows,
+        },
     )
     db.add(run_record)
     db.flush()
@@ -128,8 +146,10 @@ def run_pipeline(
                 reasons=acct.reasons,
                 findings=[f.model_dump() for f in acct.findings],
                 features=features.get(aid, {}),
+                status="unreviewed",
             )
             db.add(res)
+
 
     audit = AuditLog(
         action="PIPELINE_RUN",

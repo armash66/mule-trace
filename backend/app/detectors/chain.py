@@ -121,7 +121,23 @@ def detect_chains(
 
     for chain in chains:
         strength = min(1.0, 0.6 + 0.1 * len(chain))
-        for acct in chain:
+        full_chain = list(chain)
+        first_hop = node_to_hop.get(chain[0])
+        if first_hop and first_hop[0] in graph:
+            full_chain.insert(0, first_hop[0])
+        last_hop = node_to_hop.get(chain[-1])
+        if last_hop and last_hop[1] in graph:
+            full_chain.append(last_hop[1])
+
+        # Deduplicate while preserving order
+        seen_accts: set[str] = set()
+        deduped_chain: list[str] = []
+        for a in full_chain:
+            if a not in seen_accts:
+                seen_accts.add(a)
+                deduped_chain.append(a)
+
+        for acct in deduped_chain:
             hop = node_to_hop.get(acct)
             gap_min = round(hop[6] / 60, 2) if hop else 5.0
             ratio = round(hop[7], 4) if hop else 0.98
@@ -135,9 +151,9 @@ def detect_chains(
                 "amount_sent": amt_out,
                 "hop_gap_min": gap_min,
                 "balance_after": balance,
-                "chain_length": len(chain),
-                "chain_order": chain,
-                "position": chain.index(acct),
+                "chain_length": len(deduped_chain),
+                "chain_order": deduped_chain,
+                "position": deduped_chain.index(acct),
             }
 
             findings.append(
@@ -146,8 +162,9 @@ def detect_chains(
                     pattern="chain",
                     strength=round(strength, 4),
                     evidence=evidence,
-                    related_accounts=sorted(set(chain) - {acct}),
+                    related_accounts=sorted(set(deduped_chain) - {acct}),
                 )
             )
 
     return findings
+

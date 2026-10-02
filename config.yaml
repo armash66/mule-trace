@@ -26,9 +26,10 @@ generator:
 
 detectors:
   fan:
-    min_senders: 6
-    min_receivers: 3
-    min_forward_ratio: 0.80
+    min_senders: 8
+    min_receivers: 4
+    min_forward_ratio: 0.85
+    min_inflow: 150000
     window_in_minutes: 30
     window_out_minutes: 60
 
@@ -55,6 +56,13 @@ detectors:
     address_weight: 0.6
     nat_ip_threshold: 10
 
+  dormancy:
+    dormant_days: 90
+    min_awakening_amount: 250000
+    volume_multiplier: 5.0
+    window_hours: 24
+
+
 scoring:
   ml_weight: 0.30
   pattern_weights:
@@ -62,6 +70,8 @@ scoring:
     cycle: 0.70
     chain: 0.80
     cluster: 0.60
+    dormancy: 0.75
+    community: 0.65
   isolation_forest:
     n_estimators: 200
     contamination: 0.05
@@ -71,6 +81,24 @@ scoring:
     cleared_suppress: true
     weight_min: 0.1
     weight_max: 1.0
+
+analytics:
+  taint:
+    method: "haircut"
+    min_taint_amount: 100
+  freeze_optimizer:
+    max_alternatives: 3
+    tie_break: "degree_desc"
+  propagation:
+    alpha: 0.85
+    max_iter: 50
+    confirmed_weight: 1.0
+  communities:
+    resolution: 1.0
+    min_size: 3
+    random_state: 42
+  explain:
+    top_features: 3
 
 api:
   max_network_nodes: 60
@@ -82,3 +110,4 @@ api:
 testing:
   max_decoy_false_positives: 2
   min_recall_per_pattern: 0.90
+

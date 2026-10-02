@@ -1,16 +1,17 @@
-"""Fan-in / fan-out detector.
+"""Fan-in / fan-out pattern detector for MuleTrace.
 
-Flags a hub account when:
-  1. >= N distinct senders pay it inside a window T_in, **and**
-  2. within T_out afterwards >= M distinct receivers get >= R share of the inflow.
+Identifies hubs that receive funds from at least N distinct senders within
+a tight time window (T_in), then forward at least R (e.g. 80%) of that inflow
+to at least M distinct receivers within T_out.
 
-Requiring BOTH fan-in *and* fan-out avoids flagging payroll or merchant accounts.
+Excludes payroll accounts (many receivers, no preceding sudden fan-in)
+and merchants (continuous daily inflow, no matching rapid fan-out).
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 import networkx as nx
@@ -24,7 +25,7 @@ def detect_fan(
     accounts_df: pd.DataFrame,
     config: dict[str, Any],
 ) -> list[Finding]:
-    """Detect fan-in/fan-out patterns.
+    """Detect fan-in / fan-out hub and receiver patterns.
 
     Args:
         graph: Transaction multigraph.
@@ -32,21 +33,23 @@ def detect_fan(
         config: Full config dict.
 
     Returns:
-        List of Findings (one per hub).
+        List of Findings for hub and associated receivers.
     """
     cfg = config.get("detectors", {}).get("fan", {})
     min_senders: int = cfg.get("min_senders", 6)
     min_receivers: int = cfg.get("min_receivers", 3)
     min_fwd: float = cfg.get("min_forward_ratio", 0.80)
+    min_inflow: float = float(cfg.get("min_inflow", 100000.0))
     win_in = timedelta(minutes=cfg.get("window_in_minutes", 30))
     win_out = timedelta(minutes=cfg.get("window_out_minutes", 60))
+
 
     findings: list[Finding] = []
 
     for hub in graph.nodes():
-        # ── Quick filter: enough distinct senders overall? ──
+        # Quick filter: enough distinct senders & receivers overall
         in_edges = [
-            (u, d["timestamp"], d["amount"])
+            (u, d["timestamp"] if isinstance(d["timestamp"], datetime) else pd.to_datetime(d["timestamp"], utc=True).to_pydatetime(), float(d["amount"]))
             for u, _, d in graph.in_edges(hub, data=True)
         ]
         distinct_senders = {e[0] for e in in_edges}
@@ -54,16 +57,14 @@ def detect_fan(
             continue
 
         out_edges = [
-            (v, d["timestamp"], d["amount"])
+            (v, d["timestamp"] if isinstance(d["timestamp"], datetime) else pd.to_datetime(d["timestamp"], utc=True).to_pydatetime(), float(d["amount"]))
             for _, v, d in graph.out_edges(hub, data=True)
         ]
         distinct_receivers = {e[0] for e in out_edges}
         if len(distinct_receivers) < min_receivers:
             continue
 
-        # ── Sort in-edges by time, sliding-window search ──
         in_edges.sort(key=lambda e: e[1])
-
         best: dict[str, Any] | None = None
 
         for i in range(len(in_edges)):
@@ -81,17 +82,20 @@ def detect_fan(
                 continue
 
             inflow = sum(window_senders.values())
+            if inflow < min_inflow:
+                continue
 
-            # Check fan-out in [t_end_in, t_end_in + win_out]
-            t_start_out = t_end_in
-            t_end_out = t_start_out + win_out
+            # Check fan-out in [t_start, t_end_in + win_out]
+            t_start_out = t_start
+            t_end_out = t_end_in + win_out
             window_receivers: dict[str, float] = defaultdict(float)
             for recv, ts, amt in out_edges:
-                if t_start_out <= ts <= t_end_out:
+                if t_start_out <= ts <= t_end_out and amt >= (inflow * 0.05):
                     window_receivers[recv] += amt
 
             if len(window_receivers) < min_receivers:
                 continue
+
 
             outflow = sum(window_receivers.values())
             fwd_ratio = outflow / max(inflow, 1.0)
@@ -99,7 +103,7 @@ def detect_fan(
             if fwd_ratio < min_fwd:
                 continue
 
-            # Keep the best (highest inflow) window for this hub
+            # Keep the best window for this hub
             if best is None or inflow > best["inflow"]:
                 last_out_ts = max(
                     (ts for _, ts, _ in out_edges if t_start_out <= ts <= t_end_out),
@@ -121,12 +125,11 @@ def detect_fan(
         if best is None:
             continue
 
-        # Strength: higher with more senders, higher fwd ratio
         strength = min(
             1.0,
             (best["n_senders"] / min_senders)
             * (best["forward_ratio"] / min_fwd)
-            * 0.4,
+            * 0.5,
         )
 
         findings.append(
@@ -140,5 +143,23 @@ def detect_fan(
                 ),
             )
         )
+
+        # Also flag the immediate fan-out receivers
+        for recv in best["receivers"]:
+            findings.append(
+                Finding(
+                    account_id=recv,
+                    pattern="fan",
+                    strength=round(strength * 0.85, 4),
+                    evidence={
+                        "role": "fan_out_receiver",
+                        "hub": hub,
+                        "forward_ratio": best["forward_ratio"],
+                        "n_senders": best["n_senders"],
+                        "n_receivers": best["n_receivers"],
+                    },
+                    related_accounts=[hub] + [r for r in best["receivers"] if r != recv],
+                )
+            )
 
     return findings

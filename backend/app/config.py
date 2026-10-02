@@ -20,7 +20,11 @@ def load_config(path: str | Path = "config.yaml") -> dict[str, Any]:
     """
     config_path = Path(path)
     if not config_path.exists():
-        raise FileNotFoundError(f"Config file not found: {config_path}")
+        repo_root_config = Path(__file__).resolve().parent.parent.parent / "config.yaml"
+        if repo_root_config.exists():
+            config_path = repo_root_config
+        else:
+            raise FileNotFoundError(f"Config file not found: {config_path}")
     with open(config_path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 

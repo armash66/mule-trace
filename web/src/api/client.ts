@@ -142,6 +142,16 @@ export const api = {
     }
   },
 
+  traceAccount: async (accountId: string, rule: 'proportional' | 'fifo' = 'proportional') => {
+    const res = await apiClient.get(`/accounts/${accountId}/trace`, { params: { rule, max_hops: 8 } });
+    return res.data;
+  },
+
+  getFreezeRecommendation: async (accountId: string, rule: 'proportional' | 'fifo' = 'proportional') => {
+    const res = await apiClient.get(`/accounts/${accountId}/freeze-recommendation`, { params: { rule } });
+    return res.data;
+  },
+
   getAccountExplain: async (accountId: string): Promise<ExplainResponse> => {
     try {
       const res = await apiClient.get<ExplainResponse>(`/accounts/${accountId}/explain`);

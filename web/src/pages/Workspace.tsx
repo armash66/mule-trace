@@ -40,6 +40,9 @@ export const Investigate: React.FC = () => {
   const [freezeModalOpen, setFreezeModalOpen] = useState(false);
   const [decisionNote, setDecisionNote] = useState('');
   const [latestDecision, setLatestDecision] = useState<'confirmed' | 'cleared' | null>(null);
+  const [traceRule, setTraceRule] = useState<'proportional' | 'fifo'>('proportional');
+  const [traceData, setTraceData] = useState<any>(null);
+  const [freezeRecommendation, setFreezeRecommendation] = useState<any>(null);
 
   // Sync route
   useEffect(() => {
@@ -101,6 +104,16 @@ export const Investigate: React.FC = () => {
       loadAccountData(activeId, currentHops);
     } catch {
       showToast('Failed to record decision.');
+    }
+  };
+
+  const traceFromVictim = async () => {
+    try {
+      const [trace, recommendation] = await Promise.all([api.traceAccount(activeId, traceRule), api.getFreezeRecommendation(activeId, traceRule)]);
+      setTraceData(trace);
+      setFreezeRecommendation(recommendation);
+    } catch {
+      showToast('No trace is available for this account.');
     }
   };
 
@@ -370,6 +383,22 @@ export const Investigate: React.FC = () => {
               Not a mule
             </button>
           </div>
+        </div>
+
+        <div style={{ borderTop: '2px solid var(--ink)', paddingTop: '10px', marginBottom: '20px' }}>
+          <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>Trace from victim</div>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+            <select className="mono" value={traceRule} onChange={(event) => setTraceRule(event.target.value as 'proportional' | 'fifo')} style={{ flex: 1, padding: '6px', border: '1px solid var(--rule)', background: 'var(--paper)', color: 'var(--ink)' }}>
+              <option value="proportional">Proportional</option><option value="fifo">FIFO</option>
+            </select>
+            <button type="button" className="btn" onClick={traceFromVictim}>Trace</button>
+          </div>
+          {traceData && <div style={{ border: '1px solid var(--rule)', padding: '10px' }}>
+            <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>Rule: {traceData.rule} · up to {traceData.max_hops} hops</div>
+            <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginBottom: '8px' }}>Taint moves forward in time. Amounts are estimated from the selected rule and available transaction balance.</div>
+            {traceData.edges.map((edge: any) => <div key={`${edge.txn_id}-${edge.timestamp}`} className="mono" style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--rule)', padding: '6px 0' }}><span>{edge.src} → {edge.dst}</span><span>INR {Number(edge.tainted_amount).toFixed(2)}</span></div>)}
+            {freezeRecommendation && <div style={{ borderTop: '2px solid var(--ink)', marginTop: '8px', paddingTop: '8px', fontSize: '12px' }}><strong>Freeze comparison</strong><div>Min-cut: {freezeRecommendation.freeze_accounts.length} accounts, INR {freezeRecommendation.amount_intercepted.toFixed(2)} intercepted.</div><div>Top-3 risk: {freezeRecommendation.baseline_accounts.length} accounts, INR {freezeRecommendation.baseline_intercepted.toFixed(2)} intercepted.</div><div className="mono" style={{ color: freezeRecommendation.mincut_wins ? 'var(--ok)' : 'var(--ink-2)', marginTop: '4px' }}>{freezeRecommendation.mincut_wins ? 'Min-cut wins on this trail.' : 'Top-3 risk is not beaten on this trail.'}</div></div>}
+          </div>}
         </div>
 
         {/* Three plain text tabs: Evidence, Details, History with 2px ink underline */}

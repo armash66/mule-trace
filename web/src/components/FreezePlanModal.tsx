@@ -16,6 +16,7 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
   const [plan, setPlan] = useState<FreezePlanResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [dispatching, setDispatching] = useState(false);
+  const [demoRole, setDemoRole] = useState<'analyst' | 'maker' | 'checker'>('maker');
 
   useEffect(() => {
     if (isOpen && ringId) {
@@ -109,6 +110,13 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
 
         {/* Body */}
         <div style={{ padding: '20px' }}>
+          <div style={{ borderBottom: '1px solid var(--rule)', paddingBottom: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="mono" style={{ color: 'var(--ink-2)' }}>Demo role</span>
+            <select className="mono" value={demoRole} onChange={(event) => setDemoRole(event.target.value as typeof demoRole)} style={{ padding: '4px', border: '1px solid var(--rule)', background: 'var(--paper)', color: 'var(--ink)' }}>
+              <option value="analyst">Analyst · view only</option><option value="maker">Maker · generate request</option><option value="checker">Checker · approve or reject</option>
+            </select>
+            <span className="mono" style={{ color: 'var(--ink-2)' }}>Demo only</span>
+          </div>
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div className="skeleton" style={{ height: '40px' }} />
@@ -276,7 +284,7 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
             Cancel
           </button>
           <button
-            disabled={!plan || dispatching}
+            disabled={!plan || dispatching || demoRole !== 'maker'}
             onClick={handleDispatch}
             style={{
               display: 'inline-flex',
@@ -288,8 +296,8 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
               color: 'var(--paper)',
               fontSize: '13px',
               fontWeight: 600,
-              cursor: dispatching ? 'not-allowed' : 'pointer',
-              opacity: dispatching ? 0.7 : 1,
+              cursor: dispatching || demoRole !== 'maker' ? 'not-allowed' : 'pointer',
+              opacity: dispatching || demoRole !== 'maker' ? 0.7 : 1,
             }}
           >
             <CheckCircle size={14} />

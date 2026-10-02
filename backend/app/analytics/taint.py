@@ -28,6 +28,109 @@ class TaintSummary:
     accounts: dict[str, TaintAccountResult]
 
 
+@dataclass
+class TaintTrailEdge:
+    src: str
+    dst: str
+    amount: float
+    tainted_amount: float
+    timestamp: datetime
+    txn_id: str
+    hop: int
+
+
+@dataclass
+class TaintTrailAccount:
+    account_id: str
+    tainted_received: float
+    tainted_forwarded: float
+    current_exposure: float
+
+
+@dataclass
+class TaintTrail:
+    rule: str
+    max_hops: int
+    seed_amount: float
+    edges: list[TaintTrailEdge]
+    accounts: dict[str, TaintTrailAccount]
+
+
+def trace_taint(
+    G: nx.MultiDiGraph,
+    seed_transfer: dict[str, Any],
+    rule: str = "proportional",
+    max_hops: int = 8,
+    decision_time: datetime | str | None = None,
+) -> TaintTrail:
+    """Trace one victim transfer forward in time using proportional or FIFO taint."""
+    if rule not in {"proportional", "fifo"}:
+        raise ValueError("rule must be proportional or fifo")
+    seed_time = pd.to_datetime(seed_transfer["timestamp"], utc=True).to_pydatetime()
+    cutoff = pd.to_datetime(decision_time, utc=True).to_pydatetime() if decision_time else None
+    edges: list[dict[str, Any]] = []
+    for src, dst, key, data in G.edges(keys=True, data=True):
+        timestamp = pd.to_datetime(data.get("timestamp"), utc=True, errors="coerce")
+        if pd.isna(timestamp):
+            continue
+        timestamp = timestamp.to_pydatetime()
+        if timestamp <= seed_time or (cutoff and timestamp > cutoff):
+            continue
+        edges.append({"src": src, "dst": dst, "amount": float(data.get("amount", 0.0)), "timestamp": timestamp, "txn_id": data.get("txn_id", f"{src}_{dst}_{key}")})
+    edges.sort(key=lambda edge: edge["timestamp"])
+
+    total_balance: dict[str, float] = {str(seed_transfer["dst"]): float(seed_transfer["amount"])}
+    taint_balance: dict[str, float] = {str(seed_transfer["dst"]): float(seed_transfer["amount"])}
+    tainted_received: dict[str, float] = {str(seed_transfer["dst"]): float(seed_transfer["amount"])}
+    tainted_forwarded: dict[str, float] = {}
+    lots: dict[str, list[tuple[int, float]]] = {str(seed_transfer["dst"]): [(0, float(seed_transfer["amount"]))]}
+    trail: list[TaintTrailEdge] = []
+
+    for edge in edges:
+        src, dst, amount = edge["src"], edge["dst"], edge["amount"]
+        available = max(total_balance.get(src, 0.0), 0.0)
+        available_taint = max(taint_balance.get(src, 0.0), 0.0)
+        if rule == "proportional":
+            transferred_taint = min(amount, available_taint) if available <= 0 else min(amount, available_taint * (amount / available))
+            source_lots = lots.get(src, [])
+            allocations: list[tuple[int, float]] = []
+            for hop, lot_amount in source_lots:
+                share = lot_amount / available_taint if available_taint else 0.0
+                allocations.append((hop + 1, transferred_taint * share))
+            lots[src] = [(hop, max(0.0, value - transferred_taint * (value / available_taint))) for hop, value in source_lots] if available_taint else source_lots
+        else:
+            transferred_taint = min(amount, available_taint)
+            allocations = []
+            remaining = transferred_taint
+            source_lots = lots.get(src, [])
+            kept: list[tuple[int, float]] = []
+            for hop, lot_amount in source_lots:
+                used = min(remaining, lot_amount)
+                if used:
+                    allocations.append((hop + 1, used))
+                    remaining -= used
+                if lot_amount - used > 1e-9:
+                    kept.append((hop, lot_amount - used))
+            lots[src] = kept
+        total_balance[src] = max(0.0, available - amount)
+        total_balance[dst] = total_balance.get(dst, 0.0) + amount
+        taint_balance[src] = max(0.0, available_taint - transferred_taint)
+        taint_balance[dst] = taint_balance.get(dst, 0.0) + transferred_taint
+        if transferred_taint <= 0 or not allocations:
+            continue
+        tainted_received[dst] = tainted_received.get(dst, 0.0) + transferred_taint
+        tainted_forwarded[src] = tainted_forwarded.get(src, 0.0) + transferred_taint
+        for hop, allocation in allocations:
+            if allocation > 0 and hop <= max_hops:
+                lots.setdefault(dst, []).append((hop, allocation))
+        min_hop = min(hop for hop, _ in allocations)
+        if min_hop <= max_hops:
+            trail.append(TaintTrailEdge(src, dst, amount, transferred_taint, edge["timestamp"], edge["txn_id"], min_hop))
+
+    accounts = {account: TaintTrailAccount(account, round(tainted_received.get(account, 0.0), 2), round(tainted_forwarded.get(account, 0.0), 2), round(taint_balance.get(account, 0.0), 2)) for account in set(tainted_received) | set(tainted_forwarded) | set(taint_balance)}
+    return TaintTrail(rule, max_hops, float(seed_transfer["amount"]), trail, accounts)
+
+
 def propagate_taint(
     G: nx.MultiDiGraph,
     seed_transfers: list[dict[str, Any]],

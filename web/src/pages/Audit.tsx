@@ -7,6 +7,19 @@ export const Audit: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterAction, setFilterAction] = useState('all');
+  const [demoRole, setDemoRole] = useState<'analyst' | 'maker' | 'checker'>('analyst');
+
+  const exportCsv = () => {
+    const header = 'actor,action,timestamp,request_id,payload_hash';
+    const rows = filteredLogs.map((log) => [log.analyst || log.username || '', log.action, log.timestamp, log.request_id || log.entity_id || '', log.payload_hash || ''].map((value) => JSON.stringify(value)).join(','));
+    const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'muletrace-audit.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     api.getAuditLog().then((data) => {
@@ -32,6 +45,12 @@ export const Audit: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>Demo role</span>
+          <select className="mono" value={demoRole} onChange={(event) => setDemoRole(event.target.value as typeof demoRole)} style={{ padding: '4px 8px', border: '1px solid var(--rule)', background: 'var(--paper)', color: 'var(--ink)' }}>
+            <option value="analyst">Analyst · view and review</option><option value="maker">Maker · draft freezes</option><option value="checker">Checker · approve or reject</option>
+          </select>
+          <span className="mono" style={{ color: 'var(--ink-2)' }}>Demo only</span>
+          <button className="btn-ghost" onClick={exportCsv} style={{ padding: '5px 8px', cursor: 'pointer' }}>Export CSV</button>
           <span style={{ fontSize: '11px', color: 'var(--ink-2)', fontWeight: 600 }}>ACTION FILTER:</span>
           <select
             value={filterAction}

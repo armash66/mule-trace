@@ -16,6 +16,42 @@ from ..schemas import FreezeAlternative, FreezePlanResponse
 logger = logging.getLogger(__name__)
 
 
+def build_time_expanded_flow(trail: Any, decision_time: Any | None = None) -> tuple[nx.DiGraph, str, str]:
+    """Build a time-expanded node-split graph from a TaintTrail."""
+    flow = nx.DiGraph()
+    source, sink = "__VICTIM__", "__CASHOUT__"
+    for edge in trail.edges:
+        if decision_time is not None and edge.timestamp > decision_time:
+            continue
+        flow.add_edge((edge.src, edge.timestamp, "out"), (edge.dst, edge.timestamp, "in"), capacity=float(edge.tainted_amount))
+        flow.add_edge((edge.dst, edge.timestamp, "in"), (edge.dst, edge.timestamp, "out"), capacity=float(edge.tainted_amount))
+    if trail.edges:
+        first = min(trail.edges, key=lambda edge: edge.timestamp)
+        last = max(trail.edges, key=lambda edge: edge.timestamp)
+        flow.add_edge(source, (first.src, first.timestamp, "out"), capacity=trail.seed_amount)
+        flow.add_edge((last.dst, last.timestamp, "out"), sink, capacity=trail.seed_amount)
+    return flow, source, sink
+
+
+def recommend_time_expanded_freeze(trail: Any, risk_scores: dict[str, float] | None = None, decision_time: Any | None = None) -> dict[str, Any]:
+    """Compare a taint-trail minimum cut with a top-three risk baseline."""
+    flow, source, sink = build_time_expanded_flow(trail, decision_time)
+    mincut_accounts: list[str] = []
+    intercepted = 0.0
+    if flow.has_node(source) and flow.has_node(sink):
+        _, partition = nx.minimum_cut(flow, source, sink)
+        reachable, blocked = partition
+        for node in reachable:
+            if isinstance(node, tuple) and len(node) == 3 and node[2] == "in" and (node[0], node[1], "out") in blocked:
+                if node[0] not in mincut_accounts:
+                    mincut_accounts.append(node[0])
+        intercepted = sum(edge.tainted_amount for edge in trail.edges if edge.dst in mincut_accounts)
+    scores = risk_scores or {}
+    baseline = sorted(scores, key=scores.get, reverse=True)[:3]
+    baseline_intercepted = sum(edge.tainted_amount for edge in trail.edges if edge.dst in baseline)
+    return {"freeze_accounts": mincut_accounts, "amount_intercepted": round(intercepted, 2), "baseline_accounts": baseline, "baseline_intercepted": round(baseline_intercepted, 2), "mincut_wins": intercepted > baseline_intercepted, "assumptions": ["Taint only moves forward in time.", "Node capacity is tainted money passing through an account.", "Decision time excludes later transfers."]}
+
+
 def optimize_freeze_plan(
     ring_graph: nx.DiGraph | nx.MultiDiGraph,
     seed_accounts: list[str],

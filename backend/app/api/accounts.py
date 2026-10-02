@@ -10,8 +10,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from ..analytics.explain import explain_account
+from ..analytics.freeze_optimizer import recommend_time_expanded_freeze
 from ..analytics.propagation import compute_risk_propagation
-from ..analytics.taint import propagate_taint
+from ..analytics.taint import propagate_taint, trace_taint
 from ..db import get_db
 from ..graph import get_ego_network
 from ..models import AccountResult, AuditLog, Decision, Run
@@ -27,6 +28,7 @@ from ..schemas import (
     NetworkResponse,
     TaintAccountResult,
 )
+from dataclasses import asdict
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/accounts", tags=["accounts"])
@@ -272,6 +274,31 @@ def get_account_taint(account_id: str) -> TaintAccountResult:
         tainted_balance_remaining=0.0,
         cashed_out=0.0,
     )
+
+
+@router.get("/{account_id}/trace")
+def trace_account(account_id: str, rule: Literal["proportional", "fifo"] = "proportional", max_hops: int = Query(8, ge=1, le=8), decision_time: str | None = None) -> dict[str, Any]:
+    """Trace the first victim transfer from an account using a selectable rule."""
+    if pipeline_state.graph is None or not pipeline_state.graph.has_node(account_id):
+        raise HTTPException(status_code=404, detail="Account graph is not loaded")
+    outgoing = list(pipeline_state.graph.out_edges(account_id, data=True, keys=True))
+    if not outgoing:
+        raise HTTPException(status_code=404, detail="No victim transaction found for this account")
+    src, dst, key, data = sorted(outgoing, key=lambda item: str(item[3].get("timestamp", "")))[0]
+    trail = trace_taint(pipeline_state.graph, {"src": src, "dst": dst, "amount": float(data.get("amount", 0.0)), "timestamp": data.get("timestamp")}, rule=rule, max_hops=max_hops, decision_time=decision_time)
+    return asdict(trail)
+
+
+@router.get("/{account_id}/freeze-recommendation")
+def freeze_recommendation(account_id: str, rule: Literal["proportional", "fifo"] = "proportional", decision_time: str | None = None) -> dict[str, Any]:
+    """Compare a time-expanded taint cut with the top-three risk baseline."""
+    trace = trace_account(account_id, rule=rule, decision_time=decision_time)
+    from types import SimpleNamespace
+    trail = SimpleNamespace(**trace)
+    trail.edges = [SimpleNamespace(**edge) for edge in trace["edges"]]
+    trail.seed_amount = trace["seed_amount"]
+    scores = {aid: float(item.risk_score) for aid, item in pipeline_state.scored_accounts.items()}
+    return recommend_time_expanded_freeze(trail, scores, decision_time)
 
 
 @router.get("/{account_id}/explain", response_model=ExplainResponse)

@@ -165,8 +165,8 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
         {
           selector: 'edge[isTainted = 1]',
           style: {
-            'line-color': '#b42318',
-            'target-arrow-color': '#b42318',
+            'line-color': theme.signal,
+            'target-arrow-color': theme.signal,
             width: 2.5,
             opacity: 0.95,
           },

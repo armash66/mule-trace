@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cytoscape from 'cytoscape';
 import type { Core } from 'cytoscape';
 import type { NetworkEdge, NetworkNode } from '../api/types';
-import { formatLakhs } from '../lib/utils';
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { getThemeColors } from '../lib/theme';
 
 interface CytoscapeGraphProps {
   nodes: NetworkNode[];
@@ -12,6 +11,7 @@ interface CytoscapeGraphProps {
   recommendedFreezeId?: string | null;
   onNodeClick?: (nodeId: string) => void;
   height?: string | number;
+  savedAmountFormatted?: string;
 }
 
 export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
@@ -21,34 +21,53 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
   recommendedFreezeId,
   onNodeClick,
   height = '100%',
+  savedAmountFormatted = '₹4.1L',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
+  const [cutLabelPos, setCutLabelPos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || nodes.length === 0) return;
+
+    const theme = getThemeColors();
+
+    // Compute node degrees
+    const degreeMap: Record<string, number> = {};
+    nodes.forEach((n) => {
+      degreeMap[n.id] = 0;
+    });
+    edges.forEach((e) => {
+      degreeMap[e.src] = (degreeMap[e.src] || 0) + 1;
+      degreeMap[e.dst] = (degreeMap[e.dst] || 0) + 1;
+    });
+
+    // Find top-risk node (highest score)
+    let topNodeId = nodes[0]?.id;
+    let maxScore = -1;
+    nodes.forEach((n) => {
+      if (n.score > maxScore) {
+        maxScore = n.score;
+        topNodeId = n.id;
+      }
+    });
 
     // Convert to Cytoscape elements
     const elements: cytoscape.ElementDefinition[] = [];
 
     nodes.forEach((n) => {
-      let color = 'var(--risk-low)';
-      if (n.score >= 75) color = 'var(--signal)';
-      else if (n.score >= 40) color = 'var(--ink-2)';
-      else color = 'var(--ink-2)';
-
-      const isFreeze = n.id === recommendedFreezeId;
-      const isSelected = n.id === selectedId;
+      const isTop = n.id === topNodeId;
+      const deg = degreeMap[n.id] || 0;
+      const size = isTop ? 26 : Math.min(22, Math.max(10, 10 + deg * 2));
 
       elements.push({
         group: 'nodes',
         data: {
           id: n.id,
           label: n.id,
-          score: n.score,
-          color: color,
-          isFreeze: isFreeze ? 1 : 0,
-          isSelected: isSelected ? 1 : 0,
+          isTop: isTop ? 1 : 0,
+          nodeSize: size,
+          isFreeze: n.id === recommendedFreezeId ? 1 : 0,
         },
       });
     });
@@ -60,20 +79,13 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
           id: `e_${e.src}_${e.dst}_${idx}`,
           source: e.src,
           target: e.dst,
-          label: formatLakhs(e.total_amount),
-          amount: e.total_amount,
         },
       });
     });
 
-    // Destroy existing instance if any
     if (cyRef.current) {
       cyRef.current.destroy();
     }
-
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? 'var(--paper)' : 'var(--ink)';
-    const edgeColor = isDark ? 'var(--ink)' : 'var(--ink)';
 
     const cy = cytoscape({
       container: containerRef.current,
@@ -82,181 +94,267 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
         {
           selector: 'node',
           style: {
-            'background-color': 'data(color)',
-            label: 'data(label)',
+            'background-color': theme.ink,
+            width: 'data(nodeSize)',
+            height: 'data(nodeSize)',
+            'border-width': 0,
+            label: '',
             'font-family': 'JetBrains Mono, monospace',
             'font-size': '11px',
-            'font-weight': 600,
-            color: textColor,
+            'font-weight': 400,
+            color: theme.ink,
             'text-valign': 'bottom',
             'text-margin-y': 6,
-            width: 36,
-            height: 36,
-            'border-width': 2,
-            'border-color': 'var(--paper)',
-            'transition-property': 'background-color, border-width, border-color, width, height',
-            'transition-duration': 0.2,
+            'transition-property': 'opacity, background-color, border-width, border-color',
+            'transition-duration': 0.25,
           },
         },
+        // Top-risk node: signal fill, size 26, always shows label
         {
-          selector: 'node[isSelected = 1]',
+          selector: 'node[isTop = 1]',
           style: {
-            'border-width': 4,
-            'border-color': 'var(--ink)',
-            width: 44,
-            height: 44,
+            'background-color': theme.signal,
+            width: 26,
+            height: 26,
+            label: 'data(label)',
+            'border-width': 0,
           },
         },
+        // Show label on hover
         {
-          selector: 'node[isFreeze = 1]',
+          selector: 'node:hover',
           style: {
-            'border-width': 4,
-            'border-color': 'var(--signal)',
-            width: 44,
-            height: 44,
+            label: 'data(label)',
           },
         },
+        // Neighbor nodes style (applied dynamically on select)
+        {
+          selector: 'node.neighbor',
+          style: {
+            'background-color': theme.paper,
+            'border-width': 1,
+            'border-color': theme.ink,
+          },
+        },
+        // Faded style
+        {
+          selector: '.faded',
+          style: {
+            opacity: 0.15,
+          },
+        },
+        // Edges: 1px ink at 0.5 opacity, small arrowheads
         {
           selector: 'edge',
           style: {
-            width: 2,
-            'line-color': edgeColor,
-            'target-arrow-color': edgeColor,
+            width: 1,
+            'line-color': theme.ink,
+            opacity: 0.5,
+            'target-arrow-color': theme.ink,
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'arrow-scale': 1.1,
-            label: 'data(label)',
-            'font-family': 'JetBrains Mono, monospace',
-            'font-size': '10px',
-            color: isDark ? 'var(--ink-2)' : 'var(--ink-2)',
-            'text-background-opacity': 0.85,
-            'text-background-color': isDark ? 'var(--ink)' : 'var(--paper)',
-            'text-background-padding': '2px',
-            'text-background-shape': 'roundrectangle',
+            'arrow-scale': 0.7,
+            'transition-property': 'opacity',
+            'transition-duration': 0.25,
           },
         },
       ],
       layout: {
-        name: 'breadthfirst',
-        directed: true,
-        padding: 40,
-        spacingFactor: 1.3,
+        name: 'cose',
+        animate: false,
+        padding: 30,
+        componentSpacing: 40,
+        nodeOverlap: 20,
       },
-      minZoom: 0.3,
-      maxZoom: 2.5,
-      wheelSensitivity: 0.25,
+      minZoom: 0.2,
+      maxZoom: 3,
+      wheelSensitivity: 0.2,
     });
+
+    const updateCutLabel = () => {
+      if (!recommendedFreezeId) {
+        setCutLabelPos(null);
+        return;
+      }
+      const targetNode = cy.getElementById(recommendedFreezeId);
+      if (targetNode && targetNode.length > 0) {
+        const renderedPos = targetNode.renderedPosition();
+        setCutLabelPos({ x: renderedPos.x, y: renderedPos.y });
+      } else {
+        setCutLabelPos(null);
+      }
+    };
+
+    cy.on('render pan zoom', updateCutLabel);
+
+    const applySelection = (nodeId: string) => {
+      const selectedNode = cy.getElementById(nodeId);
+      if (!selectedNode || selectedNode.length === 0) {
+        cy.elements().removeClass('faded neighbor');
+        return;
+      }
+
+      const neighborhood = selectedNode.closedNeighborhood();
+      const neighbors = selectedNode.neighborhood('node');
+
+      // Fade everything outside the ring to 0.15 opacity
+      cy.elements().addClass('faded');
+      neighborhood.removeClass('faded');
+
+      // Neighbour nodes: paper fill with 1px ink border
+      cy.nodes().removeClass('neighbor');
+      neighbors.forEach((n) => {
+        if (n.data('isTop') !== 1) {
+          n.addClass('neighbor');
+        }
+      });
+
+      // Fit the view in 400ms
+      cy.animate({
+        fit: {
+          eles: neighborhood,
+          padding: 40,
+        },
+        duration: 400,
+      });
+    };
+
+    if (selectedId) {
+      applySelection(selectedId);
+    }
 
     cy.on('tap', 'node', (evt) => {
       const node = evt.target;
+      const clickedId = node.id();
+      applySelection(clickedId);
       if (onNodeClick) {
-        onNodeClick(node.id());
+        onNodeClick(clickedId);
+      }
+    });
+
+    cy.on('tap', (evt) => {
+      if (evt.target === cy) {
+        cy.elements().removeClass('faded neighbor');
+        cy.animate({
+          fit: {
+            eles: cy.elements(),
+            padding: 30,
+          },
+          duration: 400,
+        });
       }
     });
 
     cyRef.current = cy;
+    setTimeout(updateCutLabel, 100);
 
     return () => {
       cy.destroy();
     };
   }, [nodes, edges, selectedId, recommendedFreezeId, onNodeClick]);
 
-  const handleZoomIn = () => cyRef.current?.zoom(cyRef.current.zoom() * 1.25);
-  const handleZoomOut = () => cyRef.current?.zoom(cyRef.current.zoom() * 0.8);
-  const handleFit = () => cyRef.current?.fit(undefined, 30);
-
   return (
-    <div style={{ position: 'relative', width: '100%', height: height, overflow: 'hidden' }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: height,
+        overflow: 'hidden',
+        backgroundColor: 'var(--paper)',
+      }}
+    >
       <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 
-      {/* Floating Controls */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '16px',
-          right: '16px',
-          display: 'flex',
-          gap: '6px',
-          backgroundColor: 'var(--surface)',
-          padding: '4px',
-          border: '1px solid var(--line)',
-          }}
-      >
-        <button
-          onClick={handleZoomIn}
-          title="Zoom In"
+      {/* "Cut here · saves ₹4.1L" label with 1px line to node */}
+      {cutLabelPos && (
+        <div
           style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--ink-2)',
-            padding: '4px',
-            cursor: 'pointer',
+            position: 'absolute',
+            left: `${cutLabelPos.x + 18}px`,
+            top: `${cutLabelPos.y - 12}px`,
+            pointerEvents: 'none',
             display: 'flex',
             alignItems: 'center',
+            gap: '6px',
+            zIndex: 10,
           }}
         >
-          <ZoomIn size={15} />
-        </button>
-        <button
-          onClick={handleZoomOut}
-          title="Zoom Out"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--ink-2)',
-            padding: '4px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <ZoomOut size={15} />
-        </button>
-        <button
-          onClick={handleFit}
-          title="Fit Network"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--ink-2)',
-            padding: '4px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <Maximize2 size={15} />
-        </button>
-      </div>
+          <div
+            style={{
+              width: '14px',
+              height: '1px',
+              backgroundColor: 'var(--ink)',
+            }}
+          />
+          <span
+            className="mono"
+            style={{
+              fontSize: '11px',
+              backgroundColor: 'var(--paper)',
+              padding: '2px 6px',
+              border: '1px solid var(--ink)',
+              color: 'var(--ink)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Cut here · saves {savedAmountFormatted}
+          </span>
+        </div>
+      )}
 
-      {/* Legend */}
+      {/* Subtle zoom controls */}
       <div
         style={{
           position: 'absolute',
-          top: '16px',
-          left: '16px',
-          backgroundColor: 'var(--surface)',
-          padding: '8px 12px',
-          border: '1px solid var(--line)',
+          bottom: '12px',
+          right: '12px',
           display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          fontSize: '11px',
-          color: 'var(--ink-2)',
+          gap: '4px',
+          zIndex: 5,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, backgroundColor: 'var(--signal)' }} />
-          <span>High Risk (≥75)</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, backgroundColor: 'var(--ink-2)' }} />
-          <span>Mid Risk</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, backgroundColor: 'var(--ink-2)' }} />
-          <span>Low Risk</span>
-        </div>
+        <button
+          type="button"
+          onClick={() => cyRef.current?.zoom(cyRef.current.zoom() * 1.25)}
+          className="mono"
+          style={{
+            background: 'var(--paper)',
+            border: '1px solid var(--rule)',
+            color: 'var(--ink)',
+            padding: '2px 8px',
+            cursor: 'pointer',
+          }}
+        >
+          +
+        </button>
+        <button
+          type="button"
+          onClick={() => cyRef.current?.zoom(cyRef.current.zoom() * 0.8)}
+          className="mono"
+          style={{
+            background: 'var(--paper)',
+            border: '1px solid var(--rule)',
+            color: 'var(--ink)',
+            padding: '2px 8px',
+            cursor: 'pointer',
+          }}
+        >
+          -
+        </button>
+        <button
+          type="button"
+          onClick={() => cyRef.current?.fit(undefined, 30)}
+          className="mono"
+          style={{
+            background: 'var(--paper)',
+            border: '1px solid var(--rule)',
+            color: 'var(--ink)',
+            padding: '2px 8px',
+            cursor: 'pointer',
+          }}
+        >
+          Fit
+        </button>
       </div>
     </div>
   );

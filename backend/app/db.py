@@ -86,7 +86,7 @@ def init_db() -> None:
                         pass
 
             for table, table_columns in {
-                "decisions": {"case_id": "VARCHAR(32)", "run_id": "VARCHAR(32)", "action": "VARCHAR(20)", "status": "VARCHAR(20)", "analyst": "VARCHAR(100)"},
+                "decisions": {"case_id": "VARCHAR(32)", "run_id": "VARCHAR(32)", "action": "VARCHAR(20)", "status": "VARCHAR(20)", "user_id": "VARCHAR(32)", "analyst": "VARCHAR(100)"},
                 "freeze_requests": {"run_id": "VARCHAR(32)", "ring_id": "VARCHAR(32)", "account_ids": "JSON", "amount": "FLOAT", "note": "TEXT", "updated_at": "DATETIME"},
             }.items():
                 cursor = conn.execute(text(f"PRAGMA table_info({table})"))

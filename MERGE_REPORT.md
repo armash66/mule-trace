@@ -55,7 +55,7 @@ No textual merge conflicts occurred. Post-merge checks found two package/module 
 - Tracked artifact check: passed after untracking `data/accounts.csv` and `data/transactions.csv` and adding `data/*.csv` to `.gitignore`.
 - Backend import probe: passed (`MuleTrace API`).
 - Pydantic schema resolution probe: passed for `FileInfo`, `Finding`, `FreezePlanResponse`, and `ExplainResponse`.
-- Backend pytest: initial run was 36 passed, 10 failed. After compatibility fixes, the latest completed full run reached 45 passed, 1 failed. The remaining demo API failure was an old SQLite audit-log migration path; per-column migration handling was hardened afterward, but the final focused rerun was skipped by tool confirmation, so a fully green pytest result is not claimed.
+- Backend pytest: initial run was 36 passed, 10 failed. After compatibility fixes, the latest completed full run reached 45 passed, 1 failed because an existing SQLite `decisions` table lacked `user_id`. A migration for that column is now included; the focused rerun was skipped by tool confirmation, so a fully green pytest result is not claimed.
 - App smoke test: Docker Compose was blocked because Docker Desktop's Linux engine was unavailable. A local backend reached `/health`, but seeded API smoke testing remained blocked by the long-running demo initialization. Browser routes rendered; backend-dependent Alerts data, decisions, upload persistence, freeze plans, and replay were not fully verified.
 
 ### Branch Cleanup

@@ -58,7 +58,6 @@ export const Upload: React.FC = () => {
           padding: '16px 20px',
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--accent)',
-          borderRadius: 'var(--radius)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -82,9 +81,8 @@ export const Upload: React.FC = () => {
           style={{
             padding: '8px 16px',
             backgroundColor: 'var(--accent)',
-            color: '#ffffff',
+            color: 'var(--paper)',
             border: 'none',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '13px',
             fontWeight: 600,
             cursor: isProcessing ? 'not-allowed' : 'pointer',
@@ -101,7 +99,6 @@ export const Upload: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '2px dashed var(--line-strong)',
-            borderRadius: 'var(--radius)',
             padding: '24px',
             textAlign: 'center',
             display: 'flex',
@@ -122,7 +119,6 @@ export const Upload: React.FC = () => {
               padding: '6px 14px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -144,7 +140,6 @@ export const Upload: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '2px dashed var(--line-strong)',
-            borderRadius: 'var(--radius)',
             padding: '24px',
             textAlign: 'center',
             display: 'flex',
@@ -165,7 +160,6 @@ export const Upload: React.FC = () => {
               padding: '6px 14px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -189,7 +183,6 @@ export const Upload: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '20px',
             marginBottom: '24px',
           }}
@@ -208,29 +201,29 @@ export const Upload: React.FC = () => {
               gap: '12px',
             }}
           >
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Duplicates Dropped</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Duplicates Dropped</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.duplicates_removed}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Out-of-Order Fixed</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Out-of-Order Fixed</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.out_of_order_fixed}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Missing Device/IP</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Missing Device/IP</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.missing_device_pct}% / {healthReport.missing_ip_pct}%
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Self-Transfers Dropped</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Self-Transfers Dropped</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {healthReport.self_transfers_dropped}
               </div>
@@ -246,9 +239,8 @@ export const Upload: React.FC = () => {
                 gap: '8px',
                 padding: '9px 18px',
                 backgroundColor: 'var(--ok)',
-                color: '#ffffff',
+                color: 'var(--paper)',
                 border: 'none',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '13px',
                 fontWeight: 600,
                 cursor: 'pointer',

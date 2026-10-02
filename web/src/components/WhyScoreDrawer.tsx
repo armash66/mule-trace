@@ -44,8 +44,7 @@ export const WhyScoreDrawer: React.FC = () => {
           borderLeft: '1px solid var(--line-strong)',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '-8px 0 32px rgba(0, 0, 0, 0.15)',
-        }}
+          }}
       >
         {/* Header */}
         <div
@@ -86,7 +85,7 @@ export const WhyScoreDrawer: React.FC = () => {
           ) : explain ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <div style={{ fontSize: '12px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <div style={{ fontSize: '12px', color: 'var(--ink-3)', }}>
                   Target Account
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
@@ -119,7 +118,6 @@ export const WhyScoreDrawer: React.FC = () => {
                         key={i}
                         style={{
                           padding: '10px 12px',
-                          borderRadius: 'var(--radius-sm)',
                           backgroundColor: 'var(--surface-raised)',
                           border: '1px solid var(--line)',
                         }}
@@ -141,7 +139,6 @@ export const WhyScoreDrawer: React.FC = () => {
                           style={{
                             height: '4px',
                             backgroundColor: 'var(--line)',
-                            borderRadius: '2px',
                             overflow: 'hidden',
                           }}
                         >
@@ -150,8 +147,7 @@ export const WhyScoreDrawer: React.FC = () => {
                               height: '100%',
                               width: `${Math.min(100, Math.abs(f.shap_value) * 200)}%`,
                               backgroundColor: isPositive ? 'var(--risk-high)' : 'var(--ok)',
-                              borderRadius: '2px',
-                            }}
+                              }}
                           />
                         </div>
                       </div>
@@ -164,7 +160,6 @@ export const WhyScoreDrawer: React.FC = () => {
               <div
                 style={{
                   padding: '14px',
-                  borderRadius: 'var(--radius-sm)',
                   backgroundColor: 'var(--accent-muted)',
                   border: '1px solid var(--line)',
                 }}

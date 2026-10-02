@@ -68,7 +68,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isUploading
         style={{
           border: `2px dashed ${isDragOver ? 'var(--accent)' : 'var(--line-strong)'}`,
           backgroundColor: isDragOver ? 'var(--accent-muted)' : 'var(--surface)',
-          borderRadius: 'var(--radius)',
           padding: '40px 24px',
           textAlign: 'center',
           cursor: isUploading ? 'wait' : 'pointer',
@@ -96,7 +95,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isUploading
           style={{
             width: '48px',
             height: '48px',
-            borderRadius: '50%',
             backgroundColor: isDragOver ? 'var(--surface)' : 'var(--surface-raised)',
             border: '1px solid var(--line)',
             display: 'flex',
@@ -106,7 +104,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isUploading
           }}
         >
           {isUploading ? (
-            <div className="skeleton" style={{ width: '20px', height: '20px', borderRadius: '50%' }} />
+            <div className="skeleton" style={{ width: '20px', height: '20px', }} />
           ) : (
             <UploadCloud size={24} color={isDragOver ? 'var(--accent)' : 'var(--ink-2)'} />
           )}
@@ -125,7 +123,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isUploading
               padding: '6px 14px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -147,7 +144,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isUploading
             color: 'var(--risk-high)',
             padding: '8px 12px',
             backgroundColor: 'var(--surface-raised)',
-            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--line)',
           }}
         >

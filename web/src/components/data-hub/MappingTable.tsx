@@ -45,7 +45,6 @@ export const MappingTable: React.FC<MappingTableProps> = ({
       <div
         style={{
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           backgroundColor: 'var(--surface)',
           overflow: 'hidden',
         }}
@@ -81,7 +80,7 @@ export const MappingTable: React.FC<MappingTableProps> = ({
                         {spec.field}
                       </span>
                       {spec.required ? (
-                        <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: 600, textTransform: 'uppercase' }}>
+                        <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: 600, }}>
                           Req
                         </span>
                       ) : (
@@ -102,7 +101,6 @@ export const MappingTable: React.FC<MappingTableProps> = ({
                         width: '100%',
                         padding: '5px 8px',
                         fontSize: '12px',
-                        borderRadius: 'var(--radius-sm)',
                         border: '1px solid var(--line-strong)',
                         backgroundColor: 'var(--surface)',
                         color: 'var(--ink)',

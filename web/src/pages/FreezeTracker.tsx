@@ -78,7 +78,7 @@ export const FreezeTracker: React.FC = () => {
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>
-            Freeze Tracker Kanban
+            Freezes Kanban
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
             Track end-to-end statutory account freeze workflows from automated min-cut recommendation to recovery.
@@ -92,10 +92,9 @@ export const FreezeTracker: React.FC = () => {
               padding: '8px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
-            }}
+              }}
           >
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>In-Flight Freezes</div>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>In-Flight Freezes</div>
             <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent)' }}>
               {formatLakhs(totalInFlight)}
             </div>
@@ -106,10 +105,9 @@ export const FreezeTracker: React.FC = () => {
               padding: '8px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
-            }}
+              }}
           >
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Total Recovered</div>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Total Recovered</div>
             <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ok)' }}>
               {formatLakhs(totalRecovered)}
             </div>
@@ -120,10 +118,9 @@ export const FreezeTracker: React.FC = () => {
               padding: '8px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
-            }}
+              }}
           >
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Missed / Cash-Out</div>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Missed / Cash-Out</div>
             <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--risk-high)' }}>
               {formatLakhs(totalMissed)}
             </div>
@@ -152,7 +149,6 @@ export const FreezeTracker: React.FC = () => {
               style={{
                 backgroundColor: 'var(--surface)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius)',
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
@@ -182,7 +178,6 @@ export const FreezeTracker: React.FC = () => {
                     backgroundColor: 'var(--surface)',
                     border: '1px solid var(--line)',
                     padding: '1px 6px',
-                    borderRadius: '4px',
                     color: 'var(--ink)',
                   }}
                 >
@@ -208,9 +203,7 @@ export const FreezeTracker: React.FC = () => {
                       padding: '12px',
                       backgroundColor: 'var(--surface-raised)',
                       border: '1px solid var(--line)',
-                      borderRadius: 'var(--radius-sm)',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    }}
+                      }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                       <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
@@ -246,9 +239,8 @@ export const FreezeTracker: React.FC = () => {
                             fontSize: '11px',
                             fontWeight: 600,
                             backgroundColor: 'var(--accent)',
-                            color: '#ffffff',
+                            color: 'var(--paper)',
                             border: 'none',
-                            borderRadius: '3px',
                             cursor: 'pointer',
                           }}
                         >
@@ -267,7 +259,6 @@ export const FreezeTracker: React.FC = () => {
                               backgroundColor: 'var(--surface)',
                               border: '1px solid var(--line)',
                               color: 'var(--ok)',
-                              borderRadius: '3px',
                               cursor: 'pointer',
                               fontWeight: 600,
                             }}
@@ -283,7 +274,6 @@ export const FreezeTracker: React.FC = () => {
                               backgroundColor: 'var(--surface)',
                               border: '1px solid var(--line)',
                               color: 'var(--risk-high)',
-                              borderRadius: '3px',
                               cursor: 'pointer',
                             }}
                           >
@@ -301,9 +291,8 @@ export const FreezeTracker: React.FC = () => {
                             fontSize: '11px',
                             fontWeight: 600,
                             backgroundColor: 'var(--ok)',
-                            color: '#ffffff',
+                            color: 'var(--paper)',
                             border: 'none',
-                            borderRadius: '3px',
                             cursor: 'pointer',
                           }}
                         >

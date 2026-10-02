@@ -74,8 +74,6 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
           maxWidth: '92vw',
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line-strong)',
-          borderRadius: 'var(--radius)',
-          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.25)',
           overflow: 'hidden',
         }}
       >
@@ -127,12 +125,11 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
                   gap: '12px',
                   backgroundColor: 'var(--surface-raised)',
                   border: '1px solid var(--line)',
-                  borderRadius: 'var(--radius-sm)',
                   padding: '14px',
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>
                     Stoppable Funds (Min-Cut)
                   </div>
                   <div
@@ -143,7 +140,7 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>
                     Already Lost / Escaped
                   </div>
                   <div
@@ -173,8 +170,7 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
                     padding: '12px 14px',
                     backgroundColor: 'var(--accent-muted)',
                     border: '1px solid var(--accent)',
-                    borderRadius: 'var(--radius-sm)',
-                  }}
+                    }}
                 >
                   <div>
                     <div className="mono" style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)' }}>
@@ -188,9 +184,8 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
                     style={{
                       fontSize: '11px',
                       backgroundColor: 'var(--accent)',
-                      color: '#ffffff',
+                      color: 'var(--paper)',
                       padding: '3px 8px',
-                      borderRadius: 'var(--radius-pill)',
                       fontWeight: 600,
                     }}
                   >
@@ -215,7 +210,6 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
                           justifyContent: 'space-between',
                           padding: '8px 12px',
                           border: '1px solid var(--line)',
-                          borderRadius: 'var(--radius-sm)',
                           fontSize: '12px',
                         }}
                       >
@@ -274,7 +268,6 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
               padding: '8px 14px',
               backgroundColor: 'transparent',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               color: 'var(--ink-2)',
               fontSize: '13px',
               cursor: 'pointer',
@@ -292,8 +285,7 @@ export const FreezePlanModal: React.FC<FreezePlanModalProps> = ({ ringId, isOpen
               padding: '8px 16px',
               backgroundColor: 'var(--accent)',
               border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              color: '#ffffff',
+              color: 'var(--paper)',
               fontSize: '13px',
               fontWeight: 600,
               cursor: dispatching ? 'not-allowed' : 'pointer',

@@ -87,7 +87,6 @@ export const CommandCenter: React.FC = () => {
               padding: '6px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--accent)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               fontWeight: 600,
               color: 'var(--accent)',
@@ -126,7 +125,7 @@ export const CommandCenter: React.FC = () => {
       {/* Page Title */}
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', }}>
             Command Center
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
@@ -143,11 +142,10 @@ export const CommandCenter: React.FC = () => {
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
             padding: '6px 12px',
-            borderRadius: 'var(--radius)',
             fontSize: '12px',
           }}
         >
-          <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--ok)' }} />
+          <span style={{ width: 8, height: 8, backgroundColor: 'var(--ok)' }} />
           <span style={{ color: 'var(--ink)', fontWeight: 500 }}>Live Ingest Active</span>
           <span style={{ color: 'var(--ink-3)' }}>•</span>
           <span className="mono" style={{ color: 'var(--ink-2)' }}>5,044 Accounts</span>
@@ -161,7 +159,6 @@ export const CommandCenter: React.FC = () => {
           padding: '16px 20px',
           backgroundColor: 'var(--accent-muted)',
           border: '1px solid var(--accent)',
-          borderRadius: 'var(--radius)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -172,12 +169,11 @@ export const CommandCenter: React.FC = () => {
             style={{
               width: '36px',
               height: '36px',
-              borderRadius: '8px',
               backgroundColor: 'var(--accent)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff',
+              color: 'var(--paper)',
             }}
           >
             <Zap size={18} />
@@ -204,8 +200,7 @@ export const CommandCenter: React.FC = () => {
             padding: '8px 16px',
             backgroundColor: 'var(--accent)',
             border: 'none',
-            borderRadius: 'var(--radius-sm)',
-            color: '#ffffff',
+            color: 'var(--paper)',
             fontSize: '13px',
             fontWeight: 600,
             cursor: 'pointer',
@@ -230,12 +225,11 @@ export const CommandCenter: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '18px 20px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, }}>
               Accounts Flagged
             </span>
             <ShieldAlert size={16} color="var(--risk-high)" />
@@ -253,12 +247,11 @@ export const CommandCenter: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '18px 20px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, }}>
               Stoppable ₹ (Min-Cut)
             </span>
             <Lock size={16} color="var(--ok)" />
@@ -276,12 +269,11 @@ export const CommandCenter: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '18px 20px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, }}>
               Discovered Rings
             </span>
             <Layers size={16} color="var(--accent)" />
@@ -299,12 +291,11 @@ export const CommandCenter: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '18px 20px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600, }}>
               Model Precision
             </span>
             <CheckCircle size={16} color="var(--ok)" />
@@ -325,7 +316,6 @@ export const CommandCenter: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '20px',
           }}
         >
@@ -345,8 +335,7 @@ export const CommandCenter: React.FC = () => {
                 color: 'var(--ink-3)',
                 padding: '2px 8px',
                 backgroundColor: 'var(--surface-raised)',
-                borderRadius: '4px',
-              }}
+                }}
             >
               UTC Timestamps
             </span>
@@ -357,8 +346,8 @@ export const CommandCenter: React.FC = () => {
               <AreaChart data={trendData}>
                 <defs>
                   <linearGradient id="colorVol" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6D4AFF" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#6D4AFF" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="var(--ink)" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="var(--ink)" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="day" stroke="var(--ink-3)" fontSize={11} tickLine={false} />
@@ -367,14 +356,13 @@ export const CommandCenter: React.FC = () => {
                   contentStyle={{
                     backgroundColor: 'var(--surface)',
                     border: '1px solid var(--line)',
-                    borderRadius: 'var(--radius-sm)',
                     fontSize: '12px',
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="transactions"
-                  stroke="#6D4AFF"
+                  stroke="var(--ink)"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorVol)"
@@ -389,7 +377,6 @@ export const CommandCenter: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '20px',
             display: 'flex',
             flexDirection: 'column',
@@ -406,15 +393,15 @@ export const CommandCenter: React.FC = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
-                { label: 'Fan-In / Fan-Out Hubs', count: 1, color: '#E8590C', share: '32%' },
-                { label: 'Time-Bounded Cycles (3-5 hops)', count: 2, color: '#D9A441', share: '28%' },
-                { label: 'Pass-Through Chains', count: 2, color: '#6D4AFF', share: '22%' },
-                { label: 'Device/KYC Clusters', count: 2, color: '#2F8F5B', share: '12%' },
-                { label: 'Dormancy Awakenings', count: 1, color: '#8A8A92', share: '6%' },
+                { label: 'Collect and split', count: 1, color: 'var(--signal)', share: '32%' },
+                { label: 'Round trip', count: 2, color: 'var(--ink-2)', share: '28%' },
+                { label: 'Quick relay', count: 2, color: 'var(--ink)', share: '22%' },
+                { label: 'Same-device group', count: 2, color: 'var(--ok)', share: '12%' },
+                { label: 'Dormancy wake-up', count: 1, color: 'var(--ink-2)', share: '6%' },
               ].map((p, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: p.color }} />
+                    <span style={{ width: 8, height: 8, backgroundColor: p.color }} />
                     <span style={{ fontSize: '12px', color: 'var(--ink)' }}>{p.label}</span>
                   </div>
                   <div className="mono" style={{ fontSize: '12px', color: 'var(--ink-2)', fontWeight: 600 }}>
@@ -447,7 +434,6 @@ export const CommandCenter: React.FC = () => {
         style={{
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           overflow: 'hidden',
         }}
       >
@@ -480,7 +466,7 @@ export const CommandCenter: React.FC = () => {
               fontWeight: 600,
             }}
           >
-            View All Alerts Queue →
+            View All Alerts →
           </button>
         </div>
 
@@ -516,10 +502,8 @@ export const CommandCenter: React.FC = () => {
                     style={{
                       fontSize: '11px',
                       fontWeight: 600,
-                      textTransform: 'uppercase',
                       backgroundColor: 'var(--surface-raised)',
                       padding: '2px 8px',
-                      borderRadius: 'var(--radius-pill)',
                       border: '1px solid var(--line)',
                       color: 'var(--ink)',
                     }}
@@ -548,7 +532,6 @@ export const CommandCenter: React.FC = () => {
                       fontWeight: 600,
                       backgroundColor: 'var(--surface-raised)',
                       border: '1px solid var(--line)',
-                      borderRadius: 'var(--radius-sm)',
                       color: 'var(--ink)',
                       cursor: 'pointer',
                     }}

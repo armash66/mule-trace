@@ -157,11 +157,11 @@ export const Alerts: React.FC = () => {
       {/* Header & Shortcut info */}
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', }}>
             Alerts Triage Queue
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
-            Rapidpay-style triage queue. Use <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', borderRadius: '3px' }}>J</kbd>/<kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', borderRadius: '3px' }}>K</kbd> to step, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', borderRadius: '3px' }}>Enter</kbd> to inspect, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', borderRadius: '3px' }}>C</kbd> confirm, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', borderRadius: '3px' }}>X</kbd> clear.
+            Rapidpay-style triage queue. Use <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>J</kbd>/<kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>K</kbd> to step, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>Enter</kbd> to inspect, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>C</kbd> confirm, <kbd className="mono" style={{ backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)', padding: '1px 5px', }}>X</kbd> clear.
           </p>
         </div>
 
@@ -174,9 +174,8 @@ export const Alerts: React.FC = () => {
               style={{
                 padding: '6px 12px',
                 backgroundColor: 'var(--confirmed)',
-                color: '#ffffff',
+                color: 'var(--paper)',
                 border: 'none',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -191,7 +190,6 @@ export const Alerts: React.FC = () => {
                 backgroundColor: 'var(--surface-raised)',
                 border: '1px solid var(--line)',
                 color: 'var(--ink)',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -212,7 +210,6 @@ export const Alerts: React.FC = () => {
           marginBottom: '16px',
           backgroundColor: 'var(--surface)',
           padding: '10px 14px',
-          borderRadius: 'var(--radius)',
           border: '1px solid var(--line)',
           flexWrap: 'wrap',
         }}
@@ -249,15 +246,14 @@ export const Alerts: React.FC = () => {
               fontSize: '12px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               color: 'var(--ink)',
               outline: 'none',
             }}
           >
             <option value="all">All Patterns</option>
-            <option value="fan">Fan-In / Fan-Out</option>
-            <option value="cycle">Cycle Layering</option>
-            <option value="chain">Pass-Through Chain</option>
+            <option value="fan">Collect and split</option>
+            <option value="cycle">Round trip</option>
+            <option value="chain">Quick relay</option>
             <option value="cluster">Identity Cluster</option>
             <option value="dormancy">Dormancy Burst</option>
           </select>
@@ -274,7 +270,6 @@ export const Alerts: React.FC = () => {
               fontSize: '12px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               color: 'var(--ink)',
               outline: 'none',
             }}
@@ -309,7 +304,6 @@ export const Alerts: React.FC = () => {
         style={{
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           overflow: 'hidden',
         }}
       >
@@ -403,7 +397,7 @@ export const Alerts: React.FC = () => {
                       {acc.account_id}
                     </td>
 
-                    {/* Risk Score */}
+                    {/* Risk */}
                     <td style={{ padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span className="mono" style={{ fontWeight: 700, color: scoreColor, width: '24px' }}>
@@ -414,7 +408,6 @@ export const Alerts: React.FC = () => {
                             flex: 1,
                             height: '5px',
                             backgroundColor: 'var(--line)',
-                            borderRadius: '3px',
                             overflow: 'hidden',
                           }}
                         >
@@ -438,9 +431,7 @@ export const Alerts: React.FC = () => {
                               key={i}
                               style={{
                                 fontSize: '10px',
-                                textTransform: 'uppercase',
                                 padding: '2px 6px',
-                                borderRadius: 'var(--radius-pill)',
                                 backgroundColor: 'var(--surface-raised)',
                                 border: '1px solid var(--line)',
                                 color: 'var(--ink-2)',
@@ -508,7 +499,6 @@ export const Alerts: React.FC = () => {
                             fontSize: '11px',
                             backgroundColor: 'transparent',
                             border: '1px solid var(--line)',
-                            borderRadius: 'var(--radius-sm)',
                             color: 'var(--confirmed)',
                             cursor: 'pointer',
                           }}
@@ -520,13 +510,12 @@ export const Alerts: React.FC = () => {
                             e.stopPropagation();
                             handleDecision(acc.account_id, 'cleared');
                           }}
-                          title="Clear Account (X)"
+                          title="Not a mule (X)"
                           style={{
                             padding: '4px 8px',
                             fontSize: '11px',
                             backgroundColor: 'transparent',
                             border: '1px solid var(--line)',
-                            borderRadius: 'var(--radius-sm)',
                             color: 'var(--ok)',
                             cursor: 'pointer',
                           }}
@@ -538,13 +527,12 @@ export const Alerts: React.FC = () => {
                             e.stopPropagation();
                             inspectAccount(acc.account_id);
                           }}
-                          title="Inspect in Workspace (Enter)"
+                          title="Inspect in Investigate (Enter)"
                           style={{
                             padding: '4px 8px',
                             fontSize: '11px',
                             backgroundColor: 'var(--surface-raised)',
                             border: '1px solid var(--line)',
-                            borderRadius: 'var(--radius-sm)',
                             color: 'var(--ink)',
                             cursor: 'pointer',
                             display: 'flex',

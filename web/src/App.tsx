@@ -4,7 +4,7 @@ import { AppShell } from './components/AppShell';
 
 import { CommandCenter } from './pages/CommandCenter';
 import { Alerts } from './pages/Alerts';
-import { Workspace } from './pages/Workspace';
+import { Investigate } from './pages/Workspace';
 import { FreezeTracker } from './pages/FreezeTracker';
 import { Cases } from './pages/Cases';
 import { HeistReplay } from './pages/HeistReplay';
@@ -28,8 +28,8 @@ export const App: React.FC = () => {
       <Route element={<AppShell />}>
         <Route path="/" element={<CommandCenter />} />
         <Route path="/alerts" element={<Alerts />} />
-        <Route path="/workspace" element={<Workspace />} />
-        <Route path="/workspace/:accountId" element={<Workspace />} />
+        <Route path="/workspace" element={<Investigate />} />
+        <Route path="/workspace/:accountId" element={<Investigate />} />
         <Route path="/freezes" element={<FreezeTracker />} />
         <Route path="/cases" element={<Cases />} />
         <Route path="/cases/:ringId" element={<Cases />} />

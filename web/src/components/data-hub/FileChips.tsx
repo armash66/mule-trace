@@ -40,7 +40,6 @@ export const FileChips: React.FC<FileChipsProps> = ({
                 padding: '10px 14px',
                 backgroundColor: 'var(--surface)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -49,7 +48,6 @@ export const FileChips: React.FC<FileChipsProps> = ({
                   style={{
                     width: '32px',
                     height: '32px',
-                    borderRadius: 'var(--radius-sm)',
                     backgroundColor: 'var(--surface-raised)',
                     border: '1px solid var(--line)',
                     display: 'flex',
@@ -86,7 +84,7 @@ export const FileChips: React.FC<FileChipsProps> = ({
                           <AlertTriangle size={12} />
                           <span>Ambiguous headers. Treat as:</span>
                         </span>
-                        <div style={{ display: 'inline-flex', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)' }}>
+                        <div style={{ display: 'inline-flex', border: '1px solid var(--line)', }}>
                           <button
                             type="button"
                             onClick={() => onTypeChange(file.filename, 'transactions')}
@@ -126,9 +124,7 @@ export const FileChips: React.FC<FileChipsProps> = ({
                         style={{
                           fontSize: '11px',
                           color: 'var(--ink-2)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                        }}
+                          }}
                       >
                         Identified as: <strong>{currentType}</strong>
                       </span>
@@ -147,7 +143,6 @@ export const FileChips: React.FC<FileChipsProps> = ({
                   color: 'var(--ink-3)',
                   cursor: 'pointer',
                   padding: '4px',
-                  borderRadius: 'var(--radius-sm)',
                   display: 'flex',
                   alignItems: 'center',
                 }}
@@ -168,7 +163,6 @@ export const FileChips: React.FC<FileChipsProps> = ({
             padding: '10px 14px',
             backgroundColor: 'var(--surface-raised)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '12px',
             color: 'var(--ink-2)',
             lineHeight: 1.5,

@@ -24,7 +24,7 @@ export const Audit: React.FC = () => {
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>
-            Immutable Audit Trail
+            Immutable Activity log
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
             Append-only tamper-evident log of all analyst decisions, risk overrides, and freeze dispatches.
@@ -41,7 +41,6 @@ export const Audit: React.FC = () => {
               fontSize: '12px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               color: 'var(--ink)',
               outline: 'none',
             }}
@@ -58,7 +57,6 @@ export const Audit: React.FC = () => {
         style={{
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           overflow: 'hidden',
         }}
       >
@@ -97,7 +95,6 @@ export const Audit: React.FC = () => {
                         fontSize: '11px',
                         fontFamily: 'var(--font-mono)',
                         padding: '2px 6px',
-                        borderRadius: '3px',
                         backgroundColor: 'var(--surface-raised)',
                         border: '1px solid var(--line)',
                         fontWeight: 600,

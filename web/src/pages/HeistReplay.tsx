@@ -95,7 +95,7 @@ export const HeistReplay: React.FC = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)' }}>
-              Heist Replay Simulator: Ring #{activeRing}
+              Replay Simulator: Ring #{activeRing}
             </h2>
             <span
               style={{
@@ -103,7 +103,6 @@ export const HeistReplay: React.FC = () => {
                 backgroundColor: 'var(--accent-muted)',
                 color: 'var(--accent)',
                 padding: '2px 8px',
-                borderRadius: 'var(--radius-pill)',
                 fontWeight: 600,
               }}
             >
@@ -124,7 +123,6 @@ export const HeistReplay: React.FC = () => {
             backgroundColor: applyFreeze ? 'var(--accent-muted)' : 'var(--surface-raised)',
             border: `1px solid ${applyFreeze ? 'var(--accent)' : 'var(--line)'}`,
             padding: '8px 14px',
-            borderRadius: 'var(--radius)',
             transition: 'all 0.15s ease',
           }}
         >
@@ -174,7 +172,7 @@ export const HeistReplay: React.FC = () => {
           }}
         >
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--line)' }}>
-            <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, }}>
               Chronological Transfer Ledger
             </div>
             <div style={{ fontSize: '13px', color: 'var(--ink)', marginTop: '2px' }}>
@@ -193,7 +191,6 @@ export const HeistReplay: React.FC = () => {
                   onClick={() => setCurrentStep(idx)}
                   style={{
                     padding: '10px 12px',
-                    borderRadius: 'var(--radius-sm)',
                     border: '1px solid var(--line)',
                     backgroundColor: isCurrent
                       ? 'var(--accent-muted)'
@@ -259,10 +256,9 @@ export const HeistReplay: React.FC = () => {
             style={{
               width: '36px',
               height: '36px',
-              borderRadius: '50%',
               backgroundColor: 'var(--accent)',
               border: 'none',
-              color: '#ffffff',
+              color: 'var(--paper)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -281,7 +277,6 @@ export const HeistReplay: React.FC = () => {
             style={{
               background: 'transparent',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               padding: '6px',
               color: 'var(--ink-2)',
               cursor: 'pointer',
@@ -316,7 +311,6 @@ export const HeistReplay: React.FC = () => {
             alignItems: 'center',
             backgroundColor: 'var(--surface-raised)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius-sm)',
             padding: '2px',
           }}
         >
@@ -328,9 +322,8 @@ export const HeistReplay: React.FC = () => {
                 padding: '2px 8px',
                 fontSize: '11px',
                 border: 'none',
-                borderRadius: '3px',
                 backgroundColor: speed === s ? 'var(--accent)' : 'transparent',
-                color: speed === s ? '#ffffff' : 'var(--ink-2)',
+                color: speed === s ? 'var(--paper)' : 'var(--ink-2)',
                 fontWeight: 600,
                 cursor: 'pointer',
               }}

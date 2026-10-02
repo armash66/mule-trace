@@ -63,7 +63,6 @@ export const AppShell: React.FC = () => {
     alignItems: 'center',
     gap: '10px',
     padding: '8px 12px',
-    borderRadius: 'var(--radius-sm)',
     fontSize: '13px',
     fontWeight: isActive ? 600 : 500,
     color: isActive ? 'var(--ink)' : 'var(--ink-2)',
@@ -110,12 +109,11 @@ export const AppShell: React.FC = () => {
                 style={{
                   width: '24px',
                   height: '24px',
-                  borderRadius: '6px',
                   backgroundColor: 'var(--accent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#ffffff',
+                  color: 'var(--paper)',
                   fontSize: '11px',
                   fontWeight: 700,
                   fontFamily: 'var(--font-mono)',
@@ -123,7 +121,7 @@ export const AppShell: React.FC = () => {
               >
                 MT
               </div>
-              <span style={{ fontSize: '15px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)' }}>
                 MuleTrace
               </span>
             </div>
@@ -134,8 +132,7 @@ export const AppShell: React.FC = () => {
                 color: 'var(--ink-3)',
                 padding: '2px 5px',
                 backgroundColor: 'var(--surface-raised)',
-                borderRadius: '4px',
-              }}
+                }}
             >
               v1.0
             </span>
@@ -150,8 +147,6 @@ export const AppShell: React.FC = () => {
                   fontSize: '10px',
                   fontWeight: 700,
                   color: 'var(--ink-3)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
                   padding: '4px 12px',
                 }}
               >
@@ -164,11 +159,11 @@ export const AppShell: React.FC = () => {
                 </NavLink>
                 <NavLink to="/alerts" style={({ isActive }) => getNavStyle(isActive)}>
                   <ShieldAlert size={15} />
-                  <span>Alerts Queue</span>
+                  <span>Alerts</span>
                 </NavLink>
                 <NavLink to="/workspace" style={({ isActive }) => getNavStyle(isActive)}>
                   <Network size={15} />
-                  <span>Workspace</span>
+                  <span>Investigate</span>
                 </NavLink>
               </div>
             </div>
@@ -180,8 +175,6 @@ export const AppShell: React.FC = () => {
                   fontSize: '10px',
                   fontWeight: 700,
                   color: 'var(--ink-3)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
                   padding: '4px 12px',
                 }}
               >
@@ -190,15 +183,15 @@ export const AppShell: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '4px' }}>
                 <NavLink to="/freezes" style={({ isActive }) => getNavStyle(isActive)}>
                   <Lock size={15} />
-                  <span>Freeze Tracker</span>
+                  <span>Freezes</span>
                 </NavLink>
                 <NavLink to="/cases/fan_1" style={({ isActive }) => getNavStyle(isActive)}>
                   <FileText size={15} />
-                  <span>Case File & STR</span>
+                  <span>Cases</span>
                 </NavLink>
                 <NavLink to="/replay/fan_1" style={({ isActive }) => getNavStyle(isActive)}>
                   <PlaySquare size={15} />
-                  <span>Heist Replay</span>
+                  <span>Replay</span>
                 </NavLink>
               </div>
             </div>
@@ -210,8 +203,6 @@ export const AppShell: React.FC = () => {
                   fontSize: '10px',
                   fontWeight: 700,
                   color: 'var(--ink-3)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
                   padding: '4px 12px',
                 }}
               >
@@ -220,23 +211,23 @@ export const AppShell: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '4px' }}>
                 <NavLink to="/rules" style={({ isActive }) => getNavStyle(isActive)}>
                   <Sliders size={15} />
-                  <span>Rules & Evasion</span>
+                  <span>Rules</span>
                 </NavLink>
                 <NavLink to="/performance" style={({ isActive }) => getNavStyle(isActive)}>
                   <BarChart2 size={15} />
-                  <span>Model Metrics</span>
+                  <span>Accuracy</span>
                 </NavLink>
                 <NavLink to="/audit" style={({ isActive }) => getNavStyle(isActive)}>
                   <FileCheck2 size={15} />
-                  <span>Audit Trail</span>
+                  <span>Activity log</span>
                 </NavLink>
                 <NavLink to="/data" style={({ isActive }) => getNavStyle(isActive)}>
                   <UploadCloud size={15} />
-                  <span>Data Hub</span>
+                  <span>Data</span>
                 </NavLink>
                 <NavLink to="/patterns" style={({ isActive }) => getNavStyle(isActive)}>
                   <BookOpen size={15} />
-                  <span>Mule Patterns</span>
+                  <span>How it works</span>
                 </NavLink>
               </div>
             </div>
@@ -260,7 +251,6 @@ export const AppShell: React.FC = () => {
               style={{
                 background: 'transparent',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 color: 'var(--ink-2)',
                 padding: '5px',
                 cursor: 'pointer',
@@ -276,7 +266,6 @@ export const AppShell: React.FC = () => {
               style={{
                 background: 'transparent',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 color: 'var(--ink-2)',
                 padding: '5px',
                 cursor: 'pointer',
@@ -329,7 +318,7 @@ export const AppShell: React.FC = () => {
             <span style={{ color: 'var(--ink)', fontWeight: 600 }}>
               {location.pathname === '/'
                 ? 'Overview'
-                : location.pathname.split('/')[1]?.toUpperCase() || 'Workspace'}
+                : location.pathname.split('/')[1]?.toUpperCase() || 'Investigate'}
             </span>
           </div>
 
@@ -345,8 +334,7 @@ export const AppShell: React.FC = () => {
                   backgroundColor: 'var(--surface-raised)',
                   border: '1px solid var(--line)',
                   padding: '2px 8px',
-                  borderRadius: 'var(--radius-sm)',
-                }}
+                  }}
               >
                 <Database size={12} color="var(--ink-3)" />
                 <select
@@ -387,13 +375,11 @@ export const AppShell: React.FC = () => {
                 gap: '5px',
                 padding: '4px 10px',
                 backgroundColor: 'var(--accent)',
-                color: '#ffffff',
-                borderRadius: 'var(--radius-sm)',
+                color: 'var(--paper)',
                 fontSize: '12px',
                 fontWeight: 600,
                 textDecoration: 'none',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
-              }}
+                }}
             >
               <Plus size={13} />
               <span>Add data</span>
@@ -409,7 +395,6 @@ export const AppShell: React.FC = () => {
                 color: 'var(--ink-3)',
                 backgroundColor: 'var(--surface-raised)',
                 padding: '3px 10px',
-                borderRadius: 'var(--radius-sm)',
                 border: '1px solid var(--line)',
               }}
             >
@@ -417,11 +402,10 @@ export const AppShell: React.FC = () => {
                 style={{
                   width: '6px',
                   height: '6px',
-                  borderRadius: '50%',
                   backgroundColor: 'var(--risk-mid)',
                 }}
               />
-              <span>Measured on synthetic data • Confirm before action</span>
+              <span>Demo data. A person confirms every action.</span>
             </div>
 
             {/* Quick ⌘K Search Button */}
@@ -434,7 +418,6 @@ export const AppShell: React.FC = () => {
                 backgroundColor: 'var(--surface-raised)',
                 border: '1px solid var(--line)',
                 padding: '4px 10px',
-                borderRadius: 'var(--radius-sm)',
                 color: 'var(--ink-3)',
                 fontSize: '12px',
                 cursor: 'pointer',
@@ -448,7 +431,6 @@ export const AppShell: React.FC = () => {
                   fontSize: '10px',
                   backgroundColor: 'var(--surface)',
                   padding: '1px 4px',
-                  borderRadius: '3px',
                   border: '1px solid var(--line)',
                 }}
               >

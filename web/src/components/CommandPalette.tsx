@@ -71,8 +71,6 @@ export const CommandPalette: React.FC = () => {
           maxWidth: '90vw',
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line-strong)',
-          borderRadius: 'var(--radius)',
-          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.25)',
           overflow: 'hidden',
         }}
       >
@@ -106,7 +104,6 @@ export const CommandPalette: React.FC = () => {
                 color: 'var(--ink-3)',
                 padding: '2px 6px',
                 border: '1px solid var(--line)',
-                borderRadius: '4px',
                 fontFamily: 'var(--font-mono)',
               }}
             >
@@ -137,7 +134,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => navigateTo('/')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -153,7 +149,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => navigateTo('/alerts')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -163,13 +158,12 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <ShieldAlert size={15} color="var(--ink-2)" />
-                <span>Alerts Queue (Triage)</span>
+                <span>Alerts (Triage)</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/workspace')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -179,13 +173,12 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <Network size={15} color="var(--ink-2)" />
-                <span>Investigation Workspace (3-Pane Hero)</span>
+                <span>Investigation Investigate (3-Pane Hero)</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/freezes')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -195,13 +188,12 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <Lock size={15} color="var(--ink-2)" />
-                <span>Freeze Tracker (Kanban)</span>
+                <span>Freezes (Kanban)</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/cases/fan_1')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -217,7 +209,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => navigateTo('/replay/fan_1')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -227,13 +218,12 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <PlaySquare size={15} color="var(--ink-2)" />
-                <span>Heist Replay Simulator</span>
+                <span>Replay Simulator</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => navigateTo('/rules')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -249,7 +239,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => navigateTo('/performance')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -265,7 +254,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => navigateTo('/upload')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -281,7 +269,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => navigateTo('/audit')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -291,7 +278,7 @@ export const CommandPalette: React.FC = () => {
                 }}
               >
                 <FileCheck2 size={15} color="var(--ink-2)" />
-                <span>Audit Trail (Append-Only)</span>
+                <span>Activity log (Append-Only)</span>
               </Command.Item>
             </Command.Group>
 
@@ -300,7 +287,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => jumpToAccount('ACC_05001')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -316,7 +302,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => jumpToAccount('ACC_05008')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -332,7 +317,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => jumpToAccount('ACC_05016')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -341,14 +325,13 @@ export const CommandPalette: React.FC = () => {
                   fontSize: '13px',
                 }}
               >
-                <span>ACC_05016 — Pass-Through Chain (₹2.10L)</span>
+                <span>ACC_05016 — Quick relay (₹2.10L)</span>
                 <span className="mono" style={{ color: 'var(--risk-high)', fontWeight: 600 }}>91</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => jumpToAccount('ACC_05026')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -364,7 +347,6 @@ export const CommandPalette: React.FC = () => {
                 onSelect={() => jumpToAccount('ACC_05044')}
                 style={{
                   padding: '8px 12px',
-                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',

@@ -33,12 +33,11 @@ export const Landing: React.FC = () => {
             style={{
               width: '26px',
               height: '26px',
-              borderRadius: '6px',
               backgroundColor: 'var(--accent)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff',
+              color: 'var(--paper)',
               fontSize: '12px',
               fontWeight: 700,
               fontFamily: 'var(--font-mono)',
@@ -46,7 +45,7 @@ export const Landing: React.FC = () => {
           >
             MT
           </div>
-          <span style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '-0.02em' }}>MuleTrace</span>
+          <span style={{ fontSize: '16px', fontWeight: 800, }}>MuleTrace</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -81,9 +80,8 @@ export const Landing: React.FC = () => {
             style={{
               padding: '7px 14px',
               backgroundColor: 'var(--accent)',
-              color: '#ffffff',
+              color: 'var(--paper)',
               border: 'none',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '13px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -105,13 +103,12 @@ export const Landing: React.FC = () => {
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
             padding: '4px 12px',
-            borderRadius: 'var(--radius-pill)',
             fontSize: '11px',
             color: 'var(--ink-2)',
             marginBottom: '20px',
           }}
         >
-          <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--ok)' }} />
+          <span style={{ width: 6, height: 6, backgroundColor: 'var(--ok)' }} />
           <span>Tested on 62,218 transactions • 0 / 9 decoys false flagged</span>
         </div>
 
@@ -119,7 +116,6 @@ export const Landing: React.FC = () => {
           style={{
             fontSize: '44px',
             fontWeight: 800,
-            letterSpacing: '-0.03em',
             lineHeight: '1.15',
             color: 'var(--ink)',
             marginBottom: '16px',
@@ -149,15 +145,14 @@ export const Landing: React.FC = () => {
               gap: '8px',
               padding: '11px 22px',
               backgroundColor: 'var(--accent)',
-              color: '#ffffff',
+              color: 'var(--paper)',
               border: 'none',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
             }}
           >
-            <span>Live Workspace Demo</span>
+            <span>Live Investigate Demo</span>
             <ArrowRight size={16} />
           </button>
 
@@ -170,7 +165,6 @@ export const Landing: React.FC = () => {
               padding: '11px 20px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '14px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -191,11 +185,10 @@ export const Landing: React.FC = () => {
             style={{
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
               01 • DETECT
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
@@ -211,11 +204,10 @@ export const Landing: React.FC = () => {
             style={{
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
               02 • QUANTIFY
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
@@ -231,11 +223,10 @@ export const Landing: React.FC = () => {
             style={{
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
               03 • ACT
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
@@ -251,11 +242,10 @@ export const Landing: React.FC = () => {
             style={{
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               padding: '20px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 700, marginBottom: '8px' }}>
               04 • COMPLY
             </div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>

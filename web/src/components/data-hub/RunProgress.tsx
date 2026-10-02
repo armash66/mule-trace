@@ -137,8 +137,7 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
         padding: '24px',
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--line)',
-        borderRadius: 'var(--radius)',
-      }}
+        }}
     >
       {/* Header & Overall progress */}
       <div>
@@ -175,7 +174,6 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
                 color: 'var(--risk-high)',
                 backgroundColor: 'transparent',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 cursor: 'pointer',
               }}
             >
@@ -189,7 +187,6 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
           style={{
             height: '4px',
             backgroundColor: 'var(--surface-raised)',
-            borderRadius: '2px',
             overflow: 'hidden',
             marginTop: '12px',
           }}
@@ -219,7 +216,6 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
                 padding: '12px',
                 backgroundColor: isCurrent ? 'var(--accent-muted)' : 'var(--surface-raised)',
                 border: isCurrent ? '1px solid var(--accent)' : '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '6px',
@@ -237,7 +233,6 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
                     style={{
                       width: '8px',
                       height: '8px',
-                      borderRadius: '50%',
                       backgroundColor: 'var(--accent)',
                       animation: 'subtlePulse 1s infinite',
                     }}
@@ -262,7 +257,6 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
             padding: '12px 16px',
             backgroundColor: 'var(--surface-raised)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '12px',
             color: 'var(--risk-high)',
             display: 'flex',
@@ -285,36 +279,36 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
               gap: '12px',
             }}
           >
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Accounts Ingested</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Accounts Ingested</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {status.summary.accounts.toLocaleString()}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Transactions Analyzed</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Transactions Analyzed</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {status.summary.transactions.toLocaleString()}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Accounts Flagged</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Accounts Flagged</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {status.summary.flagged.toLocaleString()}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Rings Discovered</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Rings Discovered</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {status.summary.rings_found}
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Est. Rupees at Risk</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Est. Rupees at Risk</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--risk-high)', marginTop: '2px' }}>
                 {formatLakhs(status.summary.estimated_at_risk)}
               </div>
@@ -341,7 +335,6 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
                 padding: '8px 16px',
                 backgroundColor: 'transparent',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '13px',
                 fontWeight: 500,
                 color: 'var(--ink)',
@@ -361,16 +354,15 @@ export const RunProgress: React.FC<RunProgressProps> = ({ runId, onCancel }) => 
                 gap: '8px',
                 padding: '8px 20px',
                 backgroundColor: 'var(--accent)',
-                color: '#ffffff',
+                color: 'var(--paper)',
                 border: 'none',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '13px',
                 fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
               <Network size={14} />
-              <span>Open Top Ring in Workspace</span>
+              <span>Open Top Ring in Investigate</span>
               <ArrowRight size={14} />
             </button>
           </div>

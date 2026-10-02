@@ -88,7 +88,7 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
 
   const getStatusDot = (status: string) => {
     if (status === 'completed') {
-      return <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ok)' }} />;
+      return <span style={{ width: '6px', height: '6px', backgroundColor: 'var(--ok)' }} />;
     }
     if (status === 'running') {
       return (
@@ -96,7 +96,6 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
           style={{
             width: '6px',
             height: '6px',
-            borderRadius: '50%',
             backgroundColor: 'var(--accent)',
             animation: 'subtlePulse 1s infinite',
           }}
@@ -104,9 +103,9 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
       );
     }
     if (status === 'failed') {
-      return <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--risk-high)' }} />;
+      return <span style={{ width: '6px', height: '6px', backgroundColor: 'var(--risk-high)' }} />;
     }
-    return <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ink-3)' }} />;
+    return <span style={{ width: '6px', height: '6px', backgroundColor: 'var(--ink-3)' }} />;
   };
 
   return (
@@ -129,7 +128,6 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
             padding: '5px 12px',
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '12px',
             color: 'var(--ink)',
             cursor: 'pointer',
@@ -143,7 +141,6 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
       <div
         style={{
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           backgroundColor: 'var(--surface)',
           overflow: 'hidden',
         }}
@@ -193,7 +190,6 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
                             style={{
                               padding: '2px 6px',
                               fontSize: '12px',
-                              borderRadius: 'var(--radius-sm)',
                               border: '1px solid var(--accent)',
                               backgroundColor: 'var(--surface)',
                               color: 'var(--ink)',
@@ -218,11 +214,9 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
                                 fontSize: '10px',
                                 color: 'var(--accent)',
                                 fontWeight: 700,
-                                textTransform: 'uppercase',
                                 padding: '1px 4px',
                                 border: '1px solid var(--accent)',
-                                borderRadius: '3px',
-                              }}
+                                }}
                             >
                               ACTIVE
                             </span>
@@ -289,7 +283,6 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
                             padding: '3px 8px',
                             backgroundColor: 'var(--surface-raised)',
                             border: '1px solid var(--line)',
-                            borderRadius: 'var(--radius-sm)',
                             fontSize: '11px',
                             fontWeight: 500,
                             color: 'var(--ink)',
@@ -308,7 +301,6 @@ export const RunHistoryTable: React.FC<RunHistoryTableProps> = ({ runs, onRefres
                               padding: '3px 8px',
                               backgroundColor: 'transparent',
                               border: '1px solid var(--line)',
-                              borderRadius: 'var(--radius-sm)',
                               fontSize: '11px',
                               color: 'var(--ink-2)',
                               cursor: 'pointer',

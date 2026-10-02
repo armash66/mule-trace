@@ -78,9 +78,8 @@ export const Cases: React.FC = () => {
                 padding: '4px 10px',
                 fontSize: '12px',
                 backgroundColor: activeRingId === rid ? 'var(--accent)' : 'var(--surface)',
-                color: activeRingId === rid ? '#ffffff' : 'var(--ink)',
+                color: activeRingId === rid ? 'var(--paper)' : 'var(--ink)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 fontWeight: 600,
                 cursor: 'pointer',
               }}
@@ -100,7 +99,6 @@ export const Cases: React.FC = () => {
               padding: '6px 12px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               fontWeight: 500,
               color: 'var(--ink)',
@@ -119,9 +117,8 @@ export const Cases: React.FC = () => {
               gap: '6px',
               padding: '6px 12px',
               backgroundColor: 'var(--accent)',
-              color: '#ffffff',
+              color: 'var(--paper)',
               border: 'none',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -138,16 +135,14 @@ export const Cases: React.FC = () => {
         style={{
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           padding: '36px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-        }}
+          }}
       >
         {/* Document Header */}
         <div style={{ borderBottom: '2px solid var(--line-strong)', paddingBottom: '18px', marginBottom: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, }}>
                 FIU-IND Suspicious Transaction Investigation Report
               </div>
               <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ink)', marginTop: '4px' }}>
@@ -170,7 +165,7 @@ export const Cases: React.FC = () => {
 
         {/* Section 1: Subject Entities (Masked KYC) */}
         <div style={{ marginBottom: '28px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', }}>
             1. Involved Subject Entities (Masked for Compliance)
           </h3>
 
@@ -203,11 +198,10 @@ export const Cases: React.FC = () => {
                         style={{
                           fontSize: '10px',
                           fontWeight: 700,
-                          color: '#ffffff',
+                          color: 'var(--paper)',
                           backgroundColor: 'var(--risk-high)',
                           padding: '2px 6px',
-                          borderRadius: '3px',
-                        }}
+                          }}
                       >
                         MIN-CUT BOTTLENECK
                       </span>
@@ -223,7 +217,7 @@ export const Cases: React.FC = () => {
 
         {/* Section 2: Fund Propagation Timeline */}
         <div style={{ marginBottom: '28px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', }}>
             2. Chronological Money Flow Ledger
           </h3>
 
@@ -261,14 +255,13 @@ export const Cases: React.FC = () => {
 
         {/* Section 3: Draft STR Narrative */}
         <div>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', }}>
             3. Regulatory Suspicious Transaction Report (STR / SAR) Draft
           </h3>
           <pre
             style={{
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               padding: '16px',
               fontSize: '12px',
               fontFamily: 'var(--font-mono)',

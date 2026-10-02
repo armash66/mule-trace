@@ -10,12 +10,12 @@ export const ShortcutSheet: React.FC = () => {
   const shortcuts = [
     { key: 'J / ↓', desc: 'Select next alert in queue' },
     { key: 'K / ↑', desc: 'Select previous alert in queue' },
-    { key: 'Enter', desc: 'Inspect account in 3-pane Workspace' },
+    { key: 'Enter', desc: 'Inspect account in 3-pane Investigate' },
     { key: 'C', desc: 'Confirm Mule (triggers risk uplift via PageRank)' },
-    { key: 'X', desc: 'Clear Account (benign / false positive)' },
+    { key: 'X', desc: 'Not a mule (benign / false positive)' },
     { key: 'F', desc: 'Generate Min-Cut Freeze Plan' },
-    { key: 'R', desc: 'Open Heist Replay simulator' },
-    { key: 'W', desc: 'Open "Why this score?" (SHAP explanation)' },
+    { key: 'R', desc: 'Open Replay simulator' },
+    { key: 'W', desc: 'Open "Why this risk?" (SHAP explanation)' },
     { key: '⌘K / Ctrl+K', desc: 'Open Command Palette & Jump' },
     { key: '?', desc: 'Toggle keyboard shortcuts sheet' },
     { key: 'Esc', desc: 'Dismiss active modal or drawer' },
@@ -42,8 +42,6 @@ export const ShortcutSheet: React.FC = () => {
           maxWidth: '92vw',
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line-strong)',
-          borderRadius: 'var(--radius)',
-          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.25)',
           overflow: 'hidden',
         }}
       >
@@ -95,7 +93,6 @@ export const ShortcutSheet: React.FC = () => {
                     backgroundColor: 'var(--surface-raised)',
                     border: '1px solid var(--line)',
                     padding: '3px 8px',
-                    borderRadius: 'var(--radius-sm)',
                     color: 'var(--ink)',
                   }}
                 >
@@ -118,7 +115,7 @@ export const ShortcutSheet: React.FC = () => {
             alignItems: 'center',
           }}
         >
-          <span>All shortcuts are active on Queue & Workspace</span>
+          <span>All shortcuts are active on Queue & Investigate</span>
           <span className="mono">Esc to close</span>
         </div>
       </div>

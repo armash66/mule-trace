@@ -69,7 +69,6 @@ export const RulesLab: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '20px',
           }}
         >
@@ -132,7 +131,7 @@ export const RulesLab: React.FC = () => {
             {/* Chain Forward Ratio */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Pass-Through Chain Ratio</span>
+                <span style={{ fontWeight: 500, color: 'var(--ink)' }}>Quick relay Ratio</span>
                 <span className="mono" style={{ fontWeight: 600, color: 'var(--accent)' }}>{chainRatio}%</span>
               </div>
               <input
@@ -184,7 +183,6 @@ export const RulesLab: React.FC = () => {
           style={{
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             padding: '20px',
             display: 'flex',
             flexDirection: 'column',
@@ -202,7 +200,7 @@ export const RulesLab: React.FC = () => {
           </p>
 
           {/* Interactive Evasion Slider */}
-          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--surface-raised)', }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px' }}>
               <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Simulate Evasion Level (ε):</span>
               <span className="mono" style={{ fontWeight: 700, color: 'var(--risk-high)' }}>
@@ -234,15 +232,15 @@ export const RulesLab: React.FC = () => {
               marginBottom: '16px',
             }}
           >
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Recall Retention</div>
+            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Recall Retention</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {(simResult.recall * 100).toFixed(1)}%
               </div>
             </div>
 
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Rings Caught</div>
+            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Rings Caught</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ok)', marginTop: '2px' }}>
                 {simResult.detected_rings} / {simResult.active_rings}
               </div>
@@ -259,7 +257,6 @@ export const RulesLab: React.FC = () => {
                   contentStyle={{
                     backgroundColor: 'var(--surface)',
                     border: '1px solid var(--line)',
-                    borderRadius: '4px',
                     fontSize: '11px',
                   }}
                 />
@@ -267,7 +264,7 @@ export const RulesLab: React.FC = () => {
                   type="monotone"
                   dataKey="recall"
                   name="MuleTrace Multi-Layer"
-                  stroke="#6D4AFF"
+                  stroke="var(--ink)"
                   strokeWidth={2}
                   dot={{ r: 4 }}
                 />
@@ -275,7 +272,7 @@ export const RulesLab: React.FC = () => {
                   type="monotone"
                   dataKey="baseline"
                   name="Standard Per-Txn Rule"
-                  stroke="#8A8A92"
+                  stroke="var(--ink-2)"
                   strokeDasharray="4 4"
                   strokeWidth={1.5}
                 />

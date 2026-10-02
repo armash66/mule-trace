@@ -270,7 +270,7 @@ export const api = {
     }
   },
 
-  // Data Hub & Uploads
+  // Data & Uploads
   uploadFiles: async (files: File[]): Promise<UploadResponse> => {
     try {
       const formData = new FormData();

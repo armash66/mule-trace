@@ -55,7 +55,6 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
                 color: 'var(--ink)',
                 backgroundColor: 'var(--surface)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 textDecoration: 'none',
               }}
             >
@@ -73,8 +72,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           }}
         >
           {/* Card 1: Total Rows */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Clean Ingested Rows</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Clean Ingested Rows</div>
             <div className="mono" style={{ fontSize: '17px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
               {report.total_rows.toLocaleString()}
             </div>
@@ -84,8 +83,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 2: Date Range */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Observed Window</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Observed Window</div>
             <div className="mono" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)', marginTop: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {report.date_range.start ? `${report.date_range.start.slice(0, 10)} → ${report.date_range.end.slice(0, 10)}` : 'N/A'}
             </div>
@@ -93,8 +92,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 3: Duplicates Removed */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Duplicates Deduplicated</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Duplicates Deduplicated</div>
             <div className="mono" style={{ fontSize: '17px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
               {report.duplicates_removed}
             </div>
@@ -102,8 +101,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 4: Out-of-Order Fixed */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Out-of-Order Re-sequenced</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Out-of-Order Re-sequenced</div>
             <div className="mono" style={{ fontSize: '17px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
               {report.out_of_order_fixed}
             </div>
@@ -111,8 +110,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 5: Self-Transfers Dropped */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Self-Transfers Dropped</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Self-Transfers Dropped</div>
             <div className="mono" style={{ fontSize: '17px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
               {report.self_transfers_dropped}
             </div>
@@ -120,8 +119,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 6: Missing Device / IP % */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Missing Telemetry</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Missing Telemetry</div>
             <div className="mono" style={{ fontSize: '17px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
               {report.missing_device_pct}% <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>dev</span> / {report.missing_ip_pct}% <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>IP</span>
             </div>
@@ -129,8 +128,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 7: Amount Min/Median/Max */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Transfer Amount Range</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Transfer Amount Range</div>
             <div className="mono" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginTop: '4px' }}>
               {formatLakhs(report.amount_stats.min)} • {formatLakhs(report.amount_stats.median)} (med)
             </div>
@@ -140,8 +139,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
           </div>
 
           {/* Card 8: Rejected Rows */}
-          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Rejected Rows</div>
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', }}>
+            <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Rejected Rows</div>
             <div className="mono" style={{ fontSize: '17px', fontWeight: 700, color: report.rejected_rows_count > 0 ? 'var(--risk-mid)' : 'var(--ink)', marginTop: '2px' }}>
               {report.rejected_rows_count}
             </div>
@@ -177,7 +176,6 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
                     padding: '8px 12px',
                     backgroundColor: 'var(--surface)',
                     border: '1px solid var(--line)',
-                    borderRadius: 'var(--radius-sm)',
                     fontSize: '12px',
                   }}
                 >
@@ -192,7 +190,7 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span className="mono" style={{ fontWeight: 600, textTransform: 'uppercase', fontSize: '10px', color: isError ? 'var(--risk-high)' : isWarn ? 'var(--risk-mid)' : 'var(--ink-3)' }}>
+                      <span className="mono" style={{ fontWeight: 600, fontSize: '10px', color: isError ? 'var(--risk-high)' : isWarn ? 'var(--risk-mid)' : 'var(--ink-3)' }}>
                         {issue.severity}
                       </span>
                       {issue.field && (
@@ -229,7 +227,6 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
             maxHeight: '320px',
             overflow: 'auto',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             backgroundColor: 'var(--surface)',
           }}
         >
@@ -317,7 +314,6 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
             padding: '8px 16px',
             backgroundColor: 'transparent',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '13px',
             fontWeight: 500,
             color: 'var(--ink)',
@@ -345,9 +341,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({ report, onProcee
               gap: '6px',
               padding: '8px 20px',
               backgroundColor: hasErrors ? 'var(--line-strong)' : 'var(--accent)',
-              color: '#ffffff',
+              color: 'var(--paper)',
               border: 'none',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '13px',
               fontWeight: 600,
               cursor: hasErrors ? 'not-allowed' : 'pointer',

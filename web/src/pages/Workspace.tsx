@@ -25,7 +25,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
-export const Workspace: React.FC = () => {
+export const Investigate: React.FC = () => {
   const { accountId: routeAccountId } = useParams<{ accountId?: string }>();
   const navigate = useNavigate();
 
@@ -91,7 +91,7 @@ export const Workspace: React.FC = () => {
     try {
       await api.submitDecision(activeId, {
         status,
-        note: `Analyst triage in Workspace hero view.`,
+        note: `Analyst triage in Investigate hero view.`,
         analyst: 'analyst_on_duty',
       });
       showToast(`Account ${activeId} marked as ${status.toUpperCase()}`, () => {
@@ -185,7 +185,6 @@ export const Workspace: React.FC = () => {
               gap: '6px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               padding: '6px 8px',
             }}
           >
@@ -240,11 +239,9 @@ export const Workspace: React.FC = () => {
                       key={i}
                       style={{
                         fontSize: '9px',
-                        textTransform: 'uppercase',
                         padding: '1px 5px',
                         backgroundColor: 'var(--surface)',
                         border: '1px solid var(--line)',
-                        borderRadius: '3px',
                         color: 'var(--ink-2)',
                       }}
                     >
@@ -298,7 +295,6 @@ export const Workspace: React.FC = () => {
                 alignItems: 'center',
                 backgroundColor: 'var(--surface-raised)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 padding: '2px',
               }}
             >
@@ -310,9 +306,8 @@ export const Workspace: React.FC = () => {
                     padding: '2px 8px',
                     fontSize: '11px',
                     border: 'none',
-                    borderRadius: '3px',
                     backgroundColor: currentHops === h ? 'var(--accent)' : 'transparent',
-                    color: currentHops === h ? '#ffffff' : 'var(--ink-2)',
+                    color: currentHops === h ? 'var(--paper)' : 'var(--ink-2)',
                     fontWeight: 600,
                     cursor: 'pointer',
                   }}
@@ -333,7 +328,6 @@ export const Workspace: React.FC = () => {
                 padding: '5px 10px',
                 backgroundColor: 'var(--accent-muted)',
                 border: '1px solid var(--accent)',
-                borderRadius: 'var(--radius-sm)',
                 color: 'var(--accent)',
                 fontSize: '12px',
                 fontWeight: 600,
@@ -355,7 +349,6 @@ export const Workspace: React.FC = () => {
                 padding: '5px 10px',
                 backgroundColor: 'var(--surface-raised)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 color: 'var(--ink)',
                 fontSize: '12px',
                 fontWeight: 500,
@@ -397,7 +390,7 @@ export const Workspace: React.FC = () => {
         <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--line)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>
                 Account Dossier
               </div>
               <h2 className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
@@ -405,12 +398,12 @@ export const Workspace: React.FC = () => {
               </h2>
             </div>
 
-            {/* Risk Score Pill */}
+            {/* Risk Pill */}
             <div style={{ textAlign: 'right' }}>
               <div className="mono" style={{ fontSize: '20px', fontWeight: 800, color: scoreColor }}>
                 {accountDetail?.risk_score || 0}
               </div>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>
                 Risk / 100
               </div>
             </div>
@@ -423,7 +416,6 @@ export const Workspace: React.FC = () => {
               padding: '10px 12px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '11px',
               display: 'flex',
               flexDirection: 'column',
@@ -461,9 +453,8 @@ export const Workspace: React.FC = () => {
                 gap: '6px',
                 padding: '8px',
                 backgroundColor: 'var(--confirmed)',
-                color: '#ffffff',
+                color: 'var(--paper)',
                 border: 'none',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -483,14 +474,13 @@ export const Workspace: React.FC = () => {
                 backgroundColor: 'var(--surface-raised)',
                 border: '1px solid var(--line)',
                 color: 'var(--ink)',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
               <XCircle size={14} />
-              <span>Clear Account (X)</span>
+              <span>Not a mule (X)</span>
             </button>
           </div>
         </div>
@@ -498,7 +488,7 @@ export const Workspace: React.FC = () => {
         {/* Plain-Language Reason Card */}
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, }}>
               Plain-Language Reason
             </span>
             <button
@@ -516,7 +506,7 @@ export const Workspace: React.FC = () => {
               }}
             >
               <HelpCircle size={12} />
-              <span>Why this score? (W)</span>
+              <span>Why this risk? (W)</span>
             </button>
           </div>
 
@@ -525,7 +515,6 @@ export const Workspace: React.FC = () => {
               padding: '12px',
               backgroundColor: 'var(--accent-muted)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               color: 'var(--ink)',
               lineHeight: '1.5',
@@ -538,7 +527,7 @@ export const Workspace: React.FC = () => {
 
         {/* Taint Tracking Rupee Box */}
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '10px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600, marginBottom: '10px' }}>
             Stolen Funds Taint Tracing
           </div>
 
@@ -549,13 +538,13 @@ export const Workspace: React.FC = () => {
               gap: '10px',
             }}
           >
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
+            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
               <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Tainted Inflow</div>
               <div className="mono" style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                 {formatLakhs(taint?.tainted_in || 424089.49)}
               </div>
             </div>
-            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
+            <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
               <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Trapped Balance</div>
               <div className="mono" style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ok)', marginTop: '2px' }}>
                 {formatLakhs(taint?.tainted_balance_remaining || 24469.49)}
@@ -579,7 +568,6 @@ export const Workspace: React.FC = () => {
                 color: activeTab === tab ? 'var(--ink)' : 'var(--ink-3)',
                 fontSize: '11px',
                 fontWeight: 600,
-                textTransform: 'uppercase',
                 cursor: 'pointer',
               }}
             >
@@ -598,12 +586,11 @@ export const Workspace: React.FC = () => {
                   style={{
                     padding: '10px 12px',
                     border: '1px solid var(--line)',
-                    borderRadius: 'var(--radius-sm)',
                     fontSize: '12px',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <span style={{ fontWeight: 600, textTransform: 'uppercase', color: 'var(--ink)' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--ink)' }}>
                       {f.pattern} Pattern
                     </span>
                     <span className="mono" style={{ color: 'var(--accent)', fontWeight: 600 }}>
@@ -616,7 +603,6 @@ export const Workspace: React.FC = () => {
                       fontSize: '11px',
                       backgroundColor: 'var(--surface-raised)',
                       padding: '8px',
-                      borderRadius: '4px',
                       overflowX: 'auto',
                       color: 'var(--ink-2)',
                     }}

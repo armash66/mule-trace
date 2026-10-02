@@ -60,7 +60,6 @@ export const RunConfigStep: React.FC<RunConfigStepProps> = ({
           style={{
             padding: '8px 12px',
             fontSize: '13px',
-            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--line-strong)',
             backgroundColor: 'var(--surface)',
             color: 'var(--ink)',
@@ -108,7 +107,6 @@ export const RunConfigStep: React.FC<RunConfigStepProps> = ({
                   padding: '14px',
                   backgroundColor: 'var(--surface)',
                   border: isSelected ? '2px solid var(--accent)' : '1px solid var(--line)',
-                  borderRadius: 'var(--radius)',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -124,7 +122,6 @@ export const RunConfigStep: React.FC<RunConfigStepProps> = ({
                     style={{
                       width: '14px',
                       height: '14px',
-                      borderRadius: '50%',
                       border: isSelected ? '4px solid var(--accent)' : '1px solid var(--line-strong)',
                       backgroundColor: 'var(--surface)',
                     }}
@@ -159,12 +156,11 @@ export const RunConfigStep: React.FC<RunConfigStepProps> = ({
           padding: '10px 14px',
           backgroundColor: 'var(--surface-raised)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius-sm)',
           fontSize: '12px',
           color: 'var(--ink-3)',
         }}
       >
-        <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--risk-mid)' }} />
+        <span style={{ width: '6px', height: '6px', backgroundColor: 'var(--risk-mid)' }} />
         <span>Outputs are flagged for review and recommended action. Mules may be unaware victims; confirm before freeze.</span>
       </div>
 
@@ -186,7 +182,6 @@ export const RunConfigStep: React.FC<RunConfigStepProps> = ({
             padding: '8px 16px',
             backgroundColor: 'transparent',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '13px',
             fontWeight: 500,
             color: 'var(--ink)',
@@ -205,15 +200,14 @@ export const RunConfigStep: React.FC<RunConfigStepProps> = ({
             gap: '8px',
             padding: '9px 24px',
             backgroundColor: 'var(--accent)',
-            color: '#ffffff',
+            color: 'var(--paper)',
             border: 'none',
-            borderRadius: 'var(--radius-sm)',
             fontSize: '13px',
             fontWeight: 600,
             cursor: isStarting ? 'wait' : 'pointer',
           }}
         >
-          <Play size={14} fill="#ffffff" />
+          <Play size={14} fill="var(--paper)" />
           <span>{isStarting ? 'Initiating Pipeline...' : 'Start Detection Pipeline'}</span>
         </button>
       </div>

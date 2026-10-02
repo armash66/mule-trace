@@ -31,7 +31,6 @@ export const Performance: React.FC = () => {
           padding: '14px 18px',
           backgroundColor: 'var(--surface-raised)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
@@ -46,32 +45,32 @@ export const Performance: React.FC = () => {
 
       {/* Top Benchmark Summary Strip */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
-        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '16px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Overall Ring Recall</div>
+        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', padding: '16px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Overall Ring Recall</div>
           <div className="mono" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--ok)', marginTop: '4px' }}>
             97.1%
           </div>
           <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginTop: '2px' }}>34/35 planted ring accounts</div>
         </div>
 
-        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '16px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Model Precision</div>
+        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', padding: '16px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Model Precision</div>
           <div className="mono" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--ink)', marginTop: '4px' }}>
             95.8%
           </div>
           <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginTop: '2px' }}>Minimal false alert noise</div>
         </div>
 
-        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '16px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Decoy False Positives</div>
+        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', padding: '16px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Decoy False Positives</div>
           <div className="mono" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--ok)', marginTop: '4px' }}>
             0 / 9 Decoys
           </div>
           <div style={{ fontSize: '11px', color: 'var(--ink-2)', marginTop: '2px' }}>Payroll, merchants safe</div>
         </div>
 
-        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '16px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Tainted Funds Stopped</div>
+        <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--line)', padding: '16px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--ink-3)', }}>Traced money Stopped</div>
           <div className="mono" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--accent)', marginTop: '4px' }}>
             78.4%
           </div>
@@ -84,7 +83,6 @@ export const Performance: React.FC = () => {
         style={{
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           overflow: 'hidden',
           marginBottom: '28px',
         }}
@@ -106,9 +104,9 @@ export const Performance: React.FC = () => {
           </thead>
           <tbody>
             {[
-              { name: 'Fan-In / Fan-Out Hubs', recall: '94.0%', prec: '95.0%', status: 'Exceeds target (≥90%)' },
-              { name: 'Time-Bounded Cycles (3-5 hops)', recall: '100.0%', prec: '100.0%', status: 'Perfect recall' },
-              { name: 'Pass-Through Chains', recall: '100.0%', prec: '96.2%', status: 'Exceeds target (≥90%)' },
+              { name: 'Collect and split', recall: '94.0%', prec: '95.0%', status: 'Exceeds target (≥90%)' },
+              { name: 'Round trip', recall: '100.0%', prec: '100.0%', status: 'Perfect recall' },
+              { name: 'Quick relay', recall: '100.0%', prec: '96.2%', status: 'Exceeds target (≥90%)' },
               { name: 'Device/Address Clusters', recall: '100.0%', prec: '97.0%', status: 'Exceeds target (≥90%)' },
               { name: 'Dormancy Sudden Burst', recall: '100.0%', prec: '91.4%', status: '0 False positives on payroll' },
             ].map((row, idx) => (
@@ -128,7 +126,6 @@ export const Performance: React.FC = () => {
         style={{
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           padding: '20px',
         }}
       >
@@ -144,13 +141,13 @@ export const Performance: React.FC = () => {
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', fontSize: '12px' }}>
-          <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
             <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Payroll Distribution</span>: 200 recipient salary batch disbursements unflagged.
           </div>
-          <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
             <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Busy Merchant Inflow</span>: 50+ customer purchases without pass-through unflagged.
           </div>
-          <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ padding: '10px', backgroundColor: 'var(--surface-raised)', }}>
             <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Family Shared Device</span>: Multi-year legitimate family accounts unflagged.
           </div>
         </div>

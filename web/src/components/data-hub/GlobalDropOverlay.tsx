@@ -83,9 +83,7 @@ export const GlobalDropOverlay: React.FC = () => {
           padding: '48px 36px',
           backgroundColor: 'var(--surface)',
           border: '2px dashed var(--accent)',
-          borderRadius: 'var(--radius)',
           textAlign: 'center',
-          boxShadow: '0 20px 48px rgba(0, 0, 0, 0.24)',
           transform: 'scale(1.02)',
           transition: 'all 0.12s ease',
         }}
@@ -94,7 +92,6 @@ export const GlobalDropOverlay: React.FC = () => {
           style={{
             width: '64px',
             height: '64px',
-            borderRadius: '50%',
             backgroundColor: 'var(--accent-muted)',
             display: 'flex',
             alignItems: 'center',

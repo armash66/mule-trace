@@ -5,9 +5,9 @@ export const PatternsGuide: React.FC = () => {
   const patterns = [
     {
       id: 'fan',
-      title: '1. Fan-In / Fan-Out Accumulation Hub',
+      title: '1. Collect and split',
       icon: GitFork,
-      color: '#E8590C',
+      color: 'var(--signal)',
       description:
         'A central mule account rapidly gathers deposits from 8–15 separate victim accounts within a tight window (e.g. 20 min), then splinters 90%+ of the total balance to multiple downstream mule accounts in under 15 min.',
       countermeasure:
@@ -16,9 +16,9 @@ export const PatternsGuide: React.FC = () => {
     },
     {
       id: 'cycle',
-      title: '2. Closed Cycle Layering Ring',
+      title: '2. Round trip',
       icon: RotateCw,
-      color: '#D9A441',
+      color: 'var(--ink-2)',
       description:
         'Funds are routed through a closed loop of 3 to 6 intermediary accounts (A → B → C → A) to obscure origin. Transfer amounts shrink predictably by 2–6% at each hop as transaction fees / mule cuts are deducted.',
       countermeasure:
@@ -27,9 +27,9 @@ export const PatternsGuide: React.FC = () => {
     },
     {
       id: 'chain',
-      title: '3. Pass-Through High-Speed Transit Chain',
+      title: '3. Quick relay',
       icon: ArrowRightLeft,
-      color: '#6D4AFF',
+      color: 'var(--ink)',
       description:
         'A sequence of 3 or more conduit accounts where each account acts as an instant transit pass-through, forwarding 95–100% of inflow within 2–8 minutes, leaving a near-zero closing balance.',
       countermeasure:
@@ -40,7 +40,7 @@ export const PatternsGuide: React.FC = () => {
       id: 'cluster',
       title: '4. Device & Address Collusion Cluster',
       icon: Cpu,
-      color: '#2F8F5B',
+      color: 'var(--ok)',
       description:
         'Recently opened accounts (under 30 days) operated by the same syndicate, sharing physical hardware device identifiers, residential address hash, or telecom KYC numbers.',
       countermeasure:
@@ -51,7 +51,7 @@ export const PatternsGuide: React.FC = () => {
       id: 'dormancy',
       title: '5. Dormancy Sudden Awakening Burst',
       icon: Moon,
-      color: '#8A8A92',
+      color: 'var(--ink-2)',
       description:
         'An account with zero transaction activity for 90+ days suddenly awakens to move high-velocity volumes matching a layered mule profile before falling silent again.',
       countermeasure:
@@ -64,7 +64,7 @@ export const PatternsGuide: React.FC = () => {
     <div style={{ padding: '24px 32px', maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{ marginBottom: '28px' }}>
         <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>
-          Mule Syndicate Detection Typologies
+          Four ways stolen money moves
         </h1>
         <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
           Network graph rules and behavioral patterns designed specifically for Indian banking channels (UPI, IMPS, NEFT).
@@ -80,7 +80,6 @@ export const PatternsGuide: React.FC = () => {
               style={{
                 backgroundColor: 'var(--surface)',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius)',
                 padding: '20px',
               }}
             >
@@ -89,7 +88,6 @@ export const PatternsGuide: React.FC = () => {
                   style={{
                     width: '32px',
                     height: '32px',
-                    borderRadius: '6px',
                     backgroundColor: `${p.color}15`,
                     display: 'flex',
                     alignItems: 'center',
@@ -111,7 +109,6 @@ export const PatternsGuide: React.FC = () => {
                   padding: '12px',
                   backgroundColor: 'var(--surface-raised)',
                   border: '1px solid var(--line)',
-                  borderRadius: 'var(--radius-sm)',
                   fontSize: '12px',
                   color: 'var(--ink-2)',
                   marginBottom: '10px',
@@ -123,7 +120,7 @@ export const PatternsGuide: React.FC = () => {
               </div>
 
               <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-                <span style={{ fontWeight: 600, textTransform: 'uppercase' }}>Production Rule Calibration: </span>
+                <span style={{ fontWeight: 600, }}>Production Rule Calibration: </span>
                 <span className="mono" style={{ color: 'var(--accent)' }}>{p.thresholds}</span>
               </div>
             </div>

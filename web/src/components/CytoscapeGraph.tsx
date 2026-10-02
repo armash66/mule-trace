@@ -33,9 +33,9 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
 
     nodes.forEach((n) => {
       let color = 'var(--risk-low)';
-      if (n.score >= 75) color = '#E8590C';
-      else if (n.score >= 40) color = '#D9A441';
-      else color = '#8A8A92';
+      if (n.score >= 75) color = 'var(--signal)';
+      else if (n.score >= 40) color = 'var(--ink-2)';
+      else color = 'var(--ink-2)';
 
       const isFreeze = n.id === recommendedFreezeId;
       const isSelected = n.id === selectedId;
@@ -72,8 +72,8 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
     }
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#EDEDEF' : '#111113';
-    const edgeColor = isDark ? '#4D4D58' : '#C7C5BF';
+    const textColor = isDark ? 'var(--paper)' : 'var(--ink)';
+    const edgeColor = isDark ? 'var(--ink)' : 'var(--ink)';
 
     const cy = cytoscape({
       container: containerRef.current,
@@ -93,7 +93,7 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
             width: 36,
             height: 36,
             'border-width': 2,
-            'border-color': '#FFFFFF',
+            'border-color': 'var(--paper)',
             'transition-property': 'background-color, border-width, border-color, width, height',
             'transition-duration': 0.2,
           },
@@ -102,7 +102,7 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
           selector: 'node[isSelected = 1]',
           style: {
             'border-width': 4,
-            'border-color': '#6D4AFF',
+            'border-color': 'var(--ink)',
             width: 44,
             height: 44,
           },
@@ -111,7 +111,7 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
           selector: 'node[isFreeze = 1]',
           style: {
             'border-width': 4,
-            'border-color': '#E8590C',
+            'border-color': 'var(--signal)',
             width: 44,
             height: 44,
           },
@@ -128,9 +128,9 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
             label: 'data(label)',
             'font-family': 'JetBrains Mono, monospace',
             'font-size': '10px',
-            color: isDark ? '#9B9BA3' : '#5B5B62',
+            color: isDark ? 'var(--ink-2)' : 'var(--ink-2)',
             'text-background-opacity': 0.85,
-            'text-background-color': isDark ? '#1A1A1D' : '#FAFAF9',
+            'text-background-color': isDark ? 'var(--ink)' : 'var(--paper)',
             'text-background-padding': '2px',
             'text-background-shape': 'roundrectangle',
           },
@@ -179,10 +179,8 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
           gap: '6px',
           backgroundColor: 'var(--surface)',
           padding: '4px',
-          borderRadius: 'var(--radius)',
           border: '1px solid var(--line)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        }}
+          }}
       >
         <button
           onClick={handleZoomIn}
@@ -239,9 +237,7 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
           left: '16px',
           backgroundColor: 'var(--surface)',
           padding: '8px 12px',
-          borderRadius: 'var(--radius-sm)',
           border: '1px solid var(--line)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
@@ -250,15 +246,15 @@ export const CytoscapeGraph: React.FC<CytoscapeGraphProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#E8590C' }} />
+          <span style={{ width: 8, height: 8, backgroundColor: 'var(--signal)' }} />
           <span>High Risk (≥75)</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#D9A441' }} />
+          <span style={{ width: 8, height: 8, backgroundColor: 'var(--ink-2)' }} />
           <span>Mid Risk</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#8A8A92' }} />
+          <span style={{ width: 8, height: 8, backgroundColor: 'var(--ink-2)' }} />
           <span>Low Risk</span>
         </div>
       </div>

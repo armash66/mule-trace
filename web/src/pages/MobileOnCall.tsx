@@ -64,9 +64,7 @@ export const MobileOnCall: React.FC = () => {
           maxWidth: '400px',
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line-strong)',
-          borderRadius: '24px',
           overflow: 'hidden',
-          boxShadow: '0 20px 48px rgba(0,0,0,0.15)',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -87,7 +85,6 @@ export const MobileOnCall: React.FC = () => {
               style={{
                 width: 8,
                 height: 8,
-                borderRadius: '50%',
                 backgroundColor: 'var(--risk-high)',
                 animation: 'subtlePulse 1s infinite',
               }}
@@ -104,7 +101,6 @@ export const MobileOnCall: React.FC = () => {
               backgroundColor: 'var(--accent-muted)',
               color: 'var(--accent)',
               padding: '2px 6px',
-              borderRadius: '4px',
               fontWeight: 600,
             }}
           >
@@ -120,11 +116,10 @@ export const MobileOnCall: React.FC = () => {
               padding: '16px',
               backgroundColor: 'var(--accent-muted)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               marginBottom: '16px',
             }}
           >
-            <div style={{ fontSize: '11px', color: 'var(--ink-3)', textTransform: 'uppercase', fontWeight: 600 }}>
+            <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>
               Urgent Incident #{activeRing}
             </div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
@@ -144,15 +139,15 @@ export const MobileOnCall: React.FC = () => {
               marginBottom: '20px',
             }}
           >
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>At Risk</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>At Risk</div>
               <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--risk-high)', marginTop: '2px' }}>
                 ₹4.24 Lakhs
               </div>
             </div>
 
-            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Bottleneck Node</div>
+            <div style={{ padding: '12px', backgroundColor: 'var(--surface-raised)', border: '1px solid var(--line)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--ink-3)', }}>Bottleneck Node</div>
               <div className="mono" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginTop: '4px' }}>
                 ACC_05001
               </div>
@@ -165,7 +160,6 @@ export const MobileOnCall: React.FC = () => {
               padding: '12px',
               backgroundColor: 'var(--surface-raised)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               color: 'var(--ink-2)',
               marginBottom: '20px',
@@ -183,7 +177,6 @@ export const MobileOnCall: React.FC = () => {
                 padding: '14px',
                 backgroundColor: 'rgba(47, 143, 91, 0.1)',
                 border: '1px solid var(--ok)',
-                borderRadius: 'var(--radius)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -203,9 +196,8 @@ export const MobileOnCall: React.FC = () => {
                 width: '100%',
                 padding: '14px',
                 backgroundColor: 'var(--accent)',
-                color: '#ffffff',
+                color: 'var(--paper)',
                 border: 'none',
-                borderRadius: 'var(--radius)',
                 fontSize: '14px',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -213,8 +205,7 @@ export const MobileOnCall: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 14px rgba(109, 74, 255, 0.35)',
-              }}
+                }}
             >
               <Lock size={16} />
               <span>Authorize Freeze (₹4.24L)</span>
@@ -233,7 +224,7 @@ export const MobileOnCall: React.FC = () => {
                 textDecoration: 'underline',
               }}
             >
-              Open Full Desktop Workspace →
+              Open Full Desktop Investigate →
             </button>
           </div>
         </div>
@@ -258,17 +249,14 @@ export const MobileOnCall: React.FC = () => {
             style={{
               width: '320px',
               backgroundColor: 'var(--surface)',
-              borderRadius: '20px',
               padding: '24px',
               textAlign: 'center',
-              boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
-            }}
+              }}
           >
             <div
               style={{
                 width: '64px',
                 height: '64px',
-                borderRadius: '50%',
                 backgroundColor: 'var(--accent-muted)',
                 color: 'var(--accent)',
                 display: 'flex',
@@ -294,9 +282,8 @@ export const MobileOnCall: React.FC = () => {
                 width: '100%',
                 padding: '12px',
                 backgroundColor: 'var(--accent)',
-                color: '#ffffff',
+                color: 'var(--paper)',
                 border: 'none',
-                borderRadius: 'var(--radius)',
                 fontSize: '13px',
                 fontWeight: 600,
                 cursor: 'pointer',

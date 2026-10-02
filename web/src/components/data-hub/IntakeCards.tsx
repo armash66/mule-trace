@@ -85,7 +85,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-3)', }}>
         Alternative Intake & Data Sources
       </div>
 
@@ -97,7 +97,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             padding: '16px',
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
@@ -109,7 +108,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Clipboard size={18} color="var(--ink)" />
-            <kbd className="mono" style={{ fontSize: '10px', color: 'var(--ink-3)', padding: '1px 5px', border: '1px solid var(--line)', borderRadius: '3px' }}>
+            <kbd className="mono" style={{ fontSize: '10px', color: 'var(--ink-3)', padding: '1px 5px', border: '1px solid var(--line)', }}>
               ⌘V
             </kbd>
           </div>
@@ -128,7 +127,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             padding: '16px',
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             cursor: isResettingDemo ? 'wait' : 'pointer',
             display: 'flex',
             flexDirection: 'column',
@@ -140,7 +138,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Database size={18} color="var(--accent)" />
-            <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', }}>
               Instant
             </span>
           </div>
@@ -161,7 +159,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             padding: '16px',
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
@@ -189,7 +186,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
             padding: '16px',
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
@@ -234,7 +230,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
 
       {/* Disabled Roadmap Connectors */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-3)', }}>
           Direct Feeds & Connectors (Roadmap)
         </div>
 
@@ -244,7 +240,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               padding: '12px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               opacity: 0.55,
               display: 'flex',
               alignItems: 'center',
@@ -258,7 +253,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Finacle, TCS BaNCS, Flexcube</div>
               </div>
             </div>
-            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', borderRadius: '3px', color: 'var(--ink-3)' }}>
+            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', color: 'var(--ink-3)' }}>
               ROADMAP
             </span>
           </div>
@@ -268,7 +263,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               padding: '12px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               opacity: 0.55,
               display: 'flex',
               alignItems: 'center',
@@ -282,7 +276,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Scheduled daily batch drop</div>
               </div>
             </div>
-            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', borderRadius: '3px', color: 'var(--ink-3)' }}>
+            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', color: 'var(--ink-3)' }}>
               ROADMAP
             </span>
           </div>
@@ -292,7 +286,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               padding: '12px 14px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               opacity: 0.55,
               display: 'flex',
               alignItems: 'center',
@@ -306,7 +299,7 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 <div style={{ fontSize: '10px', color: 'var(--ink-3)' }}>Real-time sub-second ingestion</div>
               </div>
             </div>
-            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', borderRadius: '3px', color: 'var(--ink-3)' }}>
+            <span className="mono" style={{ fontSize: '9px', padding: '2px 6px', backgroundColor: 'var(--surface-raised)', color: 'var(--ink-3)' }}>
               ROADMAP
             </span>
           </div>
@@ -334,13 +327,11 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               width: '600px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               padding: '24px',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
-              boxShadow: '0 16px 36px rgba(0,0,0,0.18)',
-            }}
+              }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)' }}>
@@ -365,7 +356,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 width: '100%',
                 padding: '10px',
                 fontSize: '12px',
-                borderRadius: 'var(--radius-sm)',
                 border: '1px solid var(--line-strong)',
                 backgroundColor: 'var(--surface-raised)',
                 color: 'var(--ink)',
@@ -382,7 +372,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                   padding: '6px 14px',
                   backgroundColor: 'transparent',
                   border: '1px solid var(--line)',
-                  borderRadius: 'var(--radius-sm)',
                   fontSize: '12px',
                   color: 'var(--ink)',
                   cursor: 'pointer',
@@ -397,9 +386,8 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 style={{
                   padding: '6px 18px',
                   backgroundColor: 'var(--accent)',
-                  color: '#ffffff',
+                  color: 'var(--paper)',
                   border: 'none',
-                  borderRadius: 'var(--radius-sm)',
                   fontSize: '12px',
                   fontWeight: 600,
                   cursor: !pastedContent.trim() ? 'not-allowed' : 'pointer',
@@ -434,13 +422,11 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
               width: '520px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
               padding: '24px',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
-              boxShadow: '0 16px 36px rgba(0,0,0,0.18)',
-            }}
+              }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)' }}>
@@ -466,7 +452,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 style={{
                   padding: '6px 10px',
                   fontSize: '12px',
-                  borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--line-strong)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--ink)',
@@ -489,7 +474,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                     onClick={() => setSize(s)}
                     style={{
                       padding: '8px',
-                      borderRadius: 'var(--radius-sm)',
                       border: size === s ? '2px solid var(--accent)' : '1px solid var(--line)',
                       backgroundColor: size === s ? 'var(--accent-muted)' : 'var(--surface)',
                       fontSize: '12px',
@@ -555,7 +539,6 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                   padding: '6px 14px',
                   backgroundColor: 'transparent',
                   border: '1px solid var(--line)',
-                  borderRadius: 'var(--radius-sm)',
                   fontSize: '12px',
                   color: 'var(--ink)',
                   cursor: 'pointer',
@@ -569,9 +552,8 @@ export const IntakeCards: React.FC<IntakeCardsProps> = ({
                 style={{
                   padding: '6px 18px',
                   backgroundColor: 'var(--accent)',
-                  color: '#ffffff',
+                  color: 'var(--paper)',
                   border: 'none',
-                  borderRadius: 'var(--radius-sm)',
                   fontSize: '12px',
                   fontWeight: 600,
                   cursor: isGenerating ? 'wait' : 'pointer',

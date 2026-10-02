@@ -263,8 +263,8 @@ export const DataHub: React.FC = () => {
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
-            Data Hub & Intake Pipeline
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', }}>
+            Data & Intake Pipeline
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
             Upload transaction logs and account registries, validate data hygiene, and execute graph syndicate detection.
@@ -281,11 +281,10 @@ export const DataHub: React.FC = () => {
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
               padding: '6px 12px',
-              borderRadius: 'var(--radius)',
               fontSize: '12px',
             }}
           >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: 'var(--ok)' }} />
+            <span style={{ width: 7, height: 7, backgroundColor: 'var(--ok)' }} />
             <span style={{ color: 'var(--ink-2)' }}>Active Run:</span>
             <span className="mono" style={{ color: 'var(--ink)', fontWeight: 600 }}>
               {runs.find((r) => r.id === activeRunId)?.name || activeRunId}
@@ -301,7 +300,6 @@ export const DataHub: React.FC = () => {
           alignItems: 'center',
           backgroundColor: 'var(--surface)',
           border: '1px solid var(--line)',
-          borderRadius: 'var(--radius)',
           padding: '4px',
         }}
       >
@@ -327,7 +325,6 @@ export const DataHub: React.FC = () => {
               style={{
                 flex: 1,
                 padding: '8px 12px',
-                borderRadius: 'var(--radius-sm)',
                 border: 'none',
                 backgroundColor: isActive ? 'var(--surface-raised)' : 'transparent',
                 color: isActive ? 'var(--ink)' : 'var(--ink-3)',
@@ -369,9 +366,8 @@ export const DataHub: React.FC = () => {
                     gap: '6px',
                     padding: '8px 20px',
                     backgroundColor: 'var(--accent)',
-                    color: '#ffffff',
+                    color: 'var(--paper)',
                     border: 'none',
-                    borderRadius: 'var(--radius-sm)',
                     fontSize: '13px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -407,8 +403,7 @@ export const DataHub: React.FC = () => {
               padding: '12px 16px',
               backgroundColor: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
-            }}
+              }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>Source Timezone:</span>
@@ -418,7 +413,6 @@ export const DataHub: React.FC = () => {
                 style={{
                   padding: '4px 8px',
                   fontSize: '12px',
-                  borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--line-strong)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--ink)',
@@ -479,7 +473,6 @@ export const DataHub: React.FC = () => {
                 padding: '8px 16px',
                 backgroundColor: 'transparent',
                 border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
                 fontSize: '13px',
                 fontWeight: 500,
                 color: 'var(--ink)',
@@ -507,9 +500,8 @@ export const DataHub: React.FC = () => {
                   gap: '6px',
                   padding: '8px 20px',
                   backgroundColor: !isRequiredTxMapped() ? 'var(--line-strong)' : 'var(--accent)',
-                  color: '#ffffff',
+                  color: 'var(--paper)',
                   border: 'none',
-                  borderRadius: 'var(--radius-sm)',
                   fontSize: '13px',
                   fontWeight: 600,
                   cursor: !isRequiredTxMapped() || isValidating ? 'not-allowed' : 'pointer',
@@ -539,8 +531,7 @@ export const DataHub: React.FC = () => {
             padding: '24px',
             backgroundColor: 'var(--surface)',
             border: '1px solid var(--line)',
-            borderRadius: 'var(--radius)',
-          }}
+            }}
         >
           <RunConfigStep
             defaultName={defaultRunName}

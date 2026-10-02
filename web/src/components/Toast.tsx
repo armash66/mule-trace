@@ -20,8 +20,6 @@ export const Toast: React.FC = () => {
         backgroundColor: 'var(--ink)',
         color: 'var(--ink-inverted)',
         padding: '10px 16px',
-        borderRadius: 'var(--radius)',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
         fontSize: '13px',
         border: '1px solid var(--line-strong)',
       }}
@@ -43,8 +41,7 @@ export const Toast: React.FC = () => {
             fontWeight: 600,
             cursor: 'pointer',
             padding: '2px 6px',
-            borderRadius: 'var(--radius-sm)',
-          }}
+            }}
         >
           <Undo2 size={13} />
           Undo (5s)

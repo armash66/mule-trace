@@ -20,7 +20,7 @@ MuleTrace is engineered with a **Security-First, Privacy-Preserving** architectu
 
 ## 2. OWASP Top 10 Alignment Matrix
 
-- **A01: Broken Access Control**: Strict Role-Based Access Control (RBAC) enforced via FastAPI dependencies across all routes (`analyst`, `lead`, `compliance`, `admin`, `auditor`). Read-only auditor role blocked from mutations.
+- **A01: Broken Access Control**: Strict Role-Based Access Control (RBAC) enforced via FastAPI dependencies across all routes (`analyst`, `lead`, `compliance`, `admin`, `auditor`). Read-only auditor role blocked from mutations. Client-side route state is not an authorization boundary; the API enforces every permission.
 - **A02: Cryptographic Failures**: Passwords hashed using salted `bcrypt`. PII data (phone, address, PAN) stored only as cryptographic hashes (`kyc_*_hash`).
 - **A03: Injection**: SQLAlchemy 2.0 parameterized queries eliminate SQL injection. Dynamic CSV inputs validated via strict Pydantic schemas.
 - **A04: Insecure Design**: Proportional fund tracing prevents naive premature freezes; dual-authorization required for irreversible operational actions.

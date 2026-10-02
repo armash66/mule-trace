@@ -1,77 +1,128 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { auditApi } from '../api/client';
-import { Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { api } from '../api/client';
+import { formatDateTime } from '../lib/utils';
+import { FileCheck2, Filter, Search } from 'lucide-react';
 
-export default function Audit() {
-  const { data: entries = [], isLoading } = useQuery({
-    queryKey: ['audit'],
-    queryFn: () => auditApi.list({ limit: 100 }).then(r => r.data),
-  });
+export const Audit: React.FC = () => {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filterAction, setFilterAction] = useState('all');
 
-  const { data: verification } = useQuery({
-    queryKey: ['audit-verify'],
-    queryFn: () => auditApi.verify().then(r => r.data),
-  });
+  useEffect(() => {
+    api.getAuditLog().then((data) => {
+      setLogs(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const filteredLogs = logs.filter((l) =>
+    filterAction === 'all' ? true : l.action.toLowerCase().includes(filterAction.toLowerCase())
+  );
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+    <div style={{ padding: '24px 32px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 4 }}>Audit Log</h2>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.85rem' }}>
-            Hash-chained, tamper-evident record of all actions.
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>
+            Immutable Activity log
+          </h1>
+          <p style={{ fontSize: '13px', color: 'var(--ink-2)', marginTop: '2px' }}>
+            Append-only tamper-evident log of all analyst decisions, risk overrides, and freeze dispatches.
           </p>
         </div>
-        {verification && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '6px 14px',
-            background: verification.valid ? 'rgba(34,197,94,.08)' : 'rgba(255,77,94,.08)',
-            border: `1px solid ${verification.valid ? 'rgba(34,197,94,.2)' : 'rgba(255,77,94,.2)'}`,
-            borderRadius: 'var(--radius-sm)',
-            fontSize: '0.8rem',
-            color: verification.valid ? 'var(--ok)' : 'var(--danger)',
-          }}>
-            {verification.valid ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-            Chain: {verification.valid ? 'Verified' : 'BROKEN'}
-            {verification.total_entries && ` (${verification.total_entries} entries)`}
-          </div>
-        )}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '11px', color: 'var(--ink-2)', fontWeight: 600 }}>ACTION FILTER:</span>
+          <select
+            value={filterAction}
+            onChange={(e) => setFilterAction(e.target.value)}
+            style={{
+              padding: '4px 8px',
+              fontSize: '12px',
+              backgroundColor: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
+              color: 'var(--ink)',
+              outline: 'none',
+            }}
+          >
+            <option value="all">All Actions</option>
+            <option value="confirm">Confirmations</option>
+            <option value="clear">Clears</option>
+            <option value="freeze">Freezes</option>
+          </select>
+        </div>
       </div>
 
-      {isLoading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {[...Array(10)].map((_, i) => <div key={i} className="skeleton" style={{ height: 48 }} />)}
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {entries.map((e: any) => (
-            <div key={e.id} style={{
-              padding: '10px 14px',
-              background: 'var(--bg-1)',
-              borderBottom: '1px solid var(--line)',
-              display: 'flex', alignItems: 'center', gap: 12,
-              fontSize: '0.8rem',
-            }}>
-              <Shield size={14} style={{ color: 'var(--text-2)', flexShrink: 0 }} />
-              <span className="mono" style={{ color: 'var(--accent)', minWidth: 140 }}>
-                {e.action}
-              </span>
-              <span style={{ color: 'var(--text-1)', minWidth: 100 }}>
-                {e.username}
-              </span>
-              <span style={{ flex: 1, color: 'var(--text-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {e.entity_type && `${e.entity_type}: ${e.entity_id || ''}`}
-                {e.details && ` — ${JSON.stringify(e.details).slice(0, 80)}`}
-              </span>
-              <span className="mono" style={{ color: 'var(--text-2)', fontSize: '0.7rem', flexShrink: 0 }}>
-                {e.created_at ? new Date(e.created_at).toLocaleString() : ''}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+      <div
+        style={{
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
+          overflow: 'hidden',
+        }}
+      >
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+          <thead>
+            <tr style={{ backgroundColor: 'var(--paper-2)', borderBottom: '1px solid var(--rule)' }}>
+              <th style={{ padding: '10px 16px', color: 'var(--ink-2)', fontSize: '11px', width: '180px' }}>TIMESTAMP (UTC)</th>
+              <th style={{ padding: '10px 16px', color: 'var(--ink-2)', fontSize: '11px', width: '180px' }}>ACTION</th>
+              <th style={{ padding: '10px 16px', color: 'var(--ink-2)', fontSize: '11px', width: '140px' }}>ENTITY</th>
+              <th style={{ padding: '10px 16px', color: 'var(--ink-2)', fontSize: '11px', width: '140px' }}>ANALYST</th>
+              <th style={{ padding: '10px 16px', color: 'var(--ink-2)', fontSize: '11px' }}>RATIONALE / AUDIT NOTE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--ink-2)' }}>
+                  Loading audit log...
+                </td>
+              </tr>
+            ) : filteredLogs.length === 0 ? (
+              <tr>
+                <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--ink-2)' }}>
+                  No audit logs recorded matching filter.
+                </td>
+              </tr>
+            ) : (
+              filteredLogs.map((log, idx) => (
+                <tr key={idx} style={{ borderBottom: '1px solid var(--rule)' }}>
+                  <td className="mono" style={{ padding: '12px 16px', color: 'var(--ink-2)', fontSize: '12px' }}>
+                    {formatDateTime(log.timestamp)}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontFamily: 'JetBrains Mono',
+                        padding: '2px 6px',
+                        backgroundColor: 'var(--paper-2)',
+                        border: '1px solid var(--rule)',
+                        fontWeight: 600,
+                        color: log.action.includes('CONFIRM')
+                          ? 'var(--ok)'
+                          : log.action.includes('CLEAR')
+                          ? 'var(--ok)'
+                          : 'var(--signal)',
+                      }}
+                    >
+                      {log.action}
+                    </span>
+                  </td>
+                  <td className="mono" style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--ink)' }}>
+                    {log.entity_id}
+                  </td>
+                  <td className="mono" style={{ padding: '12px 16px', color: 'var(--ink-2)' }}>
+                    {log.analyst}
+                  </td>
+                  <td style={{ padding: '12px 16px', color: 'var(--ink)', fontSize: '12px' }}>
+                    {log.note}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-}
+};

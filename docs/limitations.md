@@ -6,7 +6,7 @@ As required by the V3 specification and responsible AI/Fintech practices, this d
 
 ## 1. Evaluation on Synthetic Datasets
 - **Current State**: Benchmark metrics (Precision, Recall, F1, Latency) are measured against deterministic synthetic datasets generated with realistic topological graph patterns (fan-in/fan-out funnels, cyclic loops, rapid pass-through chains, and device-clustered rings) alongside benign financial look-alikes (merchants, payroll, family sharing).
-- **Limitation**: While synthetic generators replicate known typologies from FIU-IND and RBI advisories, real-world banking transaction distributions possess heavier tails, complex non-standard transaction descriptions, and regional batch processing irregularities.
+- **Limitation**: Demo data is synthetic and does not represent a real bank ledger. While synthetic generators replicate known typologies from FIU-IND and RBI advisories, real-world banking transaction distributions possess heavier tails, complex non-standard transaction descriptions, and regional batch processing irregularities.
 - **Mitigation**: Pilot deployments must run shadow evaluations on anonymized historical transaction logs with domain-expert calibration.
 
 ---
@@ -32,7 +32,7 @@ As required by the V3 specification and responsible AI/Fintech practices, this d
 
 ---
 
-## 5. Regulatory Compliance & Legal Review
+## 5. Regulatory Compliance & Human-in-the-Loop
 - **Current State**: MuleTrace outputs draft Suspicious Transaction Reports (STRs) aligned with FIU-IND reporting formats.
-- **Limitation**: Automated filings are strictly prohibited by law. All outputs are marked **"Draft for Human Review Only"**.
+- **Limitation**: Automated filings are strictly prohibited by law. All outputs are marked **"Draft for Human Review Only"**. A risk score is a triage prioritization aid, never an automated determination of guilt or intent.
 - **Action Required**: Compliance officers and legal counsel must review and sign off before submission to regulatory authorities.

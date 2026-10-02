@@ -7,6 +7,7 @@ __pycache__/
 env/
 .venv/
 venv/
+ENV/
 build/
 develop-eggs/
 dist/
@@ -22,43 +23,38 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Testing & Linting
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Node / Frontend
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-dist/
-dist-ssr/
-*.local
+# Local databases
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+data/*.csv
+backend/data/
+backend/app/data/
 
-# Environment & sensitive
+# Environment files
 .env
 .env.*
 !.env.example
 
-# Data files & SQLite databases
-backend/data/
-backend/app/data/
-data/
-*.db
-*.db-journal
-*.db-wal
-*.db-shm
-*.sqlite
-*.sqlite3
-*.parquet
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+frontend/
 .DS_Store
 Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo

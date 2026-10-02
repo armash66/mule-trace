@@ -1,71 +1,86 @@
-"""MuleTrace API — FastAPI application entry point."""
+"""FastAPI entry point for MuleTrace."""
+
 from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.auth import router as auth_router
-from app.api.data import router as data_router
-from app.api.ingest import router as ingest_router
-from app.api.workflow import health_router, router as workflow_router
-from app.core.config import get_settings
-from app.core.database import init_db
-from app.core.middleware import setup_middleware
+from .api import api_router, api_v1_router
+from .api.simulate import reset_demo
+from .db import SessionLocal, init_db
+from .models import Run
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("muletrace")
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Initialize database on startup."""
-    logger.info("Starting MuleTrace API...")
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Lifespan context: initialize database tables and auto-seed demo data if empty."""
+    logger.info("Initializing MuleTrace database...")
     init_db()
-    logger.info("Database initialized")
+
+    # Auto-seed demo dataset on fresh startup if available
+    db = SessionLocal()
+    try:
+        run_count = db.query(Run).count()
+        if run_count == 0:
+            logger.info("Fresh database detected — auto-loading demo dataset...")
+            try:
+                reset_demo(db)
+                logger.info("Demo dataset successfully loaded!")
+            except Exception as e:
+                logger.warning("Could not auto-load demo data: %s", e)
+    finally:
+        db.close()
+
     yield
-    logger.info("Shutting down MuleTrace API")
+    logger.info("Shutting down MuleTrace backend...")
 
 
-def create_app() -> FastAPI:
-    settings = get_settings()
+app = FastAPI(
+    title="MuleTrace API",
+    description="High-precision graph and ML detection engine for money-mule networks in India.",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
-    app = FastAPI(
-        title="MuleTrace API",
-        description="Fraud investigation platform — detect money-mule networks, explain every flag, trace stolen funds",
-        version=settings.app_version,
-        docs_url="/docs",
-        redoc_url="/redoc",
-        lifespan=lifespan,
-    )
+# Enable CORS for frontend dev server and production origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    # CORS
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.cors_origin_list,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-        expose_headers=["X-Request-Id", "X-Response-Time-Ms", "ETag"],
-    )
-
-    # Custom middleware
-    setup_middleware(app)
-
-    # Routes
-    api_prefix = "/api/v1"
-    app.include_router(auth_router, prefix=api_prefix)
-    app.include_router(ingest_router, prefix=api_prefix)
-    app.include_router(data_router, prefix=api_prefix)
-    app.include_router(workflow_router, prefix=api_prefix)
-    app.include_router(health_router, prefix=api_prefix)
-
-    return app
+# Mount primary /api/v1 router and legacy /api router
+app.include_router(api_v1_router)
+app.include_router(api_router)
 
 
-app = create_app()
+@app.get("/health")
+@app.get("/api/v1/health")
+def health_check() -> dict[str, str]:
+    """Health check endpoint."""
+    return {"status": "ok", "service": "MuleTrace"}
+
+
+
+@app.get("/")
+def root() -> dict[str, str]:
+    """Root endpoint."""
+    return {
+        "name": "MuleTrace Engine",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "api_v1": "/api/v1",
+        "api": "/api",
+    }

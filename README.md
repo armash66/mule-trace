@@ -68,34 +68,70 @@ npm run dev
 
 ## 3. Demo Credentials
 
+These accounts are created by `backend/app/seed.py` for local demonstration:
+
 | Role | Username | Password | Permitted Actions |
 | :--- | :--- | :--- | :--- |
-| **Analyst** | `analyst` | `analyst123` | Investigate alerts, reveal PII (logged), draft freezes |
+| **Analyst** | `analyst` | `analyst123` | Investigate alerts, review evidence, reveal PII (logged), draft freezes |
 | **Lead** | `lead` | `lead123` | Approve freezes, override risk thresholds, assign cases |
-| **Compliance** | `compliance` | `compliance123` | File STR reports, review regulatory audit logs |
-| **Auditor** | `auditor` | `auditor123` | Read-only verification of cryptographic audit chain |
-| **Admin** | `admin` | `admin123` | Manage users, view system telemetry |
+| **Compliance** | `compliance` | `compliance123` | Review regulatory reports and audit activity |
+| **Auditor** | `auditor` | `auditor123` | Verify audit activity, read-only review |
+| **Admin** | `admin` | `admin123` | Manage users and system settings |
 
 ---
 
-## 4. Benchmark & Performance Results
+## 4. Detection Pipeline
 
-Measured against deterministic synthetic banking ledgers (**103,648 transactions, 5,000 accounts, 10 planted rings**, seed=42):
+1. **Ingest and sanitize:** Validate columns, timestamps, duplicates, and row quality.
+2. **Build the graph:** Construct a chronological directed multigraph with adjacency indexes.
+3. **Run parallel detectors:**
+   - `Fan-In / Fan-Out`: High velocity burst inflows followed by rapid disbursements.
+   - `Cycles`: Time-respecting circular layering loops returning $\ge 70\%$ of funds.
+   - `Pass-Through`: Transit accounts holding funds $< 15$ mins with retention $\le 10\%$.
+   - `New-Cluster`: Newly activated accounts sharing devices/IPs/KYC hashes.
+   - `Behavioral`: Outlier spikes, dormant account reactivations.
+4. **Apply innocence guards:** Deduct score when a benign commercial, payroll, or family explanation fits.
+5. **Score and explain:** Combine signals into a 0–100 score and a plain-language reason.
+6. **Trace and prioritize:** Identify downstream flow, recoverable value, and freeze candidates.
+7. **Review and act:** Record decisions, create freeze requests, replay ring activity, or export reports.
 
-```json
-{
-  "precision": "15.33%",
-  "recall": "97.87%",
-  "f1_score": "26.51%",
-  "false_positive_rate": "5.13%",
-  "pipeline_latency": "93.5s (103,648 rows)",
-  "throughput": "1,108 transactions/sec",
-  "freeze_first_recovery_pct": "100.0%",
-  "naive_recovery_pct": "0.0%"
-}
-```
+---
 
-> **Key Takeaway**: Naive first-hop freezing achieved **0% fund recovery** because fraudsters immediately emptied hop-1 accounts. MuleTrace's **Freeze-First** engine achieved **100% recoverable asset tracking** by prioritizing terminal holding nodes downstream.
+## 5. API Reference
+
+| Method | Endpoint | Purpose |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/ingest` | Upload CSVs and run detection pipeline |
+| `GET` | `/api/v1/runs` | List pipeline runs |
+| `GET` | `/api/v1/runs/{id}/health` | View data quality and health metrics |
+| `GET` | `/api/v1/accounts` | Query scored accounts and risk bands |
+| `GET` | `/api/v1/accounts/{id}` | View account evidence and masked PII |
+| `GET` | `/api/v1/accounts/{id}/network` | View multi-hop account network graph |
+| `GET` | `/api/v1/accounts/{id}/taint` | View traced-money metrics |
+| `GET` | `/api/v1/accounts/{id}/explain` | View score explanations |
+| `POST` | `/api/v1/accounts/{id}/decision` | Confirm or clear an account |
+| `GET` | `/api/v1/rings` | List detected communities |
+| `GET` | `/api/v1/rings/{id}/freeze-plan` | Calculate minimum-cut freeze plan |
+| `GET` | `/api/v1/rings/{id}/replay` | Replay ring transfer activity |
+| `POST` | `/api/v1/freeze-requests` | Create dual-control freeze request |
+| `GET` | `/api/v1/cases/{ring_id}/report` | Generate case dossier / STR draft |
+| `GET` | `/api/v1/stats` | Platform summary statistics |
+| `GET` | `/api/v1/audit/verify` | Verify cryptographic hash chain |
+| `GET` | `/health` | Check service health |
+
+---
+
+## 6. Benchmark & Performance Results
+
+Measured on the repository's synthetic dataset with planted rings and benign decoys (**103,648 transactions, 5,000 accounts, 10 planted rings**, seed=42):
+
+| Metric | Measured Result | Benchmark Context |
+| :--- | :---: | :--- |
+| **Planted Mule Recall** | **97.87%** | Flagged 34 / 35 planted mule entities |
+| **False Positive Rate (Benign)** | **5.13%** | Maintained below 6% operational noise threshold |
+| **Throughput** | **1,108 txns/sec** | 103,648 transactions processed in 93.5s |
+| **Freeze-First Recovery Rate** | **100.0%** | Identified terminal holding nodes retaining funds |
+| **Naive Hop-1 Recovery Rate** | **0.0%** | Hop-1 accounts were immediately drained |
 
 To re-run the benchmark at any time:
 ```bash
@@ -105,18 +141,7 @@ python -m synthetic.benchmark
 
 ---
 
-## 5. Technology Stack
-
-- **Backend API**: Python 3.11, FastAPI, Pydantic v2, SQLAlchemy 2.0
-- **Database & Ledger**: SQLite with Write-Ahead Logging (WAL) for concurrent reads
-- **Graph & Algorithms**: NetworkX 3.3, Python-Louvain community detection
-- **Security & Cryptography**: Python-Jose (JWT), Passlib (Bcrypt), SHA-256 forward-linked audit chain
-- **Frontend App**: React 19, TypeScript, Vite, TanStack Query, Zustand, Cytoscape.js, Lucide Icons
-- **Testing**: Pytest, Pytest-Asyncio, HTTPX TestClient
-
----
-
-## 6. Architecture & Workflow
+## 7. Architecture & Workflow
 
 ```mermaid
 graph TD
@@ -137,24 +162,11 @@ graph TD
     API --> Audit
 ```
 
-### Detection Pipeline Stages
-1. **Ingest & Sanitize**: Validates schema, deduplicates IDs, coerces types, detects BOM encoding.
-2. **Graph Construction**: Constructs chronological directed multigraph with adjacency caching.
-3. **Parallel Detectors**:
-   - `Fan-In / Fan-Out`: High velocity burst inflows followed by rapid disbursements.
-   - `Cycles`: Time-respecting circular layering loops returning $\ge 70\%$ of funds.
-   - `Pass-Through`: Transit accounts holding funds $< 15$ mins with retention $\le 10\%$.
-   - `New-Cluster`: Newly activated accounts sharing devices/IPs/KYC hashes.
-   - `Behavioral`: Outlier spikes, dormant account reactivations.
-4. **Innocence Guards**: Penalizes innocent look-alikes (merchants, payroll, family pairs).
-5. **Explainability & Scoring**: Normalizes weighted signals to a 0–100 score and generates plain-language reasons.
-6. **Community Rings**: Louvain community clustering groups multi-account rings into unified cases.
-
 ---
 
-## 7. Testing Suite
+## 8. Testing Suite
 
-The repository includes a comprehensive unit and integration test suite:
+Run the full automated test suite:
 
 ```bash
 cd backend
@@ -169,7 +181,13 @@ python -m pytest tests/ -v --tb=short
 
 ---
 
-## 8. Documentation Suite
+## 9. Design Principles
+
+The interface uses a paper-and-ink visual language: warm paper tones, black structural rules, restrained signal red accents, square corners, and plain words. The goal is a calm, authoritative investigation surface that presents clear forensic evidence with zero decorative clutter.
+
+---
+
+## 10. Further Documentation
 
 - [`docs/architecture.md`](docs/architecture.md) — System architecture, pipeline, and sequence diagrams.
 - [`docs/security.md`](docs/security.md) — Threat model, OWASP Top 10 matrix, and data classification.
@@ -177,10 +195,12 @@ python -m pytest tests/ -v --tb=short
 - [`docs/limitations.md`](docs/limitations.md) — Honest disclosures on synthetic benchmarks, in-memory graph, and balance estimation.
 - [`docs/incident-runbook.md`](docs/incident-runbook.md) — Operational incident response steps for active mule rings and audit tamper alarms.
 - [`docs/demo-script.md`](docs/demo-script.md) — 3-minute rehearsed presentation script for judges.
+- [`docs/algorithms.md`](docs/algorithms.md) — Detector graph heuristics.
+- [`docs/evaluation.md`](docs/evaluation.md) — Benchmark evaluation methodology.
 
 ---
 
-## 9. Team Members & Submission Details
+## 11. Team Members & Submission Details
 
 - **Problem Statement**: Anti-Money Laundering / Mule Account Detection
 - **Domain**: Fintech & Cybersecurity

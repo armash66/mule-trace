@@ -1,1 +1,1 @@
-"""MuleTrace backend application."""
+"""MuleTrace application package."""

@@ -1,0 +1,113 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# MuleTrace Configuration
+# All thresholds and weights live here — never hard-coded in source.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+generator:
+  normal_accounts: 5000
+  normal_transactions: 60000
+  days: 7
+  channels: [UPI, IMPS, NEFT]
+  channel_weights: [0.60, 0.25, 0.15]
+  amount_mean_log: 8.5       # lognormal μ  → median ≈ ₹5,000
+  amount_std_log: 1.5        # lognormal σ
+  min_amount: 100
+  max_amount: 5000000
+  missing_device_rate: 0.05
+  duplicate_rate_min: 0.01
+  duplicate_rate_max: 0.02
+  self_transfer_count: 5
+  family_device_groups: 20
+  family_device_size_min: 2
+  family_device_size_max: 5
+  nat_ip_groups: 5
+  nat_ip_size_min: 10
+  nat_ip_size_max: 20
+
+detectors:
+  fan:
+    min_senders: 8
+    min_receivers: 4
+    min_forward_ratio: 0.85
+    min_inflow: 150000
+    window_in_minutes: 30
+    window_out_minutes: 60
+
+  cycle:
+    min_length: 3
+    max_length: 6
+    max_window_minutes: 60
+    max_branching: 10
+    min_amount_ratio: 0.5
+
+  chain:
+    min_forward_ratio: 0.90
+    max_forward_ratio: 1.02
+    max_hop_gap_minutes: 30
+    min_chain_length: 3
+    max_balance_after: 5000
+
+  cluster:
+    max_account_age_days: 30
+    min_group_size: 3
+    device_weight: 1.0
+    ip_weight: 0.5
+    phone_weight: 0.8
+    address_weight: 0.6
+    nat_ip_threshold: 10
+
+  dormancy:
+    dormant_days: 90
+    min_awakening_amount: 250000
+    volume_multiplier: 5.0
+    window_hours: 24
+
+
+scoring:
+  ml_weight: 0.30
+  pattern_weights:
+    fan: 0.90
+    cycle: 0.70
+    chain: 0.80
+    cluster: 0.60
+    dormancy: 0.75
+    community: 0.65
+  isolation_forest:
+    n_estimators: 200
+    contamination: 0.05
+    random_state: 42
+  feedback:
+    confirmed_boost: 1.2
+    cleared_suppress: true
+    weight_min: 0.1
+    weight_max: 1.0
+
+analytics:
+  taint:
+    method: "haircut"
+    min_taint_amount: 100
+  freeze_optimizer:
+    max_alternatives: 3
+    tie_break: "degree_desc"
+  propagation:
+    alpha: 0.85
+    max_iter: 50
+    confirmed_weight: 1.0
+  communities:
+    resolution: 1.0
+    min_size: 3
+    random_state: 42
+  explain:
+    top_features: 3
+
+api:
+  max_network_nodes: 60
+  default_page_size: 20
+  max_page_size: 100
+  default_hops: 1
+  max_hops: 3
+
+testing:
+  max_decoy_false_positives: 2
+  min_recall_per_pattern: 0.90
+

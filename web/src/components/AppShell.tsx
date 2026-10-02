@@ -1,235 +1,234 @@
-import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useStore } from '../store/store';
-import {
-  LayoutDashboard, Upload, Briefcase, Hexagon, Search,
-  Settings, Shield, BarChart3, Eye, Sun, Moon, LogOut,
-  ChevronLeft, ChevronRight, Command,
-} from 'lucide-react';
+import { CommandPalette } from './CommandPalette';
+import { ShortcutSheet } from './ShortcutSheet';
+import { WhyScoreDrawer } from './WhyScoreDrawer';
+import { Toast } from './Toast';
+import { GlobalDropOverlay } from './data-hub/GlobalDropOverlay';
 
-const navItems = [
-  { to: '/app/command-center', icon: LayoutDashboard, label: 'Command Center' },
-  { to: '/app/upload', icon: Upload, label: 'Upload' },
-  { to: '/app/cases', icon: Briefcase, label: 'Cases' },
-  { to: '/app/rings', icon: Hexagon, label: 'Rings' },
-  { to: '/app/watchlist', icon: Eye, label: 'Watchlist' },
-  { to: '/app/metrics', icon: BarChart3, label: 'Metrics' },
-  { to: '/app/settings', icon: Settings, label: 'Settings' },
-  { to: '/app/audit', icon: Shield, label: 'Audit' },
-];
-
-export default function AppShell() {
-  const [collapsed, setCollapsed] = useState(false);
-  const { user, theme, toggleTheme, logout, setCommandPaletteOpen } = useStore();
+export const AppShell: React.FC = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const {
+    setCommandPaletteOpen,
+    showToast,
+    runs,
+    activeRunId,
+    setActiveRunId,
+    fetchRuns,
+  } = useStore();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  useEffect(() => {
+    fetchRuns();
+  }, [fetchRuns]);
+
+  const getPageTitle = (pathname: string) => {
+    if (pathname === '/') return 'Overview';
+    if (pathname.startsWith('/alerts')) return 'Alerts';
+    if (pathname.startsWith('/workspace')) return 'Investigate';
+    if (pathname.startsWith('/freezes')) return 'Freezes';
+    if (pathname.startsWith('/cases')) return 'Cases';
+    if (pathname.startsWith('/data') || pathname.startsWith('/upload')) return 'Data';
+    if (pathname.startsWith('/patterns')) return 'How it works';
+    if (pathname.startsWith('/rules')) return 'Rules';
+    if (pathname.startsWith('/performance')) return 'Accuracy';
+    if (pathname.startsWith('/audit')) return 'Activity log';
+    if (pathname.startsWith('/replay')) return 'Replay';
+    return 'Overview';
   };
 
+  const getPrimaryNavStyle = (isActive: boolean) => ({
+    display: 'block',
+    padding: '8px 16px',
+    fontSize: '15px',
+    color: isActive ? 'var(--paper)' : 'var(--ink)',
+    backgroundColor: isActive ? 'var(--ink)' : 'transparent',
+    textDecoration: 'none',
+    transition: 'background 100ms ease',
+  });
+
+  const getSecondaryNavStyle = (isActive: boolean) => ({
+    display: 'block',
+    padding: '4px 16px',
+    fontSize: '13px',
+    color: isActive ? 'var(--ink)' : 'var(--ink-2)',
+    textDecoration: 'none',
+    fontWeight: isActive ? 600 : 400,
+  });
+
+  const activeRun = runs.find((r) => r.id === activeRunId);
+  const activeRunName = activeRun ? activeRun.name : 'Default';
+
   return (
-    <div style={{
-      display: 'flex',
-      height: '100vh',
-      overflow: 'hidden',
-      background: 'var(--bg-0)',
-    }}>
-      {/* Left rail */}
-      <nav style={{
-        width: collapsed ? 64 : 220,
-        background: 'var(--bg-1)',
-        borderRight: '1px solid var(--line)',
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'width var(--dur) var(--ease)',
-        zIndex: 10,
-        flexShrink: 0,
-      }}>
-        {/* Logo */}
-        <div style={{
-          padding: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          borderBottom: '1px solid var(--line)',
-          height: 56,
-        }}>
-          <div style={{
-            width: 32, height: 32,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14, fontWeight: 700, color: '#070A10',
-          }}>
-            MT
-          </div>
-          {!collapsed && (
-            <span style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 600,
-              fontSize: '1rem',
-              color: 'var(--text-0)',
-            }}>
-              MuleTrace
-            </span>
-          )}
-        </div>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: 'var(--paper)' }}>
+      {/* Global Modals & Drawers */}
+      <GlobalDropOverlay />
+      <CommandPalette />
+      <ShortcutSheet />
+      <WhyScoreDrawer />
+      <Toast />
 
-        {/* Nav links */}
-        <div style={{ flex: 1, padding: '8px', overflow: 'auto' }}>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: collapsed ? '10px' : '10px 12px',
-                borderRadius: 'var(--radius-sm)',
-                color: isActive ? 'var(--accent)' : 'var(--text-1)',
-                background: isActive ? 'rgba(45,212,191,.08)' : 'transparent',
-                textDecoration: 'none',
-                fontSize: '0.875rem',
-                fontWeight: isActive ? 500 : 400,
-                transition: 'all var(--dur-fast) var(--ease)',
-                justifyContent: collapsed ? 'center' : 'flex-start',
-                marginBottom: 2,
-              })}
-            >
-              <item.icon size={18} />
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          ))}
-        </div>
-
-        {/* Bottom controls */}
-        <div style={{
-          padding: '8px',
-          borderTop: '1px solid var(--line)',
+      {/* LEFT NAV (width 200px, background paper, right border 1px rule) */}
+      <aside
+        style={{
+          width: '200px',
+          minWidth: '200px',
+          backgroundColor: 'var(--paper)',
+          borderRight: '1px solid var(--rule)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 4,
-        }}>
-          <button
-            className="btn"
-            style={{ justifyContent: collapsed ? 'center' : 'flex-start', border: 'none', background: 'transparent', color: 'var(--text-1)', padding: '8px' }}
-            onClick={toggleTheme}
-            title="Toggle theme"
-          >
-            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            {!collapsed && <span style={{ fontSize: '0.8rem' }}>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>}
-          </button>
-          <button
-            className="btn"
-            style={{ justifyContent: collapsed ? 'center' : 'flex-start', border: 'none', background: 'transparent', color: 'var(--text-1)', padding: '8px' }}
-            onClick={handleLogout}
-            title="Log out"
-          >
-            <LogOut size={16} />
-            {!collapsed && <span style={{ fontSize: '0.8rem' }}>Log out</span>}
-          </button>
-          <button
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: 'var(--text-2)', padding: 8, display: 'flex',
-              justifyContent: 'center',
-            }}
-            onClick={() => setCollapsed(!collapsed)}
-            title={collapsed ? 'Expand' : 'Collapse'}
-          >
-            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Main content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Top bar */}
-        <header style={{
-          height: 56,
-          background: 'var(--bg-1)',
-          borderBottom: '1px solid var(--line)',
-          display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 20px',
-          flexShrink: 0,
-        }}>
-          <button
-            className="input"
-            onClick={() => setCommandPaletteOpen(true)}
-            style={{
-              width: 280,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              color: 'var(--text-2)',
-              fontSize: '0.8rem',
-            }}
-          >
-            <Search size={14} />
-            Search accounts, cases, rings...
-            <span style={{
-              marginLeft: 'auto',
-              padding: '2px 6px',
-              background: 'var(--bg-3)',
-              borderRadius: 4,
-              fontSize: '0.7rem',
-            }}>
-              ⌘K
+        }}
+      >
+        <div>
+          {/* Wordmark "MuleTrace" at the top in .t-head (no logo tile, no version badge) */}
+          <div style={{ padding: '20px 16px 16px 16px' }}>
+            <span className="t-head" style={{ color: 'var(--ink)', display: 'block' }}>
+              MuleTrace
             </span>
-          </button>
+          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            {/* Responsible-use banner */}
-            <span style={{
-              fontSize: '0.7rem',
-              color: 'var(--text-2)',
-              padding: '4px 8px',
-              background: 'var(--bg-2)',
-              borderRadius: 'var(--radius-sm)',
-            }}>
-              Scores support human decisions — never auto-freeze
+          {/* Six text links, 15px, no group labels, no icons: Overview, Alerts, Investigate, Freezes, Cases, Data */}
+          <nav style={{ display: 'flex', flexDirection: 'column' }}>
+            <NavLink to="/" style={({ isActive }) => getPrimaryNavStyle(isActive)} end>
+              Overview
+            </NavLink>
+            <NavLink to="/alerts" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
+              Alerts
+            </NavLink>
+            <NavLink to="/workspace" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
+              Investigate
+            </NavLink>
+            <NavLink to="/freezes" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
+              Freezes
+            </NavLink>
+            <NavLink to="/cases/fan_1" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
+              Cases
+            </NavLink>
+            <NavLink to="/data" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
+              Data
+            </NavLink>
+
+            {/* Below a 1px rule, a small label "More" in .mono and four links in 13px ink-2 */}
+            <div style={{ margin: '16px 0 8px 0', borderTop: '1px solid var(--rule)' }} />
+
+            <div className="mono" style={{ padding: '4px 16px', color: 'var(--ink-2)', fontSize: '11px' }}>
+              More
+            </div>
+
+            <NavLink to="/patterns" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
+              How it works
+            </NavLink>
+            <NavLink to="/rules" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
+              Rules
+            </NavLink>
+            <NavLink to="/performance" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
+              Accuracy
+            </NavLink>
+            <NavLink to="/audit" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
+              Activity log
+            </NavLink>
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main Content Area with TOP BAR and FOOTER */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        {/* TOP BAR (height 56px, bottom border 2px ink) */}
+        <header
+          style={{
+            height: '56px',
+            backgroundColor: 'var(--paper)',
+            borderBottom: '2px solid var(--ink)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 24px',
+          }}
+        >
+          {/* Left side shows the page title in .t-head */}
+          <div className="t-head" style={{ color: 'var(--ink)' }}>
+            {getPageTitle(location.pathname)}
+          </div>
+
+          {/* Right side shows, in order: "Dataset: {name}" as plain text dropdown, a .btn "Add data", and text "Search ⌘K" in .mono */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {/* Dataset: {name} as a plain text dropdown */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--ink-2)' }}>
+              <span>Dataset:</span>
+              <select
+                value={activeRunId || ''}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  setActiveRunId(id);
+                  showToast(`Switched dataset to ${runs.find((r) => r.id === id)?.name || id}`);
+                }}
+                style={{
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  color: 'var(--ink)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  outline: 'none',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {runs.length === 0 && <option value="">Default</option>}
+                {runs.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* .btn "Add data" */}
+            <button
+              type="button"
+              className="btn"
+              onClick={() => navigate('/data?step=select')}
+            >
+              Add data
+            </button>
+
+            {/* Text "Search ⌘K" in .mono */}
+            <span
+              className="mono"
+              onClick={() => setCommandPaletteOpen(true)}
+              style={{
+                cursor: 'pointer',
+                color: 'var(--ink-2)',
+              }}
+            >
+              Search ⌘K
             </span>
-
-            {user && (
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                padding: '4px 10px',
-                background: 'var(--bg-2)',
-                borderRadius: 'var(--radius-sm)',
-              }}>
-                <div style={{
-                  width: 24, height: 24, borderRadius: '50%',
-                  background: 'var(--accent-2)', display: 'flex',
-                  alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 600, color: 'white',
-                }}>
-                  {user.username[0].toUpperCase()}
-                </div>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-1)' }}>
-                  {user.username}
-                </span>
-                <span className="badge" style={{
-                  background: 'rgba(124,92,255,.15)',
-                  color: 'var(--accent-2)',
-                  fontSize: '0.65rem',
-                }}>
-                  {user.role}
-                </span>
-              </div>
-            )}
           </div>
         </header>
 
-        {/* Page content */}
-        <main style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+        {/* Page Content Body */}
+        <main style={{ flex: 1, overflow: 'auto', backgroundColor: 'var(--paper)' }}>
           <Outlet />
         </main>
+
+        {/* FOOTER (one line, .mono, ink-2, top border 1px rule) */}
+        <footer
+          style={{
+            height: '36px',
+            borderTop: '1px solid var(--rule)',
+            padding: '0 24px',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: 'var(--paper)',
+          }}
+          className="mono"
+        >
+          <span style={{ color: 'var(--ink-2)', fontSize: '12px' }}>
+            Demo data. Nothing here is real. A person confirms every action.
+          </span>
+        </footer>
       </div>
     </div>
   );
-}
+};

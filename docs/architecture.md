@@ -25,6 +25,8 @@ graph TD
     API --> Audit
 ```
 
+The frontend uses the Vite development proxy for local API calls. Set `VITE_API_URL` only when the API is hosted on another origin.
+
 ---
 
 ## 2. Detection Pipeline Architecture
@@ -50,7 +52,7 @@ flowchart LR
 
 ---
 
-## 3. Freeze-First Fund Recovery Workflow
+## 3. Investigation & Freeze-First Fund Recovery Workflow
 
 Unlike legacy rule engines that alert sequentially from victim to hop 1, MuleTrace traverses the entire propagation tree using proportional-split flow physics and identifies terminal holding accounts holding stolen funds.
 

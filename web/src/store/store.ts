@@ -1,108 +1,140 @@
-import { create } from 'zustand';
+/**
+ * Zustand global application state store for MuleTrace.
+ */
 
-interface User {
-  user_id: string;
-  username: string;
-  role: string;
+import { create } from 'zustand';
+import { api } from '../api/client';
+import type { RunItem } from '../api/types';
+
+interface ToastState {
+  id: string;
+  message: string;
+  undoAction?: () => void;
 }
 
 interface AppState {
-  // Auth
-  user: User | null;
-  isAuthenticated: boolean;
-  setUser: (user: User | null) => void;
-  logout: () => void;
-
   // Theme
-  theme: 'dark' | 'light';
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
   toggleTheme: () => void;
 
-  // Run
-  currentRunId: string | null;
-  setCurrentRunId: (id: string | null) => void;
-
-  // Selected alert/account
+  // Selected Entity
   selectedAccountId: string | null;
   setSelectedAccountId: (id: string | null) => void;
 
-  // Drawer
-  drawerOpen: boolean;
-  setDrawerOpen: (open: boolean) => void;
+  selectedRingId: string | null;
+  setSelectedRingId: (id: string | null) => void;
 
-  // Locale
-  locale: 'en' | 'hi';
-  setLocale: (l: 'en' | 'hi') => void;
+  // Graph state
+  currentHops: number;
+  setCurrentHops: (hops: number) => void;
 
-  // Density
-  density: 'comfortable' | 'compact';
-  toggleDensity: () => void;
-
-  // Reduce motion
-  reduceMotion: boolean;
-  toggleReduceMotion: () => void;
-
-  // Pipeline events
-  pipelineStage: string | null;
-  pipelineProgress: number;
-  setPipelineState: (stage: string | null, progress: number) => void;
-
-  // Command palette
+  // Modals & Panels
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+
+  shortcutSheetOpen: boolean;
+  setShortcutSheetOpen: (open: boolean) => void;
+
+  whyScoreDrawerOpen: boolean;
+  setWhyScoreDrawerOpen: (open: boolean) => void;
+
+  // Runs & Data Intake
+  runs: RunItem[];
+  activeRunId: string | null;
+  setRuns: (runs: RunItem[]) => void;
+  setActiveRunId: (id: string | null) => void;
+  fetchRuns: () => Promise<void>;
+
+  // Global Drag & Intake files
+  globalDragActive: boolean;
+  setGlobalDragActive: (active: boolean) => void;
+  stagedFiles: File[];
+  setStagedFiles: (files: File[]) => void;
+
+  // User session
+  user: any | null;
+  setUser: (user: any) => void;
+
+  // Toast with 5s Undo
+  toast: ToastState | null;
+  showToast: (message: string, undoAction?: () => void) => void;
+  clearToast: () => void;
 }
 
-export const useStore = create<AppState>((set) => ({
-  // Auth
-  user: null,
-  isAuthenticated: !!localStorage.getItem('muletrace_token'),
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  logout: () => {
-    localStorage.removeItem('muletrace_token');
-    localStorage.removeItem('muletrace_refresh');
-    set({ user: null, isAuthenticated: false });
+export const useStore = create<AppState>((set, get) => ({
+  theme: 'light',
+  setTheme: (theme) => {
+    document.documentElement.setAttribute('data-theme', theme);
+    set({ theme });
+  },
+  toggleTheme: () => {
+    const next = get().theme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    set({ theme: next });
   },
 
-  // Theme
-  theme: (localStorage.getItem('muletrace_theme') as 'dark' | 'light') || 'dark',
-  toggleTheme: () => set((s) => {
-    const next = s.theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('muletrace_theme', next);
-    document.documentElement.setAttribute('data-theme', next);
-    return { theme: next };
-  }),
+  selectedAccountId: 'ACC_05001',
+  setSelectedAccountId: (id) => set({ selectedAccountId: id }),
 
-  // Run
-  currentRunId: null,
-  setCurrentRunId: (id) => set({ currentRunId: id }),
+  selectedRingId: 'fan_1',
+  setSelectedRingId: (id) => set({ selectedRingId: id }),
 
-  // Selected
-  selectedAccountId: null,
-  setSelectedAccountId: (id) => set({ selectedAccountId: id, drawerOpen: !!id }),
+  currentHops: 1,
+  setCurrentHops: (hops) => set({ currentHops: hops }),
 
-  // Drawer
-  drawerOpen: false,
-  setDrawerOpen: (open) => set({ drawerOpen: open }),
-
-  // Locale
-  locale: 'en',
-  setLocale: (l) => set({ locale: l }),
-
-  // Density
-  density: 'comfortable',
-  toggleDensity: () => set((s) => ({
-    density: s.density === 'comfortable' ? 'compact' : 'comfortable',
-  })),
-
-  // Motion
-  reduceMotion: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false,
-  toggleReduceMotion: () => set((s) => ({ reduceMotion: !s.reduceMotion })),
-
-  // Pipeline
-  pipelineStage: null,
-  pipelineProgress: 0,
-  setPipelineState: (stage, progress) => set({ pipelineStage: stage, pipelineProgress: progress }),
-
-  // Command palette
   commandPaletteOpen: false,
   setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+  shortcutSheetOpen: false,
+  setShortcutSheetOpen: (open) => set({ shortcutSheetOpen: open }),
+
+  whyScoreDrawerOpen: false,
+  setWhyScoreDrawerOpen: (open) => set({ whyScoreDrawerOpen: open }),
+
+  // Runs state
+  runs: [],
+  activeRunId: null,
+  setRuns: (runs) => {
+    const active = runs.find((r) => r.is_active)?.id || runs[0]?.id || null;
+    set({ runs, activeRunId: active });
+  },
+  setActiveRunId: (id) => {
+    set({ activeRunId: id });
+    if (id) {
+      api.updateRun(id, { is_active: true }).catch(() => {});
+    }
+  },
+  fetchRuns: async () => {
+    try {
+      const runs = await api.getRuns();
+      const currentActive = get().activeRunId;
+      const serverActive = runs.find((r) => r.is_active)?.id;
+      const active = serverActive || currentActive || runs[0]?.id || null;
+      set({ runs, activeRunId: active });
+    } catch {
+      // fallback
+    }
+  },
+
+  globalDragActive: false,
+  setGlobalDragActive: (active) => set({ globalDragActive: active }),
+  stagedFiles: [],
+  setStagedFiles: (files) => set({ stagedFiles: files }),
+
+  user: null,
+  setUser: (user) => set({ user }),
+
+  toast: null,
+  showToast: (message, undoAction) => {
+    const id = String(Date.now());
+    set({ toast: { id, message, undoAction } });
+    setTimeout(() => {
+      if (get().toast?.id === id) {
+        set({ toast: null });
+      }
+    }, 5000);
+  },
+  clearToast: () => set({ toast: null }),
 }));
+

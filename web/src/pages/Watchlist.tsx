@@ -12,7 +12,7 @@ export default function Watchlist() {
 
   const { data: entries = [], isLoading } = useQuery({
     queryKey: ['watchlist'],
-    queryFn: () => watchlistApi.list().then(r => r.data),
+    queryFn: () => watchlistApi.list().then((r: any) => r.data),
   });
 
   const addMut = useMutation({
@@ -28,8 +28,8 @@ export default function Watchlist() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 4 }}>Watchlist</h2>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.85rem' }}>
+          <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Watchlist</h2>
+          <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem' }}>
             Known mule accounts matched against future uploads.
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function Watchlist() {
           {[...Array(5)].map((_, i) => <div key={i} className="skeleton" style={{ height: 56 }} />)}
         </div>
       ) : entries.length === 0 ? (
-        <div className="card" style={{ padding: 48, textAlign: 'center', color: 'var(--text-2)' }}>
+        <div className="card" style={{ padding: 48, textAlign: 'center', color: 'var(--ink-2)' }}>
           <Eye size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
           <p>Watchlist is empty.</p>
         </div>
@@ -66,14 +66,14 @@ export default function Watchlist() {
             <div key={e.id} className="card" style={{
               padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12,
             }}>
-              <Shield size={16} style={{ color: 'var(--danger)', flexShrink: 0 }} />
+              <Shield size={16} style={{ color: 'var(--signal)', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <span className="mono" style={{ fontWeight: 500, fontSize: '0.85rem' }}>{e.account_id}</span>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginTop: 2 }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--ink-2)', marginTop: 2 }}>
                   {e.source} — {e.reason}
                 </div>
               </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-2)' }}>
+              <span style={{ fontSize: '0.7rem', color: 'var(--ink-2)' }}>
                 {e.added_at ? new Date(e.added_at).toLocaleDateString() : ''}
               </span>
             </div>

@@ -18,12 +18,13 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    JSON,
     String,
     Text,
 )
 from sqlalchemy.orm import relationship
 
-from app.core.database import Base
+from ..core.database import Base
 
 
 def gen_id() -> str:
@@ -75,6 +76,19 @@ class Run(Base):
     started_at = Column(DateTime, nullable=True)
     completed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=utcnow)
+    name = Column(String(255), default="Pipeline Run")
+    config_preset = Column(String(50), default="default")
+    source = Column(String(255), default="CSV Upload")
+    is_active = Column(Integer, default=1)
+    txn_count = Column(Integer, default=0)
+    acct_count = Column(Integer, default=0)
+    flagged_count = Column(Integer, default=0)
+    duplicates_removed = Column(Integer, default=0)
+    out_of_order_fixed = Column(Integer, default=0)
+    missing_device_pct = Column(Float, default=0.0)
+    missing_ip_pct = Column(Float, default=0.0)
+    self_transfers_dropped = Column(Integer, default=0)
+    health_summary = Column(JSON, default=dict)
 
     alerts = relationship("Alert", back_populates="run", cascade="all, delete-orphan")
     accounts = relationship("Account", back_populates="run", cascade="all, delete-orphan")
@@ -245,10 +259,13 @@ class Decision(Base):
 
     id = Column(String(32), primary_key=True, default=gen_id)
     case_id = Column(String(32), ForeignKey("cases.id"), nullable=True, index=True)
+    run_id = Column(String(32), nullable=True, index=True)
     account_id = Column(String(100), nullable=False, index=True)
     action = Column(String(20), nullable=False)  # CONFIRM, CLEAR, NEEDS_INFO, REOPEN
+    status = Column(String(20), nullable=True)
     note = Column(Text, nullable=True)
     user_id = Column(String(32), ForeignKey("users.id"), nullable=False)
+    analyst = Column(String(100), nullable=True)
     is_undone = Column(Boolean, default=False)
     undone_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=utcnow)
@@ -278,15 +295,21 @@ class FreezeRequest(Base):
 
     id = Column(String(32), primary_key=True, default=gen_id)
     case_id = Column(String(32), ForeignKey("cases.id"), nullable=False, index=True)
+    run_id = Column(String(32), nullable=True, index=True)
+    ring_id = Column(String(32), nullable=True, index=True)
     account_ids_json = Column(Text, nullable=False)  # JSON array
+    account_ids = Column(JSON, nullable=True)
     total_recoverable = Column(Float, default=0.0)
+    amount = Column(Float, default=0.0)
     status = Column(String(20), default="DRAFTED")  # DRAFTED, APPROVED, REJECTED
     maker_id = Column(String(32), ForeignKey("users.id"), nullable=False)
     maker_note = Column(Text, nullable=True)
+    note = Column(Text, nullable=True)
     checker_id = Column(String(32), ForeignKey("users.id"), nullable=True)
     checker_note = Column(Text, nullable=True)
     decided_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=utcnow)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)
 
     case = relationship("Case", back_populates="freeze_requests")
 
@@ -340,13 +363,14 @@ class AuditLog(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     action = Column(String(100), nullable=False, index=True)
-    user_id = Column(String(32), nullable=False, index=True)
+    user_id = Column(String(32), nullable=True, index=True)
     username = Column(String(100), nullable=True)
     entity_type = Column(String(50), nullable=True)
     entity_id = Column(String(100), nullable=True)
     details_json = Column(Text, nullable=True)
-    prev_hash = Column(String(64), nullable=False)
-    hash = Column(String(64), nullable=False)
+    details = Column(JSON, nullable=True)
+    prev_hash = Column(String(64), nullable=True)
+    hash = Column(String(64), nullable=True)
     created_at = Column(DateTime, default=utcnow, index=True)
 
 

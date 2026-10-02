@@ -6,18 +6,18 @@ import { Settings as SettingsIcon, Scale, RotateCcw, Check } from 'lucide-react'
 export default function Settings() {
   const { data: thresholds } = useQuery({
     queryKey: ['thresholds'],
-    queryFn: () => configApi.getThresholds().then(r => r.data),
+    queryFn: () => configApi.getThresholds().then((r: any) => r.data),
   });
 
   const { data: weights } = useQuery({
     queryKey: ['weights'],
-    queryFn: () => weightsApi.get().then(r => r.data),
+    queryFn: () => weightsApi.get().then((r: any) => r.data),
   });
 
   return (
     <div style={{ maxWidth: 800 }}>
-      <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 4 }}>Settings</h2>
-      <p style={{ color: 'var(--text-2)', fontSize: '0.85rem', marginBottom: 24 }}>
+      <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Settings</h2>
+      <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem', marginBottom: 24 }}>
         Detection thresholds and learned signal weights.
       </p>
 
@@ -34,15 +34,15 @@ export default function Settings() {
             {Object.entries(thresholds).map(([key, value]) => (
               <div key={key} style={{
                 padding: '8px 12px',
-                background: 'var(--bg-2)',
-                borderRadius: 'var(--radius-sm)',
+                background: 'var(--paper-2)',
+                borderRadius: '0px',
                 display: 'flex', justifyContent: 'space-between',
                 fontSize: '0.8rem',
               }}>
-                <span style={{ color: 'var(--text-1)' }}>
+                <span style={{ color: 'var(--ink)' }}>
                   {key.replace(/_/g, ' ')}
                 </span>
-                <span className="tabular-nums" style={{ color: 'var(--accent)', fontWeight: 500 }}>
+                <span className="tabular-nums" style={{ color: 'var(--signal)', fontWeight: 500 }}>
                   {typeof value === 'number' ? value : String(value)}
                 </span>
               </div>
@@ -73,19 +73,19 @@ export default function Settings() {
             {Object.entries(weights).map(([sig, data]: [string, any]) => (
               <div key={sig} style={{
                 padding: '10px 14px',
-                background: 'var(--bg-2)',
-                borderRadius: 'var(--radius-sm)',
+                background: 'var(--paper-2)',
+                borderRadius: '0px',
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                   <span style={{ fontWeight: 500, fontSize: '0.85rem' }}>
                     {sig.replace('_', ' ')}
                   </span>
                   <div style={{ display: 'flex', gap: 16, fontSize: '0.8rem' }}>
-                    <span style={{ color: 'var(--text-2)' }}>
+                    <span style={{ color: 'var(--ink-2)' }}>
                       Default: {data.default_weight}
                     </span>
                     <span style={{
-                      color: data.delta > 0 ? 'var(--ok)' : data.delta < 0 ? 'var(--danger)' : 'var(--text-2)',
+                      color: data.delta > 0 ? 'var(--ok)' : data.delta < 0 ? 'var(--signal)' : 'var(--ink-2)',
                       fontWeight: 500,
                     }}>
                       Current: {data.learned_weight}
@@ -94,18 +94,18 @@ export default function Settings() {
                   </div>
                 </div>
                 {/* Weight bar */}
-                <div style={{ height: 4, background: 'var(--bg-3)', borderRadius: 2 }}>
+                <div style={{ height: 4, background: 'var(--paper-2)', borderRadius: 2 }}>
                   <div style={{
                     height: '100%',
                     width: `${data.learned_weight * 100 / 0.3}%`,
-                    background: data.is_applied ? 'var(--accent)' : 'var(--text-2)',
+                    background: data.is_applied ? 'var(--signal)' : 'var(--ink-2)',
                     borderRadius: 2,
                   }} />
                 </div>
-                <div style={{ display: 'flex', gap: 16, marginTop: 4, fontSize: '0.7rem', color: 'var(--text-2)' }}>
+                <div style={{ display: 'flex', gap: 16, marginTop: 4, fontSize: '0.7rem', color: 'var(--ink-2)' }}>
                   <span>✓ {data.confirmed_hits} confirmed</span>
                   <span>✕ {data.cleared_hits} cleared</span>
-                  {data.is_applied && <span style={{ color: 'var(--accent)' }}>● Applied</span>}
+                  {data.is_applied && <span style={{ color: 'var(--signal)' }}>● Applied</span>}
                 </div>
               </div>
             ))}

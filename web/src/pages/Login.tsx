@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/store';
 import { authApi } from '../api/client';
-import { Lock, User, AlertTriangle } from 'lucide-react';
 
-export default function Login() {
+export const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,7 +21,7 @@ export default function Login() {
       localStorage.setItem('muletrace_token', data.access_token);
       localStorage.setItem('muletrace_refresh', data.refresh_token);
       setUser({ user_id: '', username: data.username, role: data.role });
-      navigate('/app/command-center');
+      navigate('/');
     } catch (err: any) {
       let msg = err.response?.data?.detail;
       if (!msg) {
@@ -39,147 +38,112 @@ export default function Login() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--bg-0)',
-      padding: 20,
-    }}>
-      <div className="atmosphere" />
-      <div style={{
-        width: '100%',
-        maxWidth: 400,
-        position: 'relative',
-        zIndex: 1,
-      }}>
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{
-            width: 56, height: 56,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 20, fontWeight: 700, color: '#070A10',
-            marginBottom: 16,
-          }}>
-            MT
-          </div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '1.5rem',
-            color: 'var(--text-0)',
-            marginBottom: 4,
-          }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'var(--paper)',
+        padding: '24px',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '380px',
+          border: '2px solid var(--ink)',
+          backgroundColor: 'var(--paper)',
+          padding: '32px 28px',
+        }}
+      >
+        <div style={{ marginBottom: '28px' }}>
+          <h1 className="t-head" style={{ color: 'var(--ink)', marginBottom: '4px' }}>
             MuleTrace
           </h1>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.875rem' }}>
-            Fraud Investigation Platform
+          <p style={{ fontSize: '13px', color: 'var(--ink-2)' }}>
+            Sign in to continue.
           </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="card" style={{ padding: 24 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '10px 14px',
-              background: 'rgba(255,77,94,.1)',
-              border: '1px solid rgba(255,77,94,.2)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--danger)',
-              fontSize: '0.85rem',
-              marginBottom: 16,
-            }}>
-              <AlertTriangle size={16} />
-              {error}
+            <div className="mono" style={{ color: 'var(--signal)', fontSize: '12px' }}>
+              Fix: {error}
             </div>
           )}
 
-          <div style={{ marginBottom: 16 }}>
-            <label style={{
-              display: 'block',
-              fontSize: '0.8rem',
-              color: 'var(--text-1)',
-              marginBottom: 6,
-            }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label className="mono" style={{ color: 'var(--ink-2)' }}>
               Username
             </label>
-            <div style={{ position: 'relative' }}>
-              <User size={16} style={{
-                position: 'absolute', left: 10, top: '50%',
-                transform: 'translateY(-50%)', color: 'var(--text-2)',
-              }} />
-              <input
-                className="input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="analyst"
-                style={{ paddingLeft: 34 }}
-                autoFocus
-                required
-              />
-            </div>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="analyst"
+              autoFocus
+              required
+              className="mono"
+              style={{
+                padding: '8px 10px',
+                border: '1px solid var(--rule)',
+                backgroundColor: 'var(--paper)',
+                color: 'var(--ink)',
+                outline: 'none',
+              }}
+            />
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <label style={{
-              display: 'block',
-              fontSize: '0.8rem',
-              color: 'var(--text-1)',
-              marginBottom: 6,
-            }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label className="mono" style={{ color: 'var(--ink-2)' }}>
               Password
             </label>
-            <div style={{ position: 'relative' }}>
-              <Lock size={16} style={{
-                position: 'absolute', left: 10, top: '50%',
-                transform: 'translateY(-50%)', color: 'var(--text-2)',
-              }} />
-              <input
-                className="input"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                style={{ paddingLeft: 34 }}
-                required
-              />
-            </div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              className="mono"
+              style={{
+                padding: '8px 10px',
+                border: '1px solid var(--rule)',
+                backgroundColor: 'var(--paper)',
+                color: 'var(--ink)',
+                outline: 'none',
+              }}
+            />
           </div>
 
           <button
             type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '10px 16px', fontSize: '0.9rem' }}
+            className="btn"
             disabled={loading}
+            style={{ marginTop: '8px' }}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
 
-          <div style={{
-            marginTop: 20,
-            padding: 12,
-            background: 'var(--bg-2)',
-            borderRadius: 'var(--radius-sm)',
-            fontSize: '0.75rem',
-            color: 'var(--text-2)',
-          }}>
-            <strong style={{ color: 'var(--text-1)' }}>Demo credentials:</strong>
-            <div style={{ marginTop: 6, display: 'grid', gap: 3, fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>
-              <span>analyst / analyst123</span>
-              <span>lead / lead123</span>
-              <span>admin / admin123</span>
-            </div>
+          <div
+            className="mono"
+            style={{
+              marginTop: '16px',
+              paddingTop: '16px',
+              borderTop: '1px solid var(--rule)',
+              fontSize: '11px',
+              color: 'var(--ink-2)',
+            }}
+          >
+            <div>Demo accounts:</div>
+            <div style={{ marginTop: '4px' }}>analyst / analyst123</div>
+            <div>lead / lead123</div>
+            <div>admin / admin123</div>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default Login;

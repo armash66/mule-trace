@@ -6,27 +6,27 @@ import { BarChart3, AlertTriangle, Briefcase, Hexagon, Shield, TrendingUp } from
 export default function Metrics() {
   const { data: metrics } = useQuery({
     queryKey: ['metrics'],
-    queryFn: () => metricsApi.summary().then(r => r.data),
+    queryFn: () => metricsApi.summary().then((r: any) => r.data),
   });
 
   const { data: benchmark } = useQuery({
     queryKey: ['benchmark'],
-    queryFn: () => metricsApi.benchmark().then(r => r.data),
+    queryFn: () => metricsApi.benchmark().then((r: any) => r.data),
   });
 
   const kpis = metrics ? [
-    { label: 'Total Runs', value: metrics.total_runs, icon: TrendingUp, color: 'var(--accent)' },
-    { label: 'Total Alerts', value: metrics.total_alerts, icon: AlertTriangle, color: 'var(--risk-high)' },
-    { label: 'Critical Alerts', value: metrics.critical_count, icon: Shield, color: 'var(--risk-crit)' },
-    { label: 'Cases', value: metrics.total_cases, icon: Briefcase, color: 'var(--accent-2)' },
-    { label: 'Open Cases', value: metrics.open_cases, icon: Briefcase, color: 'var(--warn)' },
-    { label: 'Rings', value: metrics.ring_count, icon: Hexagon, color: 'var(--accent-3)' },
+    { label: 'Total Runs', value: metrics.total_runs, icon: TrendingUp, color: 'var(--signal)' },
+    { label: 'Total Alerts', value: metrics.total_alerts, icon: AlertTriangle, color: 'var(--signal)' },
+    { label: 'Critical Alerts', value: metrics.critical_count, icon: Shield, color: 'var(--signal)' },
+    { label: 'Cases', value: metrics.total_cases, icon: Briefcase, color: 'var(--signal)' },
+    { label: 'Open Cases', value: metrics.open_cases, icon: Briefcase, color: 'var(--signal)' },
+    { label: 'Rings', value: metrics.ring_count, icon: Hexagon, color: 'var(--signal)' },
   ] : [];
 
   return (
     <div>
-      <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 4 }}>Metrics</h2>
-      <p style={{ color: 'var(--text-2)', fontSize: '0.85rem', marginBottom: 24 }}>
+      <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Metrics</h2>
+      <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem', marginBottom: 24 }}>
         Key performance indicators and detection benchmarks.
       </p>
 
@@ -41,7 +41,7 @@ export default function Metrics() {
             display: 'flex', flexDirection: 'column', gap: 8,
           }}>
             <div style={{
-              width: 36, height: 36, borderRadius: 'var(--radius-sm)',
+              width: 36, height: 36, borderRadius: '0px',
               background: `${kpi.color}15`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
@@ -50,7 +50,7 @@ export default function Metrics() {
             <div className="tabular-nums" style={{ fontSize: '2rem', fontWeight: 700, color: kpi.color }}>
               {kpi.value?.toLocaleString() ?? '—'}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{kpi.label}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--ink-2)' }}>{kpi.label}</div>
           </div>
         ))}
       </div>
@@ -70,17 +70,17 @@ export default function Metrics() {
               <div key={m.label} style={{ textAlign: 'center' }}>
                 <div className="tabular-nums" style={{
                   fontSize: '2rem', fontWeight: 700,
-                  color: m.value >= m.target ? 'var(--ok)' : 'var(--warn)',
+                  color: m.value >= m.target ? 'var(--ok)' : 'var(--signal)',
                 }}>
                   {(m.value * 100).toFixed(1)}%
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{m.label}</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-2)' }}>Target: {(m.target * 100)}%</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--ink-2)' }}>{m.label}</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--ink-2)' }}>Target: {(m.target * 100)}%</div>
               </div>
             ))}
           </div>
         ) : (
-          <p style={{ color: 'var(--text-2)', fontSize: '0.85rem' }}>
+          <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem' }}>
             {benchmark?.note || 'Run the benchmark to see precision/recall metrics.'}
           </p>
         )}

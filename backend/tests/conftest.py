@@ -1,23 +1,30 @@
-"""Pytest fixtures for MuleTrace."""
+"""Shared fixtures for MuleTrace tests."""
 from __future__ import annotations
 
+import json
 import os
+import subprocess
 import sys
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Add backend directory to sys.path
-backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if backend_dir not in sys.path:
-    sys.path.insert(0, backend_dir)
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "backend"))
 
 from app.core.database import Base, get_db
 from app.core.security import hash_password
 from app.main import app
 from app.models.models import User, gen_id
 
+SCRIPT = REPO_ROOT / "scripts" / "generate_data.py"
+CONFIG = REPO_ROOT / "config.yaml"
 TEST_DB_URL = "sqlite:///:memory:"
 
 
@@ -74,3 +81,34 @@ def client(db_session):
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(scope="session")
+def gen_data(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
+    """Run the generator once (seed=42) and return output artefacts."""
+    out = tmp_path_factory.mktemp("gendata")
+    if not SCRIPT.exists():
+        return {"dir": out, "txn": pd.DataFrame(), "acct": pd.DataFrame(), "gt": {}, "stdout": ""}
+    result = subprocess.run(
+        [
+            sys.executable, str(SCRIPT),
+            "--seed", "42",
+            "--output-dir", str(out),
+            "--config", str(CONFIG),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    txn = pd.read_csv(out / "transactions.csv")
+    acct = pd.read_csv(out / "accounts.csv")
+    with open(out / "ground_truth.json", encoding="utf-8") as f:
+        gt = json.load(f)
+
+    return {
+        "dir": out,
+        "txn": txn,
+        "acct": acct,
+        "gt": gt,
+        "stdout": result.stdout,
+    }

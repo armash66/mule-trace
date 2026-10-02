@@ -41,6 +41,12 @@ export interface AccountDetail {
   features: Record<string, number>;
   decisions: Decision[];
   age_days: number | null;
+  evidence?: {
+    observed: Array<{ label: string; value: string; transaction_ids: string[] }>;
+    inferences: Array<{ label: string; value: string; note: string }>;
+    availability: { device: string; ip: string; kyc: string };
+    reason: string;
+  };
 }
 
 export interface NetworkNode {

@@ -90,6 +90,7 @@ class AccountDetail(BaseModel):
     features: dict[str, float]
     decisions: list[DecisionOut]
     age_days: int | None = None
+    evidence: dict[str, Any] = Field(default_factory=dict)
 
 
 class NetworkNode(BaseModel):

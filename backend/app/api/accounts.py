@@ -42,6 +42,41 @@ def _mask_pii(text: str | None) -> str:
     return f"{s[:2]}••••{s[-2:]}"
 
 
+def _account_evidence(account_id: str, risk_score: int, features: dict[str, Any], patterns: list[str]) -> dict[str, Any]:
+    """Build observed transaction facts without changing detector or score logic."""
+    frame = pipeline_state.transactions_df
+    if frame is None or "src_account" not in frame.columns:
+        return {"observed": [], "inferences": [], "availability": {"device": "not available in this dataset", "ip": "not available in this dataset", "kyc": "not available in this dataset"}, "reason": "Transaction evidence is not available in this dataset."}
+
+    account_rows = frame[(frame["src_account"].astype(str) == account_id) | (frame["dst_account"].astype(str) == account_id)].copy()
+    timestamps = pd.to_datetime(account_rows["timestamp"], errors="coerce").dropna().sort_values()
+    incoming = account_rows[account_rows["dst_account"].astype(str) == account_id]
+    outgoing = account_rows[account_rows["src_account"].astype(str) == account_id]
+    total_in = float(incoming["amount"].sum())
+    total_out = float(outgoing["amount"].sum())
+    relay_times = timestamps.diff().dropna().dt.total_seconds().div(60)
+    pass_through = (total_out / total_in * 100) if total_in else 0.0
+    transaction_ids = account_rows.get("txn_id", pd.Series(dtype=str)).astype(str).tolist()
+    observed = [
+        {"label": "Fan-in sender count", "value": str(incoming["src_account"].nunique()), "transaction_ids": transaction_ids},
+        {"label": "Fan-out recipient count", "value": str(outgoing["dst_account"].nunique()), "transaction_ids": transaction_ids},
+        {"label": "Pass-through", "value": f"{pass_through:.1f}% of amount", "transaction_ids": transaction_ids},
+        {"label": "Median relay time", "value": f"{relay_times.median():.1f} minutes" if not relay_times.empty else "not available", "transaction_ids": transaction_ids},
+        {"label": "First transaction", "value": timestamps.iloc[0].isoformat() if not timestamps.empty else "not available", "transaction_ids": transaction_ids},
+        {"label": "Last transaction", "value": timestamps.iloc[-1].isoformat() if not timestamps.empty else "not available", "transaction_ids": transaction_ids},
+        {"label": "Total in", "value": f"INR {total_in:,.2f}", "transaction_ids": transaction_ids},
+        {"label": "Total out", "value": f"INR {total_out:,.2f}", "transaction_ids": transaction_ids},
+    ]
+    anomaly = features.get("amount_entropy", features.get("velocity_per_hour", 0.0))
+    inferences = [
+        {"label": "Risk score", "value": str(risk_score), "note": "Combined detector signals and configured weights."},
+        {"label": "Anomaly score", "value": f"{float(anomaly):.2f}", "note": "Derived from the account's observed transaction features."},
+        {"label": "Cluster membership", "value": ", ".join(patterns) if patterns else "None", "note": "Named from detector findings linked to this account."},
+    ]
+    reason = f"Received INR {total_in:,.0f} and sent INR {total_out:,.0f} across {len(transaction_ids)} transactions."
+    return {"observed": observed, "inferences": inferences, "availability": {"device": "not available in this dataset", "ip": "not available in this dataset", "kyc": "not available in this dataset"}, "reason": reason}
+
+
 @router.get("", response_model=AccountListResponse)
 def list_accounts(
     run_id: str | None = Query(None),
@@ -191,6 +226,7 @@ def get_account_detail(account_id: str, db: Session = Depends(get_db)) -> Accoun
         features=features,
         decisions=decisions,
         age_days=age_days,
+        evidence=_account_evidence(account_id, risk_score, features, patterns),
     )
 
 

@@ -316,6 +316,11 @@ export const Investigate: React.FC = () => {
           <span className="mono" style={{ color: 'var(--ink-2)', fontSize: '14px' }}>
             {activeId}
           </span>
+          {activeId.startsWith('DEMO:') && (
+            <span className="mono" style={{ border: '1px solid var(--signal)', color: 'var(--signal)', padding: '2px 6px' }}>
+              Injected demo case
+            </span>
+          )}
           {latestDecision === 'confirmed' && (
             <span className="stamp">MARKED AS MULE</span>
           )}
@@ -395,52 +400,30 @@ export const Investigate: React.FC = () => {
         <div>
           {activeTab === 'evidence' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {accountDetail?.findings && accountDetail.findings.length > 0 ? (
-                accountDetail.findings.map((f, i) => (
-                  <div key={i} style={{ borderTop: '1px solid var(--rule)', paddingTop: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{f.pattern}</span>
-                      <span className="mono" style={{ color: 'var(--ink-2)' }}>
-                        {(f.strength * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <pre
-                      className="mono"
-                      style={{
-                        fontSize: '11px',
-                        background: 'var(--paper-2)',
-                        padding: '8px',
-                        overflowX: 'auto',
-                        color: 'var(--ink-2)',
-                        whiteSpace: 'pre-wrap',
-                      }}
-                    >
-                      {JSON.stringify(f.evidence, null, 2)}
-                    </pre>
-                  </div>
-                ))
-              ) : (
-                <div className="mono" style={{ color: 'var(--ink-2)' }}>
-                  No findings recorded.
+              <div style={{ borderTop: '2px solid var(--ink)', paddingTop: '10px' }}>
+                <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>Observed facts</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                  {(accountDetail?.evidence?.observed || []).map((fact) => (
+                    <button key={fact.label} type="button" onClick={() => showToast(`${fact.transaction_ids.length} linked transactions`)} style={{ textAlign: 'left', border: 0, borderTop: '1px solid var(--rule)', background: 'transparent', padding: '8px 0', cursor: 'pointer', color: 'var(--ink)' }}>
+                      <span style={{ display: 'block', color: 'var(--ink-2)', fontSize: '12px' }}>{fact.label}</span><span className="mono">{fact.value}</span>
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
+              <div style={{ borderTop: '2px solid var(--ink)', paddingTop: '10px' }}>
+                <div className="mono" style={{ color: 'var(--ink-2)', marginBottom: '8px' }}>Model inferences</div>
+                {(accountDetail?.evidence?.inferences || []).map((inference) => <div key={inference.label} style={{ borderTop: '1px solid var(--rule)', padding: '8px 0' }}><div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{inference.label}</span><span className="mono">{inference.value}</span></div><div style={{ color: 'var(--ink-2)', fontSize: '12px' }}>{inference.note}</div></div>)}
+              </div>
+              <div style={{ borderTop: '1px solid var(--rule)', paddingTop: '10px', color: 'var(--ink-2)', fontSize: '13px' }}>{accountDetail?.evidence?.reason || 'Observed transaction facts are not available in this dataset.'}</div>
+              <div className="mono" style={{ color: 'var(--ink-2)' }}>Device: {accountDetail?.evidence?.availability.device || 'not available in this dataset'} · IP: {accountDetail?.evidence?.availability.ip || 'not available in this dataset'} · KYC: {accountDetail?.evidence?.availability.kyc || 'not available in this dataset'}</div>
             </div>
           )}
 
           {activeTab === 'details' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
-                <span style={{ color: 'var(--ink-2)' }}>KYC phone</span>
-                <span className="mono">+91 98••••12</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
-                <span style={{ color: 'var(--ink-2)' }}>KYC address</span>
-                <span className="mono">Flat 4••, Andheri West, Mumbai</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
-                <span style={{ color: 'var(--ink-2)' }}>Device hash</span>
-                <span className="mono">a8••••4f</span>
-              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}><span style={{ color: 'var(--ink-2)' }}>KYC</span><span className="mono">{accountDetail?.evidence?.availability.kyc || 'not available in this dataset'}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}><span style={{ color: 'var(--ink-2)' }}>Device</span><span className="mono">{accountDetail?.evidence?.availability.device || 'not available in this dataset'}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}><span style={{ color: 'var(--ink-2)' }}>IP</span><span className="mono">{accountDetail?.evidence?.availability.ip || 'not available in this dataset'}</span></div>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
                 <span style={{ color: 'var(--ink-2)' }}>Account age</span>
                 <span className="mono">

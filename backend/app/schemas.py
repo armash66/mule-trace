@@ -90,6 +90,7 @@ class AccountDetail(BaseModel):
     features: dict[str, float]
     decisions: list[DecisionOut]
     age_days: int | None = None
+    evidence: dict[str, Any] = Field(default_factory=dict)
 
 
 class NetworkNode(BaseModel):
@@ -146,6 +147,7 @@ class FreezePlanResponse(BaseModel):
     rupees_lost: float
     total_tainted: float
     alternatives: list[FreezeAlternative] = Field(default_factory=list)
+    estimate_note: str | None = None
 
 
 class ReplayEvent(BaseModel):
@@ -165,6 +167,7 @@ class ReplayResponse(BaseModel):
     total_tainted: float
     stoppable_rupees: float
     accounts: list[str]
+    estimate_note: str | None = None
 
 
 class DiscoveredRing(BaseModel):
@@ -176,6 +179,7 @@ class DiscoveredRing(BaseModel):
     density: float
     estimated_at_risk: float
     explanation: str
+    estimate_note: str | None = None
 
 
 class ExplainResponse(BaseModel):

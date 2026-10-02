@@ -18,6 +18,7 @@ import networkx as nx
 import pandas as pd
 
 from ..schemas import Finding
+from .scales import scale_config, smooth_window_score
 
 
 def detect_fan(
@@ -39,9 +40,8 @@ def detect_fan(
     min_senders: int = cfg.get("min_senders", 6)
     min_receivers: int = cfg.get("min_receivers", 3)
     min_fwd: float = cfg.get("min_forward_ratio", 0.80)
-    min_inflow: float = float(cfg.get("min_inflow", 100000.0))
-    win_in = timedelta(minutes=cfg.get("window_in_minutes", 30))
-    win_out = timedelta(minutes=cfg.get("window_out_minutes", 60))
+    scale_settings = scale_config(config, "fan")
+    max_window = timedelta(minutes=max(scale_settings["windows_minutes"]))
 
 
     findings: list[Finding] = []
@@ -69,7 +69,7 @@ def detect_fan(
 
         for i in range(len(in_edges)):
             t_start = in_edges[i][1]
-            t_end_in = t_start + win_in
+            t_end_in = t_start + max_window
 
             # Collect senders within [t_start, t_end_in]
             window_senders: dict[str, float] = defaultdict(float)
@@ -82,12 +82,9 @@ def detect_fan(
                 continue
 
             inflow = sum(window_senders.values())
-            if inflow < min_inflow:
-                continue
-
-            # Check fan-out in [t_start, t_end_in + win_out]
+            # Check fan-out over the same multi-scale horizon.
             t_start_out = t_start
-            t_end_out = t_end_in + win_out
+            t_end_out = t_start + max_window
             window_receivers: dict[str, float] = defaultdict(float)
             for recv, ts, amt in out_edges:
                 if t_start_out <= ts <= t_end_out and amt >= (inflow * 0.05):
@@ -120,6 +117,7 @@ def detect_fan(
                     "minutes_elapsed": round(
                         (last_out_ts - t_start).total_seconds() / 60, 2
                     ),
+                    "scale_score": smooth_window_score((last_out_ts - t_start).total_seconds() / 60, scale_settings),
                 }
 
         if best is None:
@@ -128,8 +126,8 @@ def detect_fan(
         strength = min(
             1.0,
             (best["n_senders"] / min_senders)
-            * (best["forward_ratio"] / min_fwd)
-            * 0.5,
+            * min(1.0, best["forward_ratio"] / min_fwd)
+            * best["scale_score"],
         )
 
         findings.append(

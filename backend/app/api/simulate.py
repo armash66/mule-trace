@@ -14,6 +14,7 @@ from ..db import get_db
 from ..models import AccountResult, AuditLog, Decision, FreezeRequest, Run
 from ..pipeline import pipeline_state, run_pipeline
 from ..schemas import IngestResponse
+from ..core.security import Role, TokenData, require_role
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["simulate"])
@@ -25,6 +26,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 @router.post("/simulate/evasion")
 def simulate_evasion(
     level: float = Query(0.0, ge=0.0, le=1.0, description="Fraudster sophistication / evasion level"),
+    user: TokenData = Depends(require_role(Role.ANALYST)),
 ) -> dict[str, Any]:
     """Simulate detection performance degradation under adversarial evasion tactics."""
     curve = evaluate_evasion_curve()
@@ -48,7 +50,7 @@ def simulate_evasion(
 
 
 @router.post("/demo/reset", response_model=IngestResponse)
-def reset_demo(db: Session = Depends(get_db)) -> IngestResponse:
+def reset_demo(db: Session = Depends(get_db), user: TokenData = Depends(require_role(Role.ANALYST))) -> IngestResponse:
     """Reset the live sandbox: clear analyst decisions, freeze requests, and reload seeded demo data."""
     try:
         # Clear existing triage decisions and freeze requests for fresh sandbox experience
@@ -94,6 +96,6 @@ def reset_demo(db: Session = Depends(get_db)) -> IngestResponse:
 
 
 @router.post("/demo/load", response_model=IngestResponse)
-def load_demo_alias(db: Session = Depends(get_db)) -> IngestResponse:
+def load_demo_alias(db: Session = Depends(get_db), user: TokenData = Depends(require_role(Role.ANALYST))) -> IngestResponse:
     """Alias for demo data loading (backward compatibility)."""
     return reset_demo(db)

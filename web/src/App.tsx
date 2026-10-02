@@ -20,13 +20,15 @@ import { MobileOnCall } from './pages/MobileOnCall';
 export const App: React.FC = () => {
   return (
     <Routes>
-      {/* Public Pages */}
+      {/* Public / Pitch Landing Experience */}
+      <Route path="/" element={<Landing />} />
       <Route path="/welcome" element={<Landing />} />
       <Route path="/m/alert/:ringId" element={<MobileOnCall />} />
 
       {/* Main Application Shell Routes */}
       <Route element={<AppShell />}>
-        <Route path="/" element={<CommandCenter />} />
+        <Route path="/command" element={<CommandCenter />} />
+        <Route path="/overview" element={<CommandCenter />} />
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/workspace" element={<Investigate />} />
         <Route path="/workspace/:accountId" element={<Investigate />} />

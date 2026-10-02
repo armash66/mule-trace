@@ -10,8 +10,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from ..analytics.explain import explain_account
+from ..analytics.freeze_optimizer import recommend_time_expanded_freeze
 from ..analytics.propagation import compute_risk_propagation
-from ..analytics.taint import propagate_taint
+from ..analytics.taint import propagate_taint, trace_taint
+from ..core.security import Role, TokenData, require_role
 from ..db import get_db
 from ..graph import get_ego_network
 from ..models import AccountResult, AuditLog, Decision, Run
@@ -24,9 +26,10 @@ from ..schemas import (
     DecisionOut,
     ExplainResponse,
     Finding,
-    NetworkResponse,
+    LegacyNetworkResponse,
     TaintAccountResult,
 )
+from dataclasses import asdict
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/accounts", tags=["accounts"])
@@ -40,6 +43,41 @@ def _mask_pii(text: str | None) -> str:
     if len(s) <= 4:
         return "***"
     return f"{s[:2]}••••{s[-2:]}"
+
+
+def _account_evidence(account_id: str, risk_score: int, features: dict[str, Any], patterns: list[str]) -> dict[str, Any]:
+    """Build observed transaction facts without changing detector or score logic."""
+    frame = pipeline_state.transactions_df
+    if frame is None or "src_account" not in frame.columns:
+        return {"observed": [], "inferences": [], "availability": {"device": "not available in this dataset", "ip": "not available in this dataset", "kyc": "not available in this dataset"}, "reason": "Transaction evidence is not available in this dataset."}
+
+    account_rows = frame[(frame["src_account"].astype(str) == account_id) | (frame["dst_account"].astype(str) == account_id)].copy()
+    timestamps = pd.to_datetime(account_rows["timestamp"], errors="coerce").dropna().sort_values()
+    incoming = account_rows[account_rows["dst_account"].astype(str) == account_id]
+    outgoing = account_rows[account_rows["src_account"].astype(str) == account_id]
+    total_in = float(incoming["amount"].sum())
+    total_out = float(outgoing["amount"].sum())
+    relay_times = timestamps.diff().dropna().dt.total_seconds().div(60)
+    pass_through = (total_out / total_in * 100) if total_in else 0.0
+    transaction_ids = account_rows.get("txn_id", pd.Series(dtype=str)).astype(str).tolist()
+    observed = [
+        {"label": "Fan-in sender count", "value": str(incoming["src_account"].nunique()), "transaction_ids": transaction_ids},
+        {"label": "Fan-out recipient count", "value": str(outgoing["dst_account"].nunique()), "transaction_ids": transaction_ids},
+        {"label": "Pass-through", "value": f"{pass_through:.1f}% of amount", "transaction_ids": transaction_ids},
+        {"label": "Median relay time", "value": f"{relay_times.median():.1f} minutes" if not relay_times.empty else "not available", "transaction_ids": transaction_ids},
+        {"label": "First transaction", "value": timestamps.iloc[0].isoformat() if not timestamps.empty else "not available", "transaction_ids": transaction_ids},
+        {"label": "Last transaction", "value": timestamps.iloc[-1].isoformat() if not timestamps.empty else "not available", "transaction_ids": transaction_ids},
+        {"label": "Total in", "value": f"INR {total_in:,.2f}", "transaction_ids": transaction_ids},
+        {"label": "Total out", "value": f"INR {total_out:,.2f}", "transaction_ids": transaction_ids},
+    ]
+    anomaly = features.get("amount_entropy", features.get("velocity_per_hour", 0.0))
+    inferences = [
+        {"label": "Risk score", "value": str(risk_score), "note": "Combined detector signals and configured weights."},
+        {"label": "Anomaly score", "value": f"{float(anomaly):.2f}", "note": "Derived from the account's observed transaction features."},
+        {"label": "Cluster membership", "value": ", ".join(patterns) if patterns else "None", "note": "Named from detector findings linked to this account."},
+    ]
+    reason = f"Received INR {total_in:,.0f} and sent INR {total_out:,.0f} across {len(transaction_ids)} transactions."
+    return {"observed": observed, "inferences": inferences, "availability": {"device": "not available in this dataset", "ip": "not available in this dataset", "kyc": "not available in this dataset"}, "reason": reason}
 
 
 @router.get("", response_model=AccountListResponse)
@@ -191,15 +229,16 @@ def get_account_detail(account_id: str, db: Session = Depends(get_db)) -> Accoun
         features=features,
         decisions=decisions,
         age_days=age_days,
+        evidence=_account_evidence(account_id, risk_score, features, patterns),
     )
 
 
-@router.get("/{account_id}/network", response_model=NetworkResponse)
+@router.get("/{account_id}/network", response_model=LegacyNetworkResponse)
 def get_account_network(
     account_id: str,
     hops: int = Query(1, ge=1, le=3),
     max_nodes: int = Query(60, ge=5, le=100),
-) -> NetworkResponse:
+) -> LegacyNetworkResponse:
     """Extract ego-network capping at max_nodes, prioritizing higher-risk neighbors."""
     return get_neighbourhood(account_id=account_id, hops=hops, max_nodes=max_nodes)
 
@@ -238,6 +277,31 @@ def get_account_taint(account_id: str) -> TaintAccountResult:
     )
 
 
+@router.get("/{account_id}/trace")
+def trace_account(account_id: str, rule: Literal["proportional", "fifo"] = "proportional", max_hops: int = Query(8, ge=1, le=8), decision_time: str | None = None) -> dict[str, Any]:
+    """Trace the first victim transfer from an account using a selectable rule."""
+    if pipeline_state.graph is None or not pipeline_state.graph.has_node(account_id):
+        raise HTTPException(status_code=404, detail="Account graph is not loaded")
+    outgoing = list(pipeline_state.graph.out_edges(account_id, data=True, keys=True))
+    if not outgoing:
+        raise HTTPException(status_code=404, detail="No victim transaction found for this account")
+    src, dst, key, data = sorted(outgoing, key=lambda item: str(item[3].get("timestamp", "")))[0]
+    trail = trace_taint(pipeline_state.graph, {"src": src, "dst": dst, "amount": float(data.get("amount", 0.0)), "timestamp": data.get("timestamp")}, rule=rule, max_hops=max_hops, decision_time=decision_time)
+    return asdict(trail)
+
+
+@router.get("/{account_id}/freeze-recommendation")
+def freeze_recommendation(account_id: str, rule: Literal["proportional", "fifo"] = "proportional", decision_time: str | None = None) -> dict[str, Any]:
+    """Compare a time-expanded taint cut with the top-three risk baseline."""
+    trace = trace_account(account_id, rule=rule, decision_time=decision_time)
+    from types import SimpleNamespace
+    trail = SimpleNamespace(**trace)
+    trail.edges = [SimpleNamespace(**edge) for edge in trace["edges"]]
+    trail.seed_amount = trace["seed_amount"]
+    scores = {aid: float(item.risk_score) for aid, item in pipeline_state.scored_accounts.items()}
+    return recommend_time_expanded_freeze(trail, scores, decision_time)
+
+
 @router.get("/{account_id}/explain", response_model=ExplainResponse)
 def get_account_explanation(account_id: str, db: Session = Depends(get_db)) -> ExplainResponse:
     """Get SHAP top feature contributions and counterfactual sentence."""
@@ -254,6 +318,7 @@ def get_account_explanation(account_id: str, db: Session = Depends(get_db)) -> E
 def record_account_decision(
     account_id: str,
     body: DecisionIn,
+    user: TokenData = Depends(require_role(Role.ANALYST)),
     db: Session = Depends(get_db),
 ) -> DecisionOut:
 
@@ -264,9 +329,11 @@ def record_account_decision(
     decision = Decision(
         run_id=run_id,
         account_id=account_id,
+        action="CONFIRM" if body.status == "confirmed" else "CLEAR",
         status=body.status,
         note=body.note,
         analyst=body.analyst,
+        user_id=user.user_id,
     )
     db.add(decision)
 

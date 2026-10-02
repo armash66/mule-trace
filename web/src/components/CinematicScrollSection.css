@@ -1,0 +1,566 @@
+/* ─────────────────────────────────────────────────────────
+   CinematicScrollSection.css — Pinned Cinematic Forensic Deck
+   GSAP ScrollTrigger Architecture · VividSites Technique
+   ───────────────────────────────────────────────────────── */
+
+.cinematic-section {
+  position: relative;
+  background: var(--bg-0);
+  border-top: 1px solid var(--line);
+  /* Crucial: DO NOT add overflow: hidden to the pinning trigger section! */
+}
+
+/* ── Pinned Scene Viewport (100vh) ───────────────────────── */
+.cinematic-pin-wrap {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-0);
+}
+
+/* ── Background Layer: Ambient Grid & Parallax SVG Edges ── */
+.deck-background-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 159, 28, 0.04) 0%, transparent 60%),
+    linear-gradient(to right, rgba(35, 40, 51, 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(35, 40, 51, 0.3) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+}
+
+.deck-svg-layer {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cinematic-edge {
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+/* ── Wrap & Main Deck Layout ────────────────────────────── */
+.deck-wrap {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, calc(100% - 48px));
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Corner Readout HUD */
+.deck-corner-readout {
+  position: relative;
+  height: 24px;
+  margin-bottom: 20px;
+}
+
+.deck-readout-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--signal);
+  opacity: 0;
+}
+
+.deck-readout-item.initial-active {
+  opacity: 1;
+}
+
+.ro-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 8px var(--signal);
+}
+
+/* Main 3-Column Layout: Text Left (~45%), Card Deck Center/Right (~45%), Rail Far Right (~10%) */
+.deck-main-layout {
+  display: grid;
+  grid-template-columns: 1fr 480px 40px;
+  gap: 40px;
+  align-items: center;
+  flex-grow: 1;
+}
+
+/* ── Left Column: Stage Text ────────────────────────────── */
+.deck-text-column {
+  position: relative;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+}
+
+.deck-text-stage {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.deck-text-stage.initial-active {
+  opacity: 1;
+}
+
+.stage-kicker {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+}
+
+.stage-heading {
+  font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.15;
+  color: var(--text-0);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.stage-copy {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-1);
+  max-width: 480px;
+  margin: 0;
+}
+
+.stage-6-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.stage-cta-btn {
+  font-size: 12px;
+}
+
+/* ── Center Column: Evidence Cards Deck ─────────────────── */
+.deck-cards-column {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.cards-stack-container {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  height: 380px;
+}
+
+/* Evidence Card Anatomy */
+.deck-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-10);
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  opacity: 0;
+}
+
+.deck-card.initial-front {
+  opacity: 1;
+}
+
+/* Corner Ticks (+ or notch brackets on 4 corners) */
+.corner-tick {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+}
+
+.tick-tl {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--signal);
+  border-left: 2px solid var(--signal);
+}
+
+.tick-tr {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid var(--signal);
+  border-right: 2px solid var(--signal);
+}
+
+.tick-bl {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid var(--signal);
+  border-left: 2px solid var(--signal);
+}
+
+.tick-br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--signal);
+  border-right: 2px solid var(--signal);
+}
+
+/* Card Top Bar */
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.card-type-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.card-entity-type {
+  font-weight: 700;
+  color: var(--text-0);
+  letter-spacing: 0.05em;
+}
+
+.card-sep {
+  color: var(--text-2);
+}
+
+.card-masked-id {
+  color: var(--signal);
+  font-weight: 600;
+}
+
+/* Card Body */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-rel-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rel-label {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+}
+
+.rel-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-0);
+}
+
+.card-act-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.act-label {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+}
+
+.act-val {
+  font-size: 16px;
+  color: var(--text-0);
+  line-height: 1.35;
+}
+
+/* Detail Metrics Grid */
+.card-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-6);
+  padding: 10px;
+}
+
+.metric-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.m-label {
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  color: var(--text-2);
+}
+
+.m-val {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-0);
+}
+
+/* Card Risk Row */
+.card-risk-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}
+
+.risk-label {
+  color: var(--text-2);
+  letter-spacing: 0.05em;
+}
+
+.risk-val {
+  font-weight: 700;
+}
+
+/* ── Far Right: Progress Rail ────────────────────────────── */
+.deck-rail-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 320px;
+}
+
+.rail-counter-top,
+.rail-counter-bottom {
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.deck-rail-track {
+  width: 2px;
+  flex-grow: 1;
+  background: var(--line);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.deck-rail-fill {
+  width: 100%;
+  height: 16.66%;
+  background: var(--signal);
+  border-radius: 1px;
+}
+
+/* ── Reduced Motion Fallback ─────────────────────────────── */
+.cinematic-reduced-motion-fallback {
+  display: none;
+  padding: 80px 0;
+}
+
+.reduced-panels-list {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-top: 40px;
+}
+
+.reduced-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  align-items: center;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-10);
+  padding: 32px;
+}
+
+.panel-kicker {
+  font-size: 10px;
+  color: var(--signal);
+  letter-spacing: 0.1em;
+}
+
+.panel-heading {
+  font-size: 24px;
+  color: var(--text-0);
+  margin: 8px 0 12px 0;
+}
+
+.panel-copy {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-1);
+  margin: 0 0 18px 0;
+}
+
+.static-card {
+  position: static;
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-pin-wrap {
+    display: none !important;
+  }
+
+  .cinematic-reduced-motion-fallback {
+    display: block !important;
+  }
+}
+
+/* ── Mobile Breakpoints (<= 860px, 390px) ───────────────── */
+@media (max-width: 860px) {
+  .deck-wrap {
+    height: 100vh;
+    padding: 68px 0 16px;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .deck-corner-readout {
+    height: 18px;
+    margin-bottom: 8px;
+  }
+
+  .deck-readout-item {
+    font-size: 10px;
+  }
+
+  .deck-main-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    flex-grow: 0;
+  }
+
+  .deck-rail-column {
+    display: none;
+  }
+
+  .deck-text-column {
+    min-height: 124px;
+    position: relative;
+    display: block;
+  }
+
+  .deck-text-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    gap: 6px;
+  }
+
+  .stage-kicker {
+    font-size: 10px;
+  }
+
+  .stage-heading {
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .stage-copy {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .stage-6-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .cards-stack-container {
+    height: 290px;
+    max-width: 100%;
+  }
+
+  .deck-card {
+    padding: 14px 14px;
+    gap: 10px;
+  }
+
+  .card-top-bar {
+    padding-bottom: 8px;
+  }
+
+  .card-entity-type {
+    font-size: 10px;
+  }
+
+  .card-masked-id {
+    font-size: 11px;
+  }
+
+  .card-body {
+    gap: 8px;
+  }
+
+  .rel-val {
+    font-size: 11px;
+  }
+
+  .act-val {
+    font-size: 13px;
+  }
+
+  .card-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .m-label {
+    font-size: 7px;
+  }
+
+  .m-val {
+    font-size: 10px;
+  }
+
+  .card-risk-row {
+    padding-top: 6px;
+    font-size: 10px;
+  }
+
+  .reduced-panel {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+}

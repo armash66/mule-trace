@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useStore } from '../store/store';
 import { CommandPalette } from './CommandPalette';
@@ -6,11 +6,86 @@ import { ShortcutSheet } from './ShortcutSheet';
 import { WhyScoreDrawer } from './WhyScoreDrawer';
 import { Toast } from './Toast';
 import { GlobalDropOverlay } from './data-hub/GlobalDropOverlay';
+import {
+  LayoutDashboard,
+  Bell,
+  Search as SearchIcon,
+  Snowflake,
+  FolderOpen,
+  Database,
+  BookOpen,
+  Sliders,
+  BarChart3,
+  ClipboardList,
+  Play,
+  Sun,
+  Moon,
+  ChevronDown,
+} from 'lucide-react';
+import './AppShell.css';
+
+/* ── Navigation config ────────────────────────────────── */
+
+interface NavItem {
+  to: string;
+  label: string;
+  icon: React.ElementType;
+  end?: boolean;
+  badge?: number;
+}
+
+const PRIMARY_NAV: NavItem[] = [
+  { to: '/overview',  label: 'Overview',    icon: LayoutDashboard },
+  { to: '/alerts',    label: 'Alerts',      icon: Bell },
+  { to: '/workspace', label: 'Investigate', icon: SearchIcon },
+  { to: '/freezes',   label: 'Freezes',     icon: Snowflake },
+  { to: '/cases/fan_1', label: 'Cases',     icon: FolderOpen },
+  { to: '/data',      label: 'Data',        icon: Database },
+  { to: '/',          label: 'Pitch Landing', icon: BookOpen, end: true },
+];
+
+const SECONDARY_NAV: NavItem[] = [
+  { to: '/patterns',    label: 'How it works', icon: BookOpen },
+  { to: '/replay',      label: 'Replay',       icon: Play },
+  { to: '/rules',       label: 'Rules',        icon: Sliders },
+  { to: '/performance', label: 'Accuracy',     icon: BarChart3 },
+  { to: '/audit',       label: 'Activity log', icon: ClipboardList },
+];
+
+/* ── Page title map ───────────────────────────────────── */
+
+const PAGE_TITLES: Record<string, string> = {
+  '/':            'Overview',
+  '/alerts':      'Alerts',
+  '/workspace':   'Investigate',
+  '/freezes':     'Freezes',
+  '/cases':       'Cases',
+  '/data':        'Data',
+  '/upload':      'Data',
+  '/patterns':    'How it works',
+  '/replay':      'Replay',
+  '/rules':       'Rules',
+  '/performance': 'Accuracy',
+  '/audit':       'Activity log',
+};
+
+function getPageTitle(pathname: string): string {
+  if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname];
+  for (const [prefix, title] of Object.entries(PAGE_TITLES)) {
+    if (prefix !== '/' && pathname.startsWith(prefix)) return title;
+  }
+  return 'Overview';
+}
+
+/* ── Component ────────────────────────────────────────── */
 
 export const AppShell: React.FC = () => {
+  const [backendOffline, setBackendOffline] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const {
+    theme,
+    toggleTheme,
     setCommandPaletteOpen,
     showToast,
     runs,
@@ -23,156 +98,139 @@ export const AppShell: React.FC = () => {
     fetchRuns();
   }, [fetchRuns]);
 
-  const getPageTitle = (pathname: string) => {
-    if (pathname === '/') return 'Overview';
-    if (pathname.startsWith('/alerts')) return 'Alerts';
-    if (pathname.startsWith('/workspace')) return 'Investigate';
-    if (pathname.startsWith('/freezes')) return 'Freezes';
-    if (pathname.startsWith('/cases')) return 'Cases';
-    if (pathname.startsWith('/data') || pathname.startsWith('/upload')) return 'Data';
-    if (pathname.startsWith('/patterns')) return 'How it works';
-    if (pathname.startsWith('/rules')) return 'Rules';
-    if (pathname.startsWith('/performance')) return 'Accuracy';
-    if (pathname.startsWith('/audit')) return 'Activity log';
-    if (pathname.startsWith('/replay')) return 'Replay';
-    return 'Overview';
-  };
+  useEffect(() => {
+    const offline = () => setBackendOffline(true);
+    const online = () => setBackendOffline(false);
+    window.addEventListener('muletrace:backend-offline', offline);
+    window.addEventListener('muletrace:backend-online', online);
+    return () => {
+      window.removeEventListener('muletrace:backend-offline', offline);
+      window.removeEventListener('muletrace:backend-online', online);
+    };
+  }, []);
 
-  const getPrimaryNavStyle = (isActive: boolean) => ({
-    display: 'block',
-    padding: '8px 16px',
-    fontSize: '15px',
-    color: isActive ? 'var(--paper)' : 'var(--ink)',
-    backgroundColor: isActive ? 'var(--ink)' : 'transparent',
-    textDecoration: 'none',
-    transition: 'background 100ms ease',
-  });
-
-  const getSecondaryNavStyle = (isActive: boolean) => ({
-    display: 'block',
-    padding: '4px 16px',
-    fontSize: '13px',
-    color: isActive ? 'var(--ink)' : 'var(--ink-2)',
-    textDecoration: 'none',
-    fontWeight: isActive ? 600 : 400,
-  });
+  // Keyboard shortcut: ⌘K / Ctrl+K for command palette
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [setCommandPaletteOpen]);
 
   const activeRun = runs.find((r) => r.id === activeRunId);
-  const activeRunName = activeRun ? activeRun.name : 'Default';
+  const activeRunName = activeRun?.name ?? 'No dataset';
+  const isRunActive = activeRun?.status === 'running';
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: 'var(--paper)' }}>
+    <div className="shell">
       {/* Global Modals & Drawers */}
       <GlobalDropOverlay />
       <CommandPalette />
       <ShortcutSheet />
       <WhyScoreDrawer />
       <Toast />
+      {backendOffline && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, padding: '8px 16px', background: 'var(--signal)', color: 'var(--paper)', textAlign: 'center', fontSize: 13 }}>
+          Backend offline: mock data
+        </div>
+      )}
 
-      {/* LEFT NAV (width 200px, background paper, right border 1px rule) */}
-      <aside
-        style={{
-          width: '200px',
-          minWidth: '200px',
-          backgroundColor: 'var(--paper)',
-          borderRight: '1px solid var(--rule)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
+      {/* ── LEFT SIDEBAR ─────────────────────────────── */}
+      <aside className="shell-sidebar">
         <div>
-          {/* Wordmark "MuleTrace" at the top in .t-head (no logo tile, no version badge) */}
-          <div style={{ padding: '20px 16px 16px 16px' }}>
-            <span className="t-head" style={{ color: 'var(--ink)', display: 'block' }}>
-              MuleTrace
-            </span>
+          {/* Brand */}
+          <div className="shell-brand">
+            <span className="shell-brand-name">MuleTrace</span>
+            <span className="shell-brand-version">v0.1</span>
           </div>
 
-          {/* Six text links, 15px, no group labels, no icons: Overview, Alerts, Investigate, Freezes, Cases, Data */}
-          <nav style={{ display: 'flex', flexDirection: 'column' }}>
-            <NavLink to="/" style={({ isActive }) => getPrimaryNavStyle(isActive)} end>
-              Overview
-            </NavLink>
-            <NavLink to="/alerts" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
-              Alerts
-            </NavLink>
-            <NavLink to="/workspace" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
-              Investigate
-            </NavLink>
-            <NavLink to="/freezes" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
-              Freezes
-            </NavLink>
-            <NavLink to="/cases/fan_1" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
-              Cases
-            </NavLink>
-            <NavLink to="/data" style={({ isActive }) => getPrimaryNavStyle(isActive)}>
-              Data
-            </NavLink>
+          {/* Primary Navigation */}
+          <nav className="shell-nav">
+            {PRIMARY_NAV.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `shell-nav-link${isActive ? ' active' : ''}`
+                }
+              >
+                <item.icon className="shell-nav-icon" />
+                {item.label}
+                {item.badge && item.badge > 0 && (
+                  <span className="shell-nav-badge">{item.badge}</span>
+                )}
+              </NavLink>
+            ))}
 
-            {/* Below a 1px rule, a small label "More" in .mono and four links in 13px ink-2 */}
-            <div style={{ margin: '16px 0 8px 0', borderTop: '1px solid var(--rule)' }} />
+            <div className="shell-nav-sep" />
+            <div className="shell-nav-label">More</div>
 
-            <div className="mono" style={{ padding: '4px 16px', color: 'var(--ink-2)', fontSize: '11px' }}>
-              More
-            </div>
-
-            <NavLink to="/patterns" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
-              How it works
-            </NavLink>
-            <NavLink to="/rules" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
-              Rules
-            </NavLink>
-            <NavLink to="/performance" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
-              Accuracy
-            </NavLink>
-            <NavLink to="/audit" style={({ isActive }) => getSecondaryNavStyle(isActive)}>
-              Activity log
-            </NavLink>
+            {SECONDARY_NAV.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `shell-nav-link secondary${isActive ? ' active' : ''}`
+                }
+              >
+                <item.icon className="shell-nav-icon" />
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
+        </div>
+
+        {/* Sidebar Footer — Active run + Theme toggle */}
+        <div className="shell-sidebar-footer">
+          <div
+            className="shell-run-status"
+            onClick={() => navigate('/data')}
+            title={`Active dataset: ${activeRunName}`}
+          >
+            <span className={`shell-run-dot ${isRunActive ? '' : 'idle'}`} />
+            <span className="shell-run-name">{activeRunName}</span>
+            <ChevronDown size={12} style={{ flexShrink: 0, opacity: 0.5 }} />
+          </div>
+
+          <button
+            className="shell-theme-toggle"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? <Moon size={13} /> : <Sun size={13} />}
+            {theme === 'light' ? 'Dark mode' : 'Light mode'}
+          </button>
         </div>
       </aside>
 
-      {/* Main Content Area with TOP BAR and FOOTER */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-        {/* TOP BAR (height 56px, bottom border 2px ink) */}
-        <header
-          style={{
-            height: '56px',
-            backgroundColor: 'var(--paper)',
-            borderBottom: '2px solid var(--ink)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 24px',
-          }}
-        >
-          {/* Left side shows the page title in .t-head */}
-          <div className="t-head" style={{ color: 'var(--ink)' }}>
+      {/* ── MAIN CONTENT AREA ────────────────────────── */}
+      <div className="shell-content">
+        {/* Top Bar */}
+        <header className="shell-topbar">
+          <h1 className="shell-topbar-title">
             {getPageTitle(location.pathname)}
-          </div>
+          </h1>
 
-          {/* Right side shows, in order: "Dataset: {name}" as plain text dropdown, a .btn "Add data", and text "Search ⌘K" in .mono */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            {/* Dataset: {name} as a plain text dropdown */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--ink-2)' }}>
+          <div className="shell-topbar-actions">
+            {/* Dataset selector */}
+            <div className="shell-dataset">
               <span>Dataset:</span>
               <select
+                className="shell-dataset-select"
                 value={activeRunId || ''}
                 onChange={(e) => {
                   const id = e.target.value;
                   setActiveRunId(id);
-                  showToast(`Switched dataset to ${runs.find((r) => r.id === id)?.name || id}`);
-                }}
-                style={{
-                  border: 'none',
-                  backgroundColor: 'transparent',
-                  color: 'var(--ink)',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  outline: 'none',
-                  fontFamily: 'inherit',
+                  showToast(
+                    `Switched dataset to ${
+                      runs.find((r) => r.id === id)?.name || id
+                    }`
+                  );
                 }}
               >
                 {runs.length === 0 && <option value="">Default</option>}
@@ -184,49 +242,48 @@ export const AppShell: React.FC = () => {
               </select>
             </div>
 
-            {/* .btn "Add data" */}
+            {/* Add data button */}
             <button
               type="button"
               className="btn"
               onClick={() => navigate('/data?step=select')}
             >
+              <Database size={14} />
               Add data
             </button>
 
-            {/* Text "Search ⌘K" in .mono */}
-            <span
-              className="mono"
+            {/* Search trigger */}
+            <button
+              type="button"
+              className="shell-search-trigger"
               onClick={() => setCommandPaletteOpen(true)}
-              style={{
-                cursor: 'pointer',
-                color: 'var(--ink-2)',
-              }}
             >
-              Search ⌘K
-            </span>
+              <SearchIcon size={14} />
+              Search…
+              <kbd>⌘K</kbd>
+            </button>
           </div>
         </header>
 
-        {/* Page Content Body */}
-        <main style={{ flex: 1, overflow: 'auto', backgroundColor: 'var(--paper)' }}>
+        {/* Page Content */}
+        <main className="shell-main">
           <Outlet />
         </main>
 
-        {/* FOOTER (one line, .mono, ink-2, top border 1px rule) */}
-        <footer
-          style={{
-            height: '36px',
-            borderTop: '1px solid var(--rule)',
-            padding: '0 24px',
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: 'var(--paper)',
-          }}
-          className="mono"
-        >
-          <span style={{ color: 'var(--ink-2)', fontSize: '12px' }}>
-            Demo data. Nothing here is real. A person confirms every action.
+        {/* Footer */}
+        <footer className="shell-footer">
+          <span>
+            Demo data · Nothing here is real · A person confirms every action
           </span>
+          <div className="shell-footer-right">
+            <span>
+              {activeRun
+                ? `${(activeRun.txn_count || 0).toLocaleString()} txns · ${(
+                    activeRun.acct_count || 0
+                  ).toLocaleString()} accts`
+                : '—'}
+            </span>
+          </div>
         </footer>
       </div>
     </div>

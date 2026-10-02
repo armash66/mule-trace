@@ -39,6 +39,7 @@ htmlcov/
 data/*.csv
 backend/data/
 backend/app/data/
+dataset/
 
 # Environment files
 .env

@@ -1,0 +1,682 @@
+/* ─────────────────────────────────────────────────────────
+   MuleTrace — Forensic Hero Section Styles
+   100dvh viewport, 40/60 split, bleeding network graph
+   ───────────────────────────────────────────────────────── */
+
+.mule-hero {
+  position: relative;
+  min-height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  background: var(--bg-0, #07080A);
+  color: var(--text-0, #F2EFE9);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-top: var(--nav-height, 64px);
+  box-sizing: border-box;
+}
+
+/* ── Background Subtle Forensic Coordinate Grid ────────── */
+.hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(35, 40, 51, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(35, 40, 51, 0.25) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at 60% 50%, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 60% 50%, black 40%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-wrap {
+  width: min(1340px, calc(100% - 48px));
+  height: calc(100% - var(--nav-height, 64px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 42% 58%;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Left Column (~40%): Text Content ───────────────────── */
+.hero-text-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 540px;
+  z-index: 10;
+  padding-right: 24px;
+}
+
+/* Status Pill */
+.hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-1, #0C0E12);
+  border: 1px solid var(--line, #232833);
+  padding: 4px 10px;
+  border-radius: var(--radius-6, 6px);
+  margin-bottom: 24px;
+  width: fit-content;
+}
+
+.status-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-indicator-dot.is-live {
+  background: var(--ok, #34D399);
+  box-shadow: 0 0 6px var(--ok, #34D399);
+}
+
+.status-indicator-dot.is-mock {
+  background: var(--text-2, #6B707C);
+}
+
+.status-pill-text {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-1, #A5A9B3);
+}
+
+/* Masked Headline Lines (staggered per-line only) */
+.hero-headline {
+  font-size: clamp(38px, 4.4vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.headline-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 4px;
+}
+
+.headline-line {
+  display: block;
+  transform: translateY(115%);
+  opacity: 0;
+  transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.72s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.headline-line.is-in {
+  transform: translateY(0%);
+  opacity: 1;
+}
+
+.headline-dim {
+  color: var(--text-1, #A5A9B3);
+}
+
+.headline-amber {
+  color: var(--signal, #FF9F1C) !important;
+}
+
+/* Subcopy */
+.hero-subcopy {
+  font-family: var(--font-body, 'Inter Variable', 'Inter', sans-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-1, #A5A9B3);
+  margin-bottom: 32px;
+  max-width: 480px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-subcopy.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* CTAs */
+.hero-ctas {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-ctas.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--signal, #FF9F1C);
+  color: #07080A;
+  border: 1px solid var(--signal, #FF9F1C);
+  padding: 12px 22px;
+  font-family: var(--font-body, 'Inter Variable', 'Inter', sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-6, 6px);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero-primary-btn:hover {
+  background: #FFAF38;
+  border-color: #FFAF38;
+  box-shadow: 0 0 20px rgba(255, 159, 28, 0.4);
+}
+
+.hero-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text-0, #F2EFE9);
+  border: 1px solid var(--line-strong, #323949);
+  padding: 12px 20px;
+  font-family: var(--font-body, 'Inter Variable', 'Inter', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-6, 6px);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.hero-secondary-btn:hover {
+  border-color: var(--text-0, #F2EFE9);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Quick Telemetry Strip */
+.hero-quick-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line, #232833);
+}
+
+.stat-unit {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-num {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-0, #F2EFE9);
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-2, #6B707C);
+  letter-spacing: 0.06em;
+}
+
+.stat-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--line, #232833);
+}
+
+/* ── Right Column (~60%): Bleeding Network ──────────────── */
+.hero-network-col {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -10vw; /* Bleed off right */
+  margin-bottom: -40px; /* Bleed off bottom */
+  overflow: visible;
+  will-change: transform;
+}
+
+.hero-network-svg {
+  width: 100%;
+  height: 100%;
+  min-width: 820px;
+  max-height: 720px;
+  overflow: visible;
+}
+
+/* Edge Annotations */
+.network-annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.anno-tag {
+  position: absolute;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-2, #6B707C);
+  background: rgba(7, 8, 10, 0.7);
+  padding: 2px 6px;
+  border: 1px solid var(--line, #232833);
+  border-radius: 4px;
+}
+
+.anno-top {
+  top: 14%;
+  left: 28%;
+  color: var(--signal, #FF9F1C);
+  border-color: rgba(255, 159, 28, 0.4);
+}
+
+.anno-right {
+  top: 26%;
+  right: 18%;
+}
+
+.anno-bottom {
+  bottom: 12%;
+  left: 36%;
+}
+
+/* SVG Elements Styling */
+.graph-edge {
+  transition: stroke-opacity 0.4s ease;
+}
+
+.graph-edge.is-cluster-edge {
+  stroke-dasharray: none;
+}
+
+.node-anchor {
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+
+.graph-node-label {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Cluster Hull */
+.cluster-hull-rect {
+  fill: rgba(255, 159, 28, 0.06);
+  stroke: var(--signal, #FF9F1C);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.hull-label {
+  font-size: 9px;
+  fill: var(--signal, #FF9F1C);
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+/* Selected Node Pulse Ring */
+.selected-pulse-ring {
+  fill: none;
+  stroke: var(--signal, #FF9F1C);
+  stroke-width: 1.5;
+  animation: singlePulseRing 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.selected-pulse-ring.is-static {
+  animation: none !important;
+  opacity: 0.4;
+  transform: scale(1.4);
+}
+
+@keyframes singlePulseRing {
+  0% {
+    r: 16px;
+    opacity: 0.9;
+  }
+  100% {
+    r: 34px;
+    opacity: 0;
+  }
+}
+
+/* ── Attached Risk Card (Attached to DEV_MULE_99) ───────── */
+.attached-risk-card {
+  position: absolute;
+  width: 280px;
+  background: var(--bg-1, #0C0E12);
+  border: 1px solid var(--line-strong, #323949);
+  border-radius: var(--radius-10, 10px);
+  padding: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75), 0 0 16px rgba(255, 159, 28, 0.15);
+  z-index: 30;
+  pointer-events: auto;
+  transform: translate(24px, -50%);
+}
+
+.attached-risk-card.is-entering {
+  animation: cardAttachIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.attached-risk-card.is-static {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes cardAttachIn {
+  from {
+    opacity: 0;
+    transform: translate(24px, -40%) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(24px, -50%) scale(1);
+  }
+}
+
+.risk-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line, #232833);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.entity-type {
+  font-size: 10px;
+  color: var(--text-1, #A5A9B3);
+  letter-spacing: 0.06em;
+}
+
+.risk-entity-id {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-0, #F2EFE9);
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.risk-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+  background: var(--bg-2, #12151B);
+  padding: 8px 10px;
+  border-radius: var(--radius-6, 6px);
+  border: 1px solid var(--line, #232833);
+}
+
+.risk-stat-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cell-label {
+  font-size: 9px;
+  color: var(--text-2, #6B707C);
+  letter-spacing: 0.06em;
+}
+
+.cell-val {
+  font-size: 11px;
+}
+
+.text-risk {
+  color: var(--risk, #FF4B4B) !important;
+}
+
+.risk-card-summary {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-1, #A5A9B3);
+  margin-bottom: 12px;
+}
+
+.risk-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-2, #6B707C);
+  border-top: 1px solid var(--line, #232833);
+  padding-top: 8px;
+}
+
+.action-tag {
+  font-weight: 600;
+}
+
+/* ── Bottom Scroll Cue ──────────────────────────────────── */
+.hero-scroll-cue {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-cue-text {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text-2, #6B707C);
+}
+
+.scroll-cue-line {
+  position: relative;
+  width: 1px;
+  height: 36px;
+  background: var(--line, #232833);
+  overflow: hidden;
+}
+
+.scroll-cue-dot {
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 3px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--signal, #FF9F1C);
+  animation: cueDotTravel 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.scroll-cue-dot.is-static {
+  animation: none !important;
+  top: 14px;
+}
+
+@keyframes cueDotTravel {
+  0% {
+    top: -8px;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    top: 36px;
+    opacity: 0;
+  }
+}
+
+/* ── Mobile Layout (< 860px) ────────────────────────────── */
+@media (max-width: 860px) {
+  .mule-hero {
+    height: auto;
+    min-height: 100vh;
+    padding-top: calc(var(--nav-height, 64px) + 24px);
+    padding-bottom: 60px;
+    display: block;
+    overflow-y: visible;
+  }
+
+  .hero-wrap {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  .hero-text-col {
+    max-width: 100%;
+    padding-right: 0;
+    margin-bottom: 40px;
+  }
+
+  .hero-headline {
+    font-size: 34px;
+    line-height: 1.08;
+  }
+
+  .hero-subcopy {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  /* CTAs stacked full width */
+  .hero-ctas {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .hero-primary-btn,
+  .hero-secondary-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 18px;
+    font-size: 13px;
+  }
+
+  .hero-quick-stats {
+    gap: 12px;
+    justify-content: space-between;
+  }
+
+  .stat-num {
+    font-size: 16px;
+  }
+
+  .hero-network-col {
+    margin-right: 0;
+    margin-bottom: 0;
+    min-height: 380px;
+    width: 100%;
+    transform: none !important;
+  }
+
+  .hero-network-svg {
+    min-width: 100%;
+    max-height: 420px;
+  }
+
+  .attached-risk-card {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .network-annotations {
+    display: none;
+  }
+
+  .hero-scroll-cue {
+    display: none;
+  }
+}
+
+/* ── 320px Safety ───────────────────────────────────────── */
+@media (max-width: 360px) {
+  .hero-headline {
+    font-size: 28px;
+  }
+
+  .stat-num {
+    font-size: 14px;
+  }
+
+  .stat-label {
+    font-size: 8px;
+  }
+}
+
+/* ── Reduced Motion Override ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .headline-line {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .hero-subcopy,
+  .hero-ctas {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .selected-pulse-ring {
+    animation: none !important;
+    opacity: 0.4 !important;
+  }
+
+  .attached-risk-card {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .scroll-cue-dot {
+    animation: none !important;
+  }
+
+  .graph-edge {
+    stroke-dashoffset: 0 !important;
+  }
+}

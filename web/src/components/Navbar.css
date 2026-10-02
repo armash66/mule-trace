@@ -1,0 +1,448 @@
+/* ─────────────────────────────────────────────────────────
+   MuleTrace — Navbar Styles
+   Forensic Dark Command Aesthetic (#07080A)
+   ───────────────────────────────────────────────────────── */
+
+/* ── Accessibility: Skip to Content ──────────────────────── */
+.skip-to-content:not(:focus-visible) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  pointer-events: none !important;
+}
+
+.skip-to-content {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  z-index: 10000;
+  padding: 8px 16px;
+  background: var(--bg-1, #0C0E12);
+  color: var(--text-0, #F2EFE9);
+  border: 1px solid var(--signal, #FF9F1C);
+  border-radius: var(--radius-6, 6px);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skip-to-content:focus-visible {
+  top: 16px;
+  outline: 2px solid var(--signal, #FF9F1C) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Interactive Focus Ring (Amber Signal) ──────────────── */
+.mule-navbar button:focus-visible,
+.mule-navbar a:focus-visible,
+.nav-mobile-sheet button:focus-visible,
+.nav-mobile-sheet a:focus-visible {
+  outline: 2px solid var(--signal, #FF9F1C) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Navbar Container ───────────────────────────────────── */
+.mule-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height, 64px);
+  z-index: 200;
+  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              backdrop-filter 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              -webkit-backdrop-filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* State: Transparent at top */
+.mule-navbar.is-transparent {
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+
+/* State: Scrolled — 1px bottom border & subtle blur */
+.mule-navbar.is-scrolled {
+  background: rgba(7, 8, 10, 0.85);
+  border-bottom: 1px solid var(--line, #232833);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-container {
+  width: min(1200px, calc(100% - 48px));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Wordmark & Dot ─────────────────────────────────────── */
+.nav-wordmark-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-wordmark {
+  font-family: var(--font-display, 'Space Grotesk Variable', 'Space Grotesk', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-0, #F2EFE9);
+  line-height: 1;
+}
+
+.nav-amber-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--signal, #FF9F1C);
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(255, 159, 28, 0.5);
+  margin-top: -1px;
+}
+
+/* ── Desktop Layout ─────────────────────────────────────── */
+.nav-col-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-brand-desktop {
+  display: flex;
+  align-items: center;
+}
+
+.nav-hamburger-btn {
+  display: none;
+}
+
+.nav-brand-mobile {
+  display: none;
+}
+
+.nav-mobile-action-btn {
+  display: none;
+}
+
+.nav-links-desktop {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
+  font-family: var(--font-body, 'Inter Variable', 'Inter', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1, #A5A9B3);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.nav-link:hover {
+  color: var(--text-0, #F2EFE9);
+}
+
+.nav-col-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Primary Action Button ──────────────────────────────── */
+.nav-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--text-0, #F2EFE9);
+  color: var(--bg-0, #07080A);
+  border: 1px solid var(--text-0, #F2EFE9);
+  padding: 8px 16px;
+  font-family: var(--font-body, 'Inter Variable', 'Inter', sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-6, 6px);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-launch-btn:hover {
+  background: var(--signal, #FF9F1C);
+  border-color: var(--signal, #FF9F1C);
+  color: #07080A;
+  box-shadow: 0 0 16px rgba(255, 159, 28, 0.35);
+}
+
+/* ── Mobile Layout (< 860px) ────────────────────────────── */
+@media (max-width: 860px) {
+  .nav-container {
+    width: 100%;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  /* Left column: Hamburger */
+  .nav-col-left {
+    justify-self: start;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-brand-desktop {
+    display: none;
+  }
+
+  .nav-hamburger-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    border: 1px solid var(--line, #232833);
+    border-radius: var(--radius-6, 6px);
+    color: var(--text-0, #F2EFE9);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-hamburger-btn:hover {
+    border-color: var(--signal, #FF9F1C);
+    color: var(--signal, #FF9F1C);
+  }
+
+  /* Center column: Wordmark CENTERED */
+  .nav-col-center {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-links-desktop {
+    display: none;
+  }
+
+  .nav-brand-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Right column: Action icon */
+  .nav-col-right {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .nav-launch-btn {
+    display: none;
+  }
+
+  .nav-mobile-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: var(--bg-1, #0C0E12);
+    border: 1px solid var(--line, #232833);
+    border-radius: var(--radius-6, 6px);
+    color: var(--text-0, #F2EFE9);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .nav-mobile-action-btn:hover {
+    border-color: var(--signal, #FF9F1C);
+    background: rgba(255, 159, 28, 0.12);
+  }
+}
+
+/* ── 320px Safety: No overlap ───────────────────────────── */
+@media (max-width: 360px) {
+  .nav-container {
+    padding: 0 10px;
+  }
+
+  .nav-hamburger-btn,
+  .nav-mobile-action-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .nav-wordmark {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* ── Mobile Left Sheet Navigation ───────────────────────── */
+.nav-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 8, 10, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 998;
+  animation: fadeInBackdrop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-mobile-sheet {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(320px, 85vw);
+  background: var(--bg-0, #07080A);
+  border-right: 1px solid var(--line, #232833);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.8);
+}
+
+.nav-mobile-sheet.is-open {
+  transform: translateX(0);
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line, #232833);
+}
+
+.sheet-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sheet-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--line, #232833);
+  border-radius: var(--radius-6, 6px);
+  color: var(--text-1, #A5A9B3);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.sheet-close-btn:hover {
+  border-color: var(--signal, #FF9F1C);
+  color: var(--signal, #FF9F1C);
+}
+
+.sheet-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 28px 0;
+  flex-grow: 1;
+}
+
+.sheet-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-6, 6px);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.sheet-link-num {
+  font-size: 11px;
+  color: var(--signal, #FF9F1C);
+  letter-spacing: 0.08em;
+}
+
+.sheet-link-text {
+  font-family: var(--font-display, 'Space Grotesk Variable', sans-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-0, #F2EFE9);
+}
+
+.sheet-link:hover {
+  background: var(--bg-1, #0C0E12);
+  border-color: var(--line, #232833);
+}
+
+.sheet-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line, #232833);
+}
+
+.sheet-launch-btn {
+  display: flex !important;
+  width: 100%;
+  justify-content: center;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.sheet-footnote {
+  font-size: 10px;
+  color: var(--text-2, #6B707C);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Reduced Motion Support ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-mobile-sheet {
+    transition: none !important;
+  }
+
+  .nav-sheet-backdrop {
+    animation: none !important;
+  }
+
+  .mule-navbar {
+    transition: none !important;
+  }
+}

@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.main import app
 from backend.app.db import init_db
+from backend.app.core.security import Role, TokenData, get_current_user
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = REPO_ROOT / "data"
@@ -18,6 +19,14 @@ client = TestClient(app)
 @pytest.fixture(scope="module", autouse=True)
 def setup_test_db():
     init_db()
+    app.dependency_overrides[get_current_user] = lambda: TokenData(
+        user_id="test-analyst",
+        username="test-analyst",
+        role=Role.ANALYST,
+        exp=__import__("datetime").datetime.now(__import__("datetime").timezone.utc),
+    )
+    yield
+    app.dependency_overrides.clear()
 
 
 def test_health_endpoint():

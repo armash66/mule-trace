@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from .models import Base, LegacyBase
@@ -22,11 +22,18 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db() -> None:
     """Create all tables if they don't exist and ensure schema is up to date."""
+    with engine.connect() as conn:
+        rows = conn.execute(text("PRAGMA table_info(decisions)")).fetchall()
+    id_row = next((row for row in rows if row[1] == "id"), None)
+    if id_row and not any(kind in str(id_row[2]).upper() for kind in ("CHAR", "CLOB", "TEXT")):
+        raise RuntimeError(
+            "Old decisions table schema detected. Recreate the database: stop the server, remove the configured SQLite database "
+            "(muletrace.db), then run `make seed` or start the server again."
+        )
     Base.metadata.create_all(bind=engine)
     LegacyBase.metadata.create_all(bind=engine)
     with engine.connect() as conn:
         try:
-            from sqlalchemy import text
             cursor = conn.execute(text("PRAGMA table_info(runs)"))
             cols = [row[1] for row in cursor.fetchall()]
             columns = {
@@ -86,7 +93,16 @@ def init_db() -> None:
                         pass
 
             for table, table_columns in {
-                "decisions": {"case_id": "VARCHAR(32)", "run_id": "VARCHAR(32)", "action": "VARCHAR(20)", "status": "VARCHAR(20)", "user_id": "VARCHAR(32)", "analyst": "VARCHAR(100)"},
+                "decisions": {
+                    "case_id": "VARCHAR(32)",
+                    "run_id": "VARCHAR(32)",
+                    "action": "VARCHAR(20)",
+                    "status": "VARCHAR(20)",
+                    "user_id": "VARCHAR(32)",
+                    "analyst": "VARCHAR(100)",
+                    "is_undone": "INTEGER DEFAULT 0",
+                    "undone_at": "DATETIME",
+                },
                 "freeze_requests": {"run_id": "VARCHAR(32)", "ring_id": "VARCHAR(32)", "account_ids": "JSON", "amount": "FLOAT", "note": "TEXT", "updated_at": "DATETIME"},
             }.items():
                 cursor = conn.execute(text(f"PRAGMA table_info({table})"))

@@ -14,6 +14,7 @@ import networkx as nx
 import pandas as pd
 
 from ..schemas import Finding
+from .scales import scale_config, smooth_window_score
 
 
 def detect_chains(
@@ -34,7 +35,8 @@ def detect_chains(
     cfg = config.get("detectors", {}).get("chain", {})
     min_fwd: float = cfg.get("min_forward_ratio", 0.90)
     max_fwd: float = cfg.get("max_forward_ratio", 1.02)
-    max_gap_s: float = cfg.get("max_hop_gap_minutes", 30) * 60
+    scale_settings = scale_config(config, "chain")
+    max_gap_s: float = max(scale_settings["windows_minutes"]) * 60
     min_chain_len: int = cfg.get("min_chain_length", 3)
     max_balance: float = cfg.get("max_balance_after", 5000)
 
@@ -78,10 +80,8 @@ def detect_chains(
                 gap = (t_out - t_in).total_seconds()
                 if 0 < gap <= max_gap_s:
                     ratio = a_out / max(a_in, 1.0)
-                    if min_fwd <= ratio <= max_fwd:
+                    if ratio <= max_fwd and ratio > 0:
                         hops[node].append((u, w, t_in, t_out, a_in, a_out, gap, ratio))
-                elif gap > max_gap_s:
-                    break
 
     # 2. Connect pass-through accounts into chains
     adj_chain: dict[str, list[str]] = defaultdict(list)
@@ -120,7 +120,7 @@ def detect_chains(
     findings: list[Finding] = []
 
     for chain in chains:
-        strength = min(1.0, 0.6 + 0.1 * len(chain))
+        strength = min(1.0, 0.35 + 0.1 * len(chain))
         full_chain = list(chain)
         first_hop = node_to_hop.get(chain[0])
         if first_hop and first_hop[0] in graph:
@@ -154,13 +154,14 @@ def detect_chains(
                 "chain_length": len(deduped_chain),
                 "chain_order": deduped_chain,
                 "position": deduped_chain.index(acct),
+                "scale_score": smooth_window_score(gap_min, scale_settings) if hop else 0.0,
             }
 
             findings.append(
                 Finding(
                     account_id=acct,
                     pattern="chain",
-                    strength=round(strength, 4),
+                    strength=round(strength * (smooth_window_score(gap_min, scale_settings) if hop else 0.0) * min(1.0, ratio / max(min_fwd, 0.01)), 4),
                     evidence=evidence,
                     related_accounts=sorted(set(deduped_chain) - {acct}),
                 )

@@ -1,0 +1,410 @@
+/* ─────────────────────────────────────────────────────────
+   MuleTrace — 4-Stage Approach Section Styles
+   NOT four cards. Open horizontal spine architecture,
+   huge outlined numerals (-webkit-text-stroke: 1px var(--line-strong)),
+   vertical stagger, 1.2s travelling bright segment,
+   mobile vertical spine, prefers-reduced-motion fully drawn.
+   ───────────────────────────────────────────────────────── */
+
+.approach-section {
+  position: relative;
+  width: 100%;
+  background: var(--bg-0, #07080A);
+  color: var(--text-0, #F2EFE9);
+  padding: clamp(96px, 12vw, 160px) 0 clamp(80px, 10vw, 130px);
+  overflow: hidden;
+  border-top: 1px solid var(--line, #232833);
+}
+
+/* Subtle background telemetry coordinates */
+.approach-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(35, 40, 51, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(35, 40, 51, 0.15) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at 50% 50%, black 25%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 25%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.approach-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+}
+
+/* ── Section Header ─────────────────────────────────────── */
+.approach-header {
+  margin-bottom: clamp(64px, 8vw, 100px);
+  max-width: 680px;
+}
+
+.approach-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-2, #6B707C);
+  margin-bottom: 20px;
+}
+
+.kicker-num {
+  color: var(--signal, #FF9F1C);
+  font-weight: 700;
+}
+
+.kicker-sep {
+  color: var(--line-strong, #323949);
+}
+
+.kicker-label {
+  color: var(--text-1, #A5A9B3);
+  font-weight: 600;
+}
+
+.approach-title {
+  font-size: clamp(38px, 4.8vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  margin: 0 0 18px 0;
+  color: var(--text-0, #F2EFE9);
+}
+
+.approach-desc {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-1, #A5A9B3);
+  margin: 0;
+}
+
+/* ── The 4-Stage Spine Container (Horizontal Spine) ─────── */
+.approach-spine-container {
+  position: relative;
+  width: 100%;
+  padding-top: 40px;
+  padding-bottom: 70px;
+  margin-bottom: 32px;
+}
+
+/* ── Horizontal Spine Track Line (passes through huge numerals) ── */
+.spine-track-line {
+  position: absolute;
+  top: 92px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.spine-base-line {
+  position: absolute;
+  inset: 0;
+  background: var(--line, #232833);
+}
+
+/* Travelling bright segment: travels stage to stage over ~1.2s */
+.spine-bright-segment {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 159, 28, 0.2) 0%, var(--signal, #FF9F1C) 75%, #FFFFFF 100%);
+  box-shadow: 0 0 14px var(--signal, #FF9F1C);
+  transform-origin: left;
+  will-change: transform, opacity;
+}
+
+/* ── Four Open Stages List (NOT 4 cards) ─────────────────── */
+.spine-stages-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(20px, 3.5vw, 48px);
+  position: relative;
+  z-index: 3;
+}
+
+/* Individual Stage Item */
+.spine-stage-item {
+  position: relative;
+  transform: translateY(var(--desktop-y, 0px));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Button Target: Transparent open editorial button */
+.stage-interaction-target {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  position: relative;
+}
+
+.stage-interaction-target:focus-visible .numeral-wrapper {
+  outline: 2px solid var(--signal, #FF9F1C);
+  outline-offset: 6px;
+  border-radius: var(--radius-6, 6px);
+}
+
+/* Anchor Pip linking to the spine */
+.stage-spine-anchor {
+  position: relative;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.anchor-pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg-0, #07080A);
+  border: 2px solid var(--signal, #FF9F1C);
+  box-shadow: 0 0 6px var(--signal, #FF9F1C);
+  margin-top: 5px;
+  will-change: transform, opacity;
+}
+
+.is-active-target .anchor-pip {
+  background: var(--signal, #FF9F1C);
+  box-shadow: 0 0 12px var(--signal, #FF9F1C), 0 0 24px rgba(255, 159, 28, 0.5);
+}
+
+.anchor-drop-line {
+  display: none;
+}
+
+/* ── Huge Outlined Numerals (01 02 03 04) ─────────────────── */
+.numeral-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 12px;
+  user-select: none;
+  line-height: 0.85;
+}
+
+/* Base Outlined Layer (-webkit-text-stroke: 1px var(--line-strong)) */
+.numeral-outline {
+  font-family: var(--font-display, 'Space Grotesk Variable', sans-serif);
+  font-size: clamp(84px, 10vw, 136px) !important;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong, #323949);
+  display: block;
+  line-height: 0.85;
+}
+
+/* Solid Fill Layer: Fills solid as segment passes */
+.numeral-solid {
+  position: absolute;
+  inset: 0;
+  font-family: var(--font-display, 'Space Grotesk Variable', sans-serif);
+  font-size: clamp(84px, 10vw, 136px) !important;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  color: var(--text-0, #F2EFE9);
+  display: block;
+  pointer-events: none;
+  will-change: opacity;
+  line-height: 0.85;
+}
+
+
+/* Hover and Active highlights matching next section */
+.stage-interaction-target:hover .numeral-solid,
+.is-active-target .numeral-solid {
+  color: var(--signal, #FF9F1C);
+  text-shadow: 0 0 24px rgba(255, 159, 28, 0.4);
+}
+
+/* ── Stage Content: Exact Copy ───────────────────────────── */
+.stage-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stage-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stage-name {
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 400;
+  color: var(--text-0, #F2EFE9);
+  line-height: 1.15;
+  transition: color 0.15s ease;
+}
+
+.stage-interaction-target:hover .stage-name,
+.is-active-target .stage-name {
+  color: var(--signal, #FF9F1C);
+}
+
+.stage-arrow-icon {
+  color: var(--text-2, #6B707C);
+  opacity: 0.4;
+  transition: opacity 0.15s ease, transform 0.2s ease, color 0.15s ease;
+}
+
+.stage-interaction-target:hover .stage-arrow-icon,
+.is-active-target .stage-arrow-icon {
+  opacity: 1;
+  color: var(--signal, #FF9F1C);
+  transform: translate(2px, -2px);
+}
+
+/* Exact Copy: Detect = surface suspicious behaviour, etc. */
+.stage-copy {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-1, #A5A9B3);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  max-width: 240px;
+}
+
+.copy-operator {
+  color: var(--signal, #FF9F1C);
+  font-weight: 700;
+}
+
+/* ── Bottom Interaction Hint ────────────────────────────── */
+.approach-footer-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--bg-1, #0C0E12);
+  border: 1px solid var(--line, #232833);
+  border-radius: var(--radius-6, 6px);
+  font-size: 11px;
+  color: var(--text-2, #6B707C);
+  letter-spacing: 0.06em;
+  width: fit-content;
+}
+
+.hint-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ok, #34D399);
+  box-shadow: 0 0 6px var(--ok, #34D399);
+}
+
+/* ── Tab Pause state when off-screen or tab hidden ───────── */
+.anim-paused * {
+  animation-play-state: paused !important;
+}
+
+/* ── Reduced Motion Mode (Fully Drawn) ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .spine-bright-segment {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .numeral-solid {
+    opacity: 1 !important;
+  }
+
+  .anchor-pip {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ── Mobile: Vertical Spine, Left Aligned ───────────────── */
+@media (max-width: 860px) {
+  .approach-section {
+    padding: 72px 0 64px;
+  }
+
+  .approach-header {
+    margin-bottom: 48px;
+  }
+
+  .approach-spine-container {
+    padding-top: 0;
+    padding-bottom: 24px;
+  }
+
+  /* Vertical spine track on the left */
+  .spine-track-line {
+    top: 24px;
+    bottom: 24px;
+    left: 20px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+
+  .spine-bright-segment {
+    transform-origin: top;
+  }
+
+  /* Single column stacked down the vertical spine */
+  .spine-stages-list {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-left: 48px;
+  }
+
+  /* Reset vertical stagger on mobile */
+  .spine-stage-item {
+    transform: none !important;
+  }
+
+  /* Mobile anchor pip aligning horizontally to vertical spine */
+  .stage-spine-anchor {
+    position: absolute;
+    left: -48px;
+    top: 28px;
+    height: auto;
+    margin-bottom: 0;
+  }
+
+  .anchor-pip {
+    margin-left: 17px;
+    margin-top: 0;
+  }
+
+  .anchor-drop-line {
+    display: none;
+  }
+
+  .numeral-outline,
+  .numeral-solid {
+    font-size: clamp(52px, 14vw, 76px);
+  }
+
+  .stage-copy {
+    max-width: none;
+    font-size: 13px;
+  }
+
+  .approach-footer-hint {
+    width: 100%;
+    font-size: 10px;
+  }
+}

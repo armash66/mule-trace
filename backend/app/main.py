@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .api import api_router, api_v1_router
 from .api.simulate import reset_demo
+from .core.config import get_settings
 from .db import SessionLocal, init_db
 from .models import Run
 
@@ -55,7 +56,7 @@ app = FastAPI(
 # Enable CORS for frontend dev server and production origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=get_settings().cors_origin_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

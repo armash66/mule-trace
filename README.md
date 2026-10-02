@@ -123,8 +123,17 @@ These accounts are created by `backend/app/seed.py` for local demonstration:
 
 ## 6. Benchmark & Performance Results
 
-Measured on the repository's synthetic dataset with planted rings and benign decoys (**103,648 transactions, 5,000 accounts, 10 planted rings**, seed=42):
+### Evaluated Benchmark Results (AMLSim / HI-Small Dataset)
+Measured locally on the checked-in AMLSim/HI-Small data on 2026-10-02. These are synthetic-data measurements, not production performance. The evaluator reports per-transaction metrics; this dataset has no real merchant labels, so the high-degree-account check is not a false-positive benchmark.
 
+| Metric | Target | Result |
+|---|---:|---:|
+| Overall test precision / recall / F1 | measured | 0.1% / 98.5% / 0.3% |
+| Highest-degree non-laundering check | measured | No real merchant labels available; not a false-positive rate |
+| Evasion curve overall recall | measured | 94.4% at level 0.0; 70.7% at level 1.0 |
+| 100k-row intake + validation | < 20s | 11.16s local measurement |
+
+### Planted Ring Benchmark (103,648 Transactions, 5,000 Accounts, 10 Planted Rings, seed=42)
 | Metric | Measured Result | Benchmark Context |
 | :--- | :---: | :--- |
 | **Planted Mule Recall** | **97.87%** | Flagged 34 / 35 planted mule entities |

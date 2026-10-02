@@ -93,7 +93,7 @@ export const Audit: React.FC = () => {
                     <span
                       style={{
                         fontSize: '11px',
-                        fontFamily: ''JetBrains Mono'',
+                        fontFamily: 'JetBrains Mono',
                         padding: '2px 6px',
                         backgroundColor: 'var(--paper-2)',
                         border: '1px solid var(--rule)',

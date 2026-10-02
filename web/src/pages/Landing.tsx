@@ -40,7 +40,7 @@ export const Landing: React.FC = () => {
               color: 'var(--paper)',
               fontSize: '12px',
               fontWeight: 700,
-              fontFamily: ''JetBrains Mono'',
+              fontFamily: 'JetBrains Mono',
             }}
           >
             MT

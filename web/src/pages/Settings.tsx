@@ -16,7 +16,7 @@ export default function Settings() {
 
   return (
     <div style={{ maxWidth: 800 }}>
-      <h2 style={{ fontFamily: ''Instrument Serif'', marginBottom: 4 }}>Settings</h2>
+      <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Settings</h2>
       <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem', marginBottom: 24 }}>
         Detection thresholds and learned signal weights.
       </p>

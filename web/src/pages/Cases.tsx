@@ -264,7 +264,7 @@ export const Cases: React.FC = () => {
               border: '1px solid var(--rule)',
               padding: '16px',
               fontSize: '12px',
-              fontFamily: ''JetBrains Mono'',
+              fontFamily: 'JetBrains Mono',
               color: 'var(--ink)',
               whiteSpace: 'pre-wrap',
               lineHeight: '1.6',

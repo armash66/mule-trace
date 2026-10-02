@@ -104,7 +104,7 @@ export const CommandPalette: React.FC = () => {
                 color: 'var(--ink-2)',
                 padding: '2px 6px',
                 border: '1px solid var(--rule)',
-                fontFamily: ''JetBrains Mono'',
+                fontFamily: 'JetBrains Mono',
               }}
             >
               ESC

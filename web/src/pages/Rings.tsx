@@ -11,7 +11,7 @@ export default function Rings() {
 
   return (
     <div>
-      <h2 style={{ fontFamily: ''Instrument Serif'', marginBottom: 4 }}>Rings</h2>
+      <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Rings</h2>
       <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem', marginBottom: 24 }}>
         Detected mule rings — communities of suspicious accounts transacting together.
       </p>

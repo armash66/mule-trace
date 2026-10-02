@@ -7,7 +7,7 @@ from collections.abc import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from .models import Base
+from .models import Base, LegacyBase
 
 DATABASE_URL = "sqlite:///./muletrace.db"
 
@@ -23,6 +23,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def init_db() -> None:
     """Create all tables if they don't exist and ensure schema is up to date."""
     Base.metadata.create_all(bind=engine)
+    LegacyBase.metadata.create_all(bind=engine)
     with engine.connect() as conn:
         try:
             from sqlalchemy import text

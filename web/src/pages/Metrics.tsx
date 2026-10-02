@@ -25,7 +25,7 @@ export default function Metrics() {
 
   return (
     <div>
-      <h2 style={{ fontFamily: ''Instrument Serif'', marginBottom: 4 }}>Metrics</h2>
+      <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Metrics</h2>
       <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem', marginBottom: 24 }}>
         Key performance indicators and detection benchmarks.
       </p>

@@ -28,7 +28,7 @@ export default function Watchlist() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h2 style={{ fontFamily: ''Instrument Serif'', marginBottom: 4 }}>Watchlist</h2>
+          <h2 style={{ fontFamily: 'Instrument Serif', marginBottom: 4 }}>Watchlist</h2>
           <p style={{ color: 'var(--ink-2)', fontSize: '0.85rem' }}>
             Known mule accounts matched against future uploads.
           </p>

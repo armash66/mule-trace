@@ -153,7 +153,7 @@ class Signal(Base):
     __tablename__ = "signals"
 
     id = Column(String(32), primary_key=True, default=gen_id)
-    account_db_id = Column(String(32), ForeignKey("accounts.id"), nullable=False, index=True)
+    account_db_id = Column(String(32), ForeignKey("accounts.id"), nullable=True, index=True)
     alert_id = Column(String(32), ForeignKey("alerts.id"), nullable=True, index=True)
     signal_type = Column(String(30), nullable=False)  # FAN_IN_OUT, CYCLE, PASS_THROUGH, NEW_CLUSTER, BEHAVIORAL, ML, WATCHLIST
     weight = Column(Float, default=0.0)

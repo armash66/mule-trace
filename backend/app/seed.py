@@ -6,8 +6,10 @@ import logging
 import os
 import sys
 
-# Add parent to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add backend directory to path
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
 from app.core.config import get_settings
 from app.core.database import init_db, get_session_factory, get_engine

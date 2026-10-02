@@ -111,19 +111,16 @@ def score_accounts(
         # Generate plain-language reason (top 2-3 signals)
         reason = _generate_reason(account_id, signal_breakdown)
         reason_simple = _generate_simple_reason(account_id, signal_breakdown)
-        innocent_reason = build_innocent_explanation(
-            [s.get("guard_details", []) for s in signals if s.get("guard_details")]
-            if any(s.get("guard_details") for s in signals)
-            else []
-        )
-
         # Flatten guard details for innocent reason
         all_guard_details = []
         for s in signals:
-            if s.get("guard_details"):
-                all_guard_details.extend(s["guard_details"])
-        if all_guard_details:
-            innocent_reason = build_innocent_explanation(all_guard_details)
+            gd = s.get("guard_details")
+            if gd:
+                if isinstance(gd, list):
+                    all_guard_details.extend(gd)
+                elif isinstance(gd, dict):
+                    all_guard_details.append(gd)
+        innocent_reason = build_innocent_explanation(all_guard_details) if all_guard_details else ""
 
         # Determine next best action
         next_action = _suggest_next_action(final_score, signal_types, confidence)

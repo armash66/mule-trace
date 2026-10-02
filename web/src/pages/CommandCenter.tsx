@@ -32,7 +32,7 @@ export default function CommandCenter() {
   const [searchQ, setSearchQ] = useState('');
   const [selectedAlert, setSelectedAlert] = useState<any>(null);
   const [undoId, setUndoId] = useState<string | null>(null);
-  const [undoTimer, setUndoTimer] = useState<NodeJS.Timeout | null>(null);
+  const [undoTimer, setUndoTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   // Queries
   const { data: alerts = [], isLoading } = useQuery({

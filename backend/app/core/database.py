@@ -18,6 +18,11 @@ def get_engine(url: str | None = None):
     connect_args = {}
     if db_url.startswith("sqlite"):
         connect_args["check_same_thread"] = False
+        db_path = db_url.replace("sqlite:///", "").split("?")[0]
+        if db_path and db_path != ":memory:":
+            import os
+            db_dir = os.path.dirname(os.path.abspath(db_path))
+            os.makedirs(db_dir, exist_ok=True)
 
     engine = create_engine(
         db_url,
@@ -53,6 +58,8 @@ _session_factory: sessionmaker[Session] | None = None
 def init_db() -> None:
     """Initialize database and create tables."""
     global _engine, _session_factory
+    # Ensure models are imported so all tables are registered with Base.metadata
+    import app.models.models  # noqa: F401
     _engine = get_engine()
     _session_factory = get_session_factory(_engine)
     Base.metadata.create_all(bind=_engine)

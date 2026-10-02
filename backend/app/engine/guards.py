@@ -173,12 +173,23 @@ def _check_guards(store: GraphStore, account_id: str) -> list[dict[str, Any]]:
     return penalties
 
 
-def build_innocent_explanation(penalties: list[dict[str, Any]]) -> str:
+def build_innocent_explanation(penalties: Any) -> str:
     """Build a 'Why this might be innocent' explanation from guard results."""
     if not penalties:
         return ""
 
-    explanations = [p["innocent_explanation"] for p in penalties if p.get("innocent_explanation")]
+    # Flatten if nested list
+    flat: list[dict[str, Any]] = []
+    if isinstance(penalties, list):
+        for item in penalties:
+            if isinstance(item, list):
+                flat.extend([x for x in item if isinstance(x, dict)])
+            elif isinstance(item, dict):
+                flat.append(item)
+    elif isinstance(penalties, dict):
+        flat.append(penalties)
+
+    explanations = [p["innocent_explanation"] for p in flat if p.get("innocent_explanation")]
     if not explanations:
         return ""
 

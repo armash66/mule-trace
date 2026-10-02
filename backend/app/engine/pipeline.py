@@ -106,7 +106,7 @@ def run_pipeline(
     cache_graph(run_id, store)
 
     # Store accounts and transfers in DB
-    _persist_accounts(db, run_id, store)
+    acct_map = _persist_accounts(db, run_id, store)
     _persist_transfers(db, run_id, df)
 
     # ── Stage 3: Run detectors ───────────────────────────
@@ -207,7 +207,7 @@ def run_pipeline(
 
     # ── Stage 8: Persist results ─────────────────────────
     t0 = time.perf_counter()
-    _persist_alerts(db, run_id, scored, ring_map, thresholds)
+    _persist_alerts(db, run_id, scored, ring_map, thresholds, acct_map)
     _persist_rings(db, run_id, rings)
     _update_account_scores(db, run_id, scored, store, ring_map)
     timings["persist"] = round(time.perf_counter() - t0, 3)
@@ -245,11 +245,14 @@ def run_pipeline(
     }
 
 
-def _persist_accounts(db: Session, run_id: str, store: GraphStore) -> None:
-    """Save accounts to database."""
+def _persist_accounts(db: Session, run_id: str, store: GraphStore) -> dict[str, str]:
+    """Save accounts to database and return account_id -> database PK mapping."""
+    acct_map: dict[str, str] = {}
     for acct_id, data in store.accounts.items():
+        pk = gen_id()
+        acct_map[acct_id] = pk
         account = Account(
-            id=gen_id(),
+            id=pk,
             run_id=run_id,
             account_id=acct_id,
             open_date=data.get("open_date"),
@@ -263,6 +266,7 @@ def _persist_accounts(db: Session, run_id: str, store: GraphStore) -> None:
         )
         db.add(account)
     db.flush()
+    return acct_map
 
 
 def _persist_transfers(db: Session, run_id: str, df: Any) -> None:
@@ -294,12 +298,15 @@ def _persist_alerts(
     scored: list[dict],
     ring_map: dict[str, str],
     thresholds: DetectorThresholds,
+    acct_map: dict[str, str] | None = None,
 ) -> None:
     """Save alerts and signals to database."""
     config_version = gen_id()
+    acct_map = acct_map or {}
 
     for s in scored:
         alert_id = gen_id()
+        acct_pk = acct_map.get(s["account_id"])
         alert = Alert(
             id=alert_id,
             run_id=run_id,
@@ -326,7 +333,7 @@ def _persist_alerts(
         for sig in s.get("signals", []):
             signal = Signal(
                 id=gen_id(),
-                account_db_id=alert_id,  # Link to alert for now
+                account_db_id=acct_pk,
                 alert_id=alert_id,
                 signal_type=sig["signal_type"],
                 weight=sig.get("weight", 0),

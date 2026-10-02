@@ -14,6 +14,7 @@ from .api.simulate import reset_demo
 from .core.config import get_settings
 from .db import SessionLocal, init_db
 from .models import Run
+from .pipeline import pipeline_state
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,12 +29,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Initializing MuleTrace database...")
     init_db()
 
-    # Auto-seed demo dataset on fresh startup if available
+    # Auto-seed demo dataset on fresh startup or restore in-memory graph
     db = SessionLocal()
     try:
         run_count = db.query(Run).count()
-        if run_count == 0:
-            logger.info("Fresh database detected — auto-loading demo dataset...")
+        if run_count == 0 or pipeline_state.graph is None:
+            logger.info("Initializing in-memory demo pipeline graph...")
             try:
                 reset_demo(db)
                 logger.info("Demo dataset successfully loaded!")

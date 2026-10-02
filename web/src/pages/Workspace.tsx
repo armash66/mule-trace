@@ -6,9 +6,12 @@ import type {
   AccountDetail,
   AccountListItem,
   NetworkResponse,
+  CaseReport,
 } from '../api/types';
 import { CytoscapeGraph } from '../components/CytoscapeGraph';
 import { FreezePlanModal } from '../components/FreezePlanModal';
+import { IdentityFingerprintCard } from '../components/IdentityFingerprintCard';
+import { generateIdentityOverlayElements } from '../lib/identityAdapter';
 
 function limitWords(text: string, maxWords: number): string {
   if (!text) return '';
@@ -34,9 +37,11 @@ export const Investigate: React.FC = () => {
   const [accountList, setAccountList] = useState<AccountListItem[]>([]);
   const [listSearch, setListSearch] = useState('');
   const [accountDetail, setAccountDetail] = useState<AccountDetail | null>(null);
+  const [caseReport, setCaseReport] = useState<CaseReport | null>(null);
+  const [identityOverlay, setIdentityOverlay] = useState<any | null>(null);
   const [network, setNetwork] = useState<NetworkResponse>({ nodes: [], edges: [] });
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'evidence' | 'details' | 'history'>('evidence');
+  const [activeTab, setActiveTab] = useState<'evidence' | 'fingerprint' | 'details' | 'history'>('fingerprint');
   const [freezeModalOpen, setFreezeModalOpen] = useState(false);
   const [decisionNote, setDecisionNote] = useState('');
   const [latestDecision, setLatestDecision] = useState<'confirmed' | 'cleared' | null>(null);
@@ -56,13 +61,16 @@ export const Investigate: React.FC = () => {
   // Load selected account data
   const loadAccountData = useCallback((id: string, hops: number) => {
     setLoading(true);
+    setIdentityOverlay(null);
     Promise.all([
       api.getAccountDetail(id),
       api.getAccountNetwork(id, hops, 60),
+      api.getCaseReport('fan_1').catch(() => null),
     ])
-      .then(([det, net]) => {
+      .then(([det, net, cr]) => {
         setAccountDetail(det);
         setNetwork(net);
+        if (cr) setCaseReport(cr);
         if (det.decisions && det.decisions.length > 0) {
           const last = det.decisions[det.decisions.length - 1];
           setLatestDecision(last.status as 'confirmed' | 'cleared');
@@ -78,6 +86,7 @@ export const Investigate: React.FC = () => {
   }, [activeId, currentHops, loadAccountData]);
 
   const selectAccount = (id: string) => {
+    setIdentityOverlay(null);
     setSelectedAccountId(id);
     navigate(`/workspace/${id}`);
   };
@@ -269,6 +278,27 @@ export const Investigate: React.FC = () => {
               ))}
             </div>
 
+            {identityOverlay && (
+              <button
+                type="button"
+                className="mono"
+                onClick={() => {
+                  setIdentityOverlay(null);
+                  showToast('Overlay: Cleared shared identifiers');
+                }}
+                style={{
+                  padding: '3px 8px',
+                  fontSize: '11px',
+                  backgroundColor: 'rgba(255, 159, 28, 0.15)',
+                  color: '#FF9F1C',
+                  border: '1px solid #FF9F1C',
+                  cursor: 'pointer',
+                }}
+              >
+                ✕ Clear Overlay
+              </button>
+            )}
+
             <button
               type="button"
               className="btn"
@@ -287,6 +317,7 @@ export const Investigate: React.FC = () => {
             edges={network.edges}
             selectedId={activeId}
             recommendedFreezeId="ACC_05001"
+            identityOverlay={identityOverlay}
             onNodeClick={(clickedId) => selectAccount(clickedId)}
           />
         </div>
@@ -367,9 +398,9 @@ export const Investigate: React.FC = () => {
           </div>
         </div>
 
-        {/* Three plain text tabs: Evidence, Details, History with 2px ink underline */}
-        <div style={{ display: 'flex', gap: '20px', borderBottom: '1px solid var(--rule)', marginBottom: '18px' }}>
-          {(['evidence', 'details', 'history'] as const).map((tab) => (
+        {/* Four plain text tabs: Evidence, Fingerprint, Details, History with 2px ink underline */}
+        <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid var(--rule)', marginBottom: '18px', flexWrap: 'wrap' }}>
+          {(['evidence', 'fingerprint', 'details', 'history'] as const).map((tab) => (
             <button
               key={tab}
               type="button"
@@ -379,14 +410,21 @@ export const Investigate: React.FC = () => {
                 border: 'none',
                 padding: '6px 0',
                 cursor: 'pointer',
-                fontSize: '15px',
+                fontSize: '14px',
                 color: activeTab === tab ? 'var(--ink)' : 'var(--ink-2)',
                 borderBottom: activeTab === tab ? '2px solid var(--ink)' : '2px solid transparent',
                 marginBottom: '-1px',
                 textTransform: 'capitalize',
+                fontWeight: activeTab === tab ? 600 : 400,
               }}
             >
-              {tab === 'evidence' ? 'Evidence' : tab === 'details' ? 'Details' : 'History'}
+              {tab === 'evidence'
+                ? 'Evidence'
+                : tab === 'fingerprint'
+                ? 'Fingerprint'
+                : tab === 'details'
+                ? 'Details'
+                : 'History'}
             </button>
           ))}
         </div>
@@ -427,8 +465,25 @@ export const Investigate: React.FC = () => {
             </div>
           )}
 
+          {activeTab === 'fingerprint' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <IdentityFingerprintCard
+                accountId={activeId}
+                caseReport={caseReport}
+                allAccounts={accountList}
+                loading={loading}
+                onAccountClick={(clickedId) => selectAccount(clickedId)}
+                onShowOnGraph={(res) => {
+                  const overlay = generateIdentityOverlayElements(res);
+                  setIdentityOverlay(overlay);
+                  showToast('Overlay: Displaying shared identity cluster on graph');
+                }}
+              />
+            </div>
+          )}
+
           {activeTab === 'details' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '6px' }}>
                 <span style={{ color: 'var(--ink-2)' }}>KYC phone</span>
                 <span className="mono">+91 98••••12</span>
@@ -446,6 +501,21 @@ export const Investigate: React.FC = () => {
                 <span className="mono">
                   {accountDetail?.age_days ? `${accountDetail.age_days} days` : '22 days'}
                 </span>
+              </div>
+
+              <div style={{ marginTop: '12px' }}>
+                <IdentityFingerprintCard
+                  accountId={activeId}
+                  caseReport={caseReport}
+                  allAccounts={accountList}
+                  loading={loading}
+                  onAccountClick={(clickedId) => selectAccount(clickedId)}
+                  onShowOnGraph={(res) => {
+                    const overlay = generateIdentityOverlayElements(res);
+                    setIdentityOverlay(overlay);
+                    showToast('Overlay: Displaying shared identity cluster on graph');
+                  }}
+                />
               </div>
             </div>
           )}

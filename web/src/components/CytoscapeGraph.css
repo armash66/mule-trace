@@ -1,0 +1,323 @@
+/* ── Cytoscape Graph Toolbar & Optimal Cut Zones ────────────── */
+
+.cy-graph-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--paper, #0D0F14);
+}
+
+.cy-canvas-host {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Top Graph Toolbar ────────────────────────────────────────── */
+.cy-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 60;
+  pointer-events: auto;
+}
+
+/* Optimal Cut Toggle Switch Button */
+.toggle-optimal-cut {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 10px;
+  background: rgba(14, 16, 21, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: var(--text-1, #B3B3B3);
+  font-family: var(--font-body, inherit);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.toggle-optimal-cut:hover {
+  background: rgba(255, 159, 28, 0.08);
+  border-color: rgba(255, 159, 28, 0.4);
+  color: #FFF;
+}
+
+.toggle-optimal-cut:focus-visible {
+  outline: 2px solid #FF9F1C;
+  outline-offset: 2px;
+}
+
+.toggle-optimal-cut[aria-checked="true"],
+.toggle-optimal-cut[aria-pressed="true"] {
+  background: rgba(255, 159, 28, 0.15);
+  border-color: #FF9F1C;
+  color: #FF9F1C;
+  box-shadow: 0 0 10px rgba(255, 159, 28, 0.2);
+}
+
+/* Switch Pill & Thumb */
+.switch-track {
+  width: 26px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-optimal-cut[aria-checked="true"] .switch-track,
+.toggle-optimal-cut[aria-pressed="true"] .switch-track {
+  background: #FF9F1C;
+}
+
+.switch-thumb {
+  width: 10px;
+  height: 10px;
+  background: #FFF;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle-optimal-cut[aria-checked="true"] .switch-thumb,
+.toggle-optimal-cut[aria-pressed="true"] .switch-thumb {
+  transform: translateX(12px);
+  background: #07080A;
+}
+
+/* Reset Layout Button */
+.btn-reset-layout {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 8px;
+  background: rgba(14, 16, 21, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: var(--text-2, #888);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reset-layout:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFF;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-reset-layout:focus-visible {
+  outline: 2px solid #FF9F1C;
+  outline-offset: 2px;
+}
+
+/* ── 3 Zones Background Overlay ───────────────────────────────── */
+.zones-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+  z-index: 2;
+  animation: fadeInZones 0.4s ease forwards;
+}
+
+@keyframes fadeInZones {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.zone-col {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px dashed rgba(255, 255, 255, 0.06);
+  padding-top: 46px;
+}
+
+.zone-col:last-child {
+  border-right: none;
+}
+
+.zone-col.victim {
+  background: linear-gradient(180deg, rgba(100, 149, 237, 0.04) 0%, transparent 80%);
+}
+
+.zone-col.hub {
+  background: linear-gradient(180deg, rgba(255, 159, 28, 0.04) 0%, transparent 80%);
+}
+
+.zone-col.mule {
+  background: linear-gradient(180deg, rgba(160, 160, 160, 0.04) 0%, transparent 80%);
+}
+
+.zone-header-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.zone-col.victim .zone-header-label {
+  color: #7E9DB9;
+  background: rgba(100, 149, 237, 0.12);
+  border: 1px solid rgba(100, 149, 237, 0.25);
+}
+
+.zone-col.hub .zone-header-label {
+  color: #FF9F1C;
+  background: rgba(255, 159, 28, 0.12);
+  border: 1px solid rgba(255, 159, 28, 0.35);
+}
+
+.zone-col.mule .zone-header-label {
+  color: #9E9E9E;
+  background: rgba(160, 160, 160, 0.12);
+  border: 1px solid rgba(160, 160, 160, 0.25);
+}
+
+/* ── "No Flow Path Found" Notice ──────────────────────────────── */
+.no-flow-badge {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 24, 0.9);
+  border: 1px solid rgba(255, 159, 28, 0.4);
+  border-radius: 4px;
+  padding: 6px 14px;
+  color: #FFB347;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  z-index: 25;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  animation: fadeInZones 0.3s ease;
+}
+
+/* ── Glowing Dashed Amber Cut Line Across Cut ─────────────────── */
+.cut-line-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  margin-left: -20px;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.cut-line-amber {
+  position: absolute;
+  top: 40px;
+  bottom: 15px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  border-left: 2px dashed #FF9F1C;
+  box-shadow: 0 0 10px rgba(255, 159, 28, 0.6), 0 0 20px rgba(255, 159, 28, 0.3);
+  opacity: 0.9;
+}
+
+/* Interactive Scissors & Cut Badge Button */
+.cut-badge-button {
+  pointer-events: auto;
+  position: absolute;
+  top: 48%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(14, 16, 21, 0.95);
+  border: 1px solid #FF9F1C;
+  border-radius: 20px;
+  color: #FF9F1C;
+  box-shadow: 0 0 14px rgba(255, 159, 28, 0.4), 0 4px 12px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.cut-badge-button:hover {
+  background: #FF9F1C;
+  color: #07080A;
+  transform: translateY(-50%) scale(1.04);
+  box-shadow: 0 0 20px rgba(255, 159, 28, 0.7);
+}
+
+.cut-badge-button:hover svg path,
+.cut-badge-button:hover svg circle,
+.cut-badge-button:hover svg line {
+  stroke: #07080A;
+}
+
+.cut-badge-button:focus-visible {
+  outline: 2px solid #FFF;
+  outline-offset: 2px;
+}
+
+.cut-scissors-svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.cut-badge-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ── Cytoscape Zoom Controls ──────────────────────────────────── */
+.cy-zoom-controls {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  z-index: 15;
+}
+
+.cy-zoom-btn {
+  background: var(--paper, #0D0F14);
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.15));
+  color: var(--ink, #EDEDED);
+  padding: 2px 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cy-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cy-zoom-btn:focus-visible {
+  outline: 2px solid #FF9F1C;
+  outline-offset: 1px;
+}

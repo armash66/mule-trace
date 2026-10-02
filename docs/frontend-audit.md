@@ -331,5 +331,24 @@ Automated headless browser audit executed via Puppeteer against the running Vite
 4. **Desktop App Overview (1440px):** `docs/screenshots/app-overview-1440px.png`  
    *Complete forensic `AppShell` with dark sidebar navigation, dataset intake drop area, and system status indicators.*
 
+
+---
+
+## 9. Accounts & Transactions Data Schema Audit (Identity & Device Fingerprint)
+
+Inspection of underlying synthetic/recorded dataset files (`data/accounts.csv`, `data/transactions.csv`, `backend/app/data/*.csv`, and `CaseReport` schema):
+
+| Field / Attribute | Present in Dataset? | Source Column / Property | Verified Format / Sample Values | Handling in Forensic UI |
+|---|---|---|---|---|
+| **KYC Phone** | ✅ Yes | `accounts.csv` (`kyc_phone_hash`), `CaseReport.accounts` (`kyc_phone_masked`) | `PH-000914`, masked `+91 98••••12` | Masked in UI (`+91 98****21`); revealed only upon explicit analyst click; cross-matched across accounts for phone link rings. |
+| **KYC Address** | ✅ Yes | `accounts.csv` (`kyc_address_hash`), `CaseReport.accounts` (`kyc_address_masked`) | `AD-000285`, masked `Flat 4••, Andheri West, Mumbai, MH` | Truncated/masked; shared address links counted and mapped to identity cards. |
+| **KYC ID / PAN Hash** | ✅ Yes | `accounts.csv` (`kyc_pan_hash`), `CaseReport.accounts` (`kyc_id_hash_masked`) | `PN-000000`, masked `a8••••4f` | Never raw PAN/Aadhaar; truncated hashes only. |
+| **Device ID** | ✅ Yes | `accounts.csv` (`device_ids`), `transactions.csv` (`device_id`) | `D-0188`, `D-0008`, `D-0050` | Mapped to distinct accounts and transaction timestamps to calculate device velocity span (e.g. "3 accounts within 12 minutes"). |
+| **IP Address** | ✅ Yes | `accounts.csv` (`ip_addresses`), `transactions.csv` (`ip_address`) | `192.168.0.52`, `192.168.0.15` | Distinct accounts per IP tracked for high velocity clusters; masked in UI (`192.168.***.***`). |
+| **Opening Date** | ✅ Yes | `accounts.csv` (`opened_date`, `age_days`) | `2026-05-09T00:00:00+00:00` | Account age and opening timestamp computed. |
+| **Opening City / Branch**| ✅ Yes | `accounts.csv` (`branch`) | `MUMBAI-01`, `DELHI-01`, `HYD-01` | City extracted from branch code prefix. |
+| **Geolocation Fields** | ❌ **No** | None | No lat/long or IP geolocation fields exist | **Strict Truthfulness:** Never fabricate fake countries or cities. Explicitly rendered as *"Geolocation not available in this dataset"*. |
+
 ---
 *Audit and Foundation Tokens verified by MuleTrace Frontend Agent.*
+

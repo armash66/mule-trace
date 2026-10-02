@@ -1,0 +1,194 @@
+/* SimulateSummaryModal.css */
+
+.summary-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(7, 8, 10, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: summaryFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes summaryFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.summary-modal-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+  animation: summarySlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes summarySlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.summary-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 14px;
+}
+
+.summary-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--signal);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.summary-scenario-sub {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.summary-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.summary-modal-close:hover {
+  color: var(--ink);
+}
+
+.summary-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.summary-metric-card {
+  background-color: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-metric-card.highlight-signal {
+  border-color: rgba(255, 159, 28, 0.3);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metric-label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-2);
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.metric-denom {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 400;
+}
+
+.metric-subtext {
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.summary-breakdown-box {
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.breakdown-label {
+  color: var(--text-2);
+}
+
+.breakdown-val {
+  font-weight: 600;
+}
+
+.summary-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summary-modal-backdrop,
+  .summary-modal-card {
+    animation: none;
+  }
+}

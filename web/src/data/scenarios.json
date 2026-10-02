@@ -1,0 +1,242 @@
+{
+  "digital_arrest": {
+    "id": "digital_arrest",
+    "title": "Digital Arrest Scam",
+    "description": "Fraudsters coerce victim into liquidating savings to a fake 'court escrow' mule account, which immediately fans out to rapid cash-outs and crypto off-ramps.",
+    "hops": 4,
+    "initial_amount": 1500000,
+    "target_ring_id": "RNG-DIGITAL-ARREST",
+    "victim_account": "ACC-003606",
+    "primary_hub": "ACC-RING07-00",
+    "interception_account": "ACC-RING07-00",
+    "transactions": [
+      {
+        "step": 1,
+        "src": "ACC-003606",
+        "dst": "ACC-RING07-00",
+        "amount": 1500000,
+        "channel": "RTGS",
+        "device": "DEV-VIC-01",
+        "ip": "103.21.244.12",
+        "delay_ms": 500,
+        "label": "Victim coerced RTGS transfer to fake escrow"
+      },
+      {
+        "step": 2,
+        "src": "ACC-RING07-00",
+        "dst": "ACC-RING07-01",
+        "amount": 420000,
+        "channel": "IMPS",
+        "device": "D-0123",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Rapid Fan-Out layer 1: Mule Hub 1"
+      },
+      {
+        "step": 3,
+        "src": "ACC-RING07-00",
+        "dst": "ACC-RING07-02",
+        "amount": 380000,
+        "channel": "IMPS",
+        "device": "D-0123",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Rapid Fan-Out layer 1: Mule Hub 2"
+      },
+      {
+        "step": 4,
+        "src": "ACC-RING07-00",
+        "dst": "ACC-RING07-03",
+        "amount": 350000,
+        "channel": "IMPS",
+        "device": "D-0123",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Rapid Fan-Out layer 1: Mule Hub 3"
+      },
+      {
+        "step": 5,
+        "src": "ACC-RING07-00",
+        "dst": "ACC-RING07-04",
+        "amount": 350000,
+        "channel": "IMPS",
+        "device": "D-0123",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Rapid Fan-Out layer 1: Mule Hub 4"
+      },
+      {
+        "step": 6,
+        "src": "ACC-RING07-01",
+        "dst": "ACC-RING01-01",
+        "amount": 400000,
+        "channel": "UPI",
+        "device": "D-0123",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Layer 2 Pass-Through Chain: Mule Pass 1"
+      },
+      {
+        "step": 7,
+        "src": "ACC-RING07-02",
+        "dst": "ACC-RING01-02",
+        "amount": 360000,
+        "channel": "UPI",
+        "device": "D-0123",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Layer 2 Pass-Through Chain: Mule Pass 2"
+      },
+      {
+        "step": 8,
+        "src": "ACC-RING07-03",
+        "dst": "ACC-RING01-03",
+        "amount": 330000,
+        "channel": "UPI",
+        "device": "D-0050",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Layer 2 Pass-Through Chain: Mule Pass 3"
+      },
+      {
+        "step": 9,
+        "src": "ACC-RING07-04",
+        "dst": "ACC-RING01-04",
+        "amount": 330000,
+        "channel": "UPI",
+        "device": "D-0050",
+        "ip": "192.168.1.110",
+        "delay_ms": 500,
+        "label": "Layer 2 Pass-Through Chain: Mule Pass 4"
+      },
+      {
+        "step": 10,
+        "src": "ACC-RING01-01",
+        "dst": "ATM-CASH-MUMBAI-01",
+        "amount": 380000,
+        "channel": "ATM",
+        "device": "D-ATM-01",
+        "ip": "10.0.4.1",
+        "is_terminal": true,
+        "delay_ms": 500,
+        "label": "Terminal cash withdrawal at ATM cluster"
+      },
+      {
+        "step": 11,
+        "src": "ACC-RING01-02",
+        "dst": "OFFRAMP-CRYPTO-P2P",
+        "amount": 340000,
+        "channel": "IMPS",
+        "device": "D-CRYPTO-01",
+        "ip": "103.45.12.9",
+        "is_terminal": true,
+        "delay_ms": 500,
+        "label": "Terminal crypto P2P off-ramp conversion"
+      },
+      {
+        "step": 12,
+        "src": "ACC-RING01-03",
+        "dst": "ATM-CASH-DELHI-02",
+        "amount": 310000,
+        "channel": "ATM",
+        "device": "D-ATM-02",
+        "ip": "10.0.4.2",
+        "is_terminal": true,
+        "delay_ms": 500,
+        "label": "Terminal cash withdrawal at Delhi ATM"
+      }
+    ]
+  },
+  "instant_loan": {
+    "id": "instant_loan",
+    "title": "Instant Loan App Phishing",
+    "description": "Predatory loan app extracts permissions and extortionately drains victim savings through rapid cyclical transfers and shared-device clusters.",
+    "hops": 3,
+    "initial_amount": 650000,
+    "target_ring_id": "RNG-LOAN-PHISH",
+    "victim_account": "ACC-002231",
+    "primary_hub": "ACC-RING01-00",
+    "interception_account": "ACC-RING01-00",
+    "transactions": [
+      {
+        "step": 1,
+        "src": "ACC-002231",
+        "dst": "ACC-RING01-00",
+        "amount": 650000,
+        "channel": "UPI",
+        "device": "DEV-LOAN-01",
+        "ip": "103.22.11.5",
+        "delay_ms": 500,
+        "label": "Victim extortionate auto-debit drain"
+      },
+      {
+        "step": 2,
+        "src": "ACC-RING01-00",
+        "dst": "ACC-RING01-01",
+        "amount": 220000,
+        "channel": "IMPS",
+        "device": "D-0050",
+        "ip": "192.168.0.70",
+        "delay_ms": 500,
+        "label": "Dispersion to Ring Node 1"
+      },
+      {
+        "step": 3,
+        "src": "ACC-RING01-00",
+        "dst": "ACC-RING01-02",
+        "amount": 210000,
+        "channel": "IMPS",
+        "device": "D-0050",
+        "ip": "192.168.0.70",
+        "delay_ms": 500,
+        "label": "Dispersion to Ring Node 2 (Shared Device D-0050)"
+      },
+      {
+        "step": 4,
+        "src": "ACC-RING01-00",
+        "dst": "ACC-RING01-03",
+        "amount": 220000,
+        "channel": "IMPS",
+        "device": "D-0050",
+        "ip": "192.168.0.70",
+        "delay_ms": 500,
+        "label": "Dispersion to Ring Node 3 (Shared Device D-0050)"
+      },
+      {
+        "step": 5,
+        "src": "ACC-RING01-01",
+        "dst": "ACC-RING01-04",
+        "amount": 210000,
+        "channel": "UPI",
+        "device": "D-0038",
+        "ip": "192.168.0.70",
+        "delay_ms": 500,
+        "label": "Layer 2 Pass-Through"
+      },
+      {
+        "step": 6,
+        "src": "ACC-RING01-02",
+        "dst": "POS-MERCHANT-OVERSEAS",
+        "amount": 200000,
+        "channel": "POS",
+        "device": "D-POS-01",
+        "ip": "10.0.8.1",
+        "is_terminal": true,
+        "delay_ms": 500,
+        "label": "Terminal foreign merchant POS swipe"
+      },
+      {
+        "step": 7,
+        "src": "ACC-RING01-04",
+        "dst": "ATM-CASH-SURAT-01",
+        "amount": 200000,
+        "channel": "ATM",
+        "device": "D-ATM-03",
+        "ip": "10.0.8.2",
+        "is_terminal": true,
+        "delay_ms": 500,
+        "label": "Terminal ATM cash withdrawal"
+      }
+    ]
+  }
+}

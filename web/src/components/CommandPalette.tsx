@@ -67,44 +67,55 @@ export const CommandPalette: React.FC = () => {
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: '560px',
-          maxWidth: '90vw',
-          backgroundColor: 'var(--paper)',
-          border: '1px solid var(--rule)',
+          position: 'relative',
+          width: '580px',
+          maxWidth: '92vw',
+          background: 'linear-gradient(180deg, #161A22, #0C0E12)',
+          border: '1px solid var(--line-strong)',
+          borderRadius: 'var(--radius-6)',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
           overflow: 'hidden',
         }}
       >
+        {/* Corner Ticks */}
+        <span style={{ position: 'absolute', top: -1, left: -1, width: 6, height: 6, borderTop: '2px solid rgba(255,159,28,0.6)', borderLeft: '2px solid rgba(255,159,28,0.6)', pointerEvents: 'none' }} />
+        <span style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, borderTop: '2px solid rgba(255,159,28,0.6)', borderRight: '2px solid rgba(255,159,28,0.6)', pointerEvents: 'none' }} />
+        <span style={{ position: 'absolute', bottom: -1, left: -1, width: 6, height: 6, borderBottom: '2px solid rgba(255,159,28,0.6)', borderLeft: '2px solid rgba(255,159,28,0.6)', pointerEvents: 'none' }} />
+        <span style={{ position: 'absolute', bottom: -1, right: -1, width: 6, height: 6, borderBottom: '2px solid rgba(255,159,28,0.6)', borderRight: '2px solid rgba(255,159,28,0.6)', pointerEvents: 'none' }} />
+
         <Command label="MuleTrace Quick Jump">
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              padding: '12px 16px',
-              borderBottom: '1px solid var(--rule)',
-              gap: '10px',
+              padding: '14px 18px',
+              borderBottom: '1px solid var(--line)',
+              gap: '12px',
             }}
           >
-            <Search size={16} color="var(--ink-2)" />
+            <Search size={16} color="var(--signal)" />
             <Command.Input
-              placeholder="Search accounts (ACC_05001), rings, or navigate..."
+              placeholder="Search accounts (ACC_05001), rings, or navigate…"
               style={{
                 width: '100%',
                 border: 'none',
                 outline: 'none',
                 background: 'transparent',
-                color: 'var(--ink)',
+                color: 'var(--text-0)',
                 fontSize: '14px',
-                fontFamily: 'Inter',
+                fontFamily: 'var(--font-body)',
               }}
               autoFocus
             />
             <span
               style={{
-                fontSize: '11px',
-                color: 'var(--ink-2)',
+                fontSize: '10px',
+                color: 'var(--text-2)',
                 padding: '2px 6px',
-                border: '1px solid var(--rule)',
-                fontFamily: 'JetBrains Mono',
+                borderRadius: '3px',
+                background: 'var(--bg-2)',
+                border: '1px solid var(--line)',
+                fontFamily: 'var(--font-mono)',
               }}
             >
               ESC

@@ -200,6 +200,28 @@ def get_neighbourhood(
     max_nodes: int = 50,
 ) -> NetworkResponse:
     """Retrieve ego network around account_id for graph visualization."""
+    if pipeline_state.graph is None:
+        try:
+            from pathlib import Path
+            from .db import SessionLocal
+            data_dir = Path(__file__).resolve().parent.parent.parent / "data"
+            txn_file = data_dir / "transactions.csv"
+            acct_file = data_dir / "accounts.csv"
+            if txn_file.exists():
+                with open(txn_file, "rb") as f:
+                    txn_bytes = f.read()
+                acct_bytes = None
+                if acct_file.exists():
+                    with open(acct_file, "rb") as f:
+                        acct_bytes = f.read()
+                db = SessionLocal()
+                try:
+                    run_pipeline(txn_bytes, acct_bytes, db)
+                finally:
+                    db.close()
+        except Exception as e:
+            logger.warning("Could not auto-load graph in get_neighbourhood: %s", e)
+
     if pipeline_state.graph is None or account_id not in pipeline_state.graph:
         return NetworkResponse(nodes=[], edges=[])
 

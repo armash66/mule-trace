@@ -1,0 +1,930 @@
+{
+  "totalTests": 44,
+  "passed": 44,
+  "failed": 0,
+  "consoleErrors": [],
+  "failedRequests": [
+    "/alerts [1440]: GET http://localhost:4173/api/v1/accounts?q= - net::ERR_ABORTED",
+    "/overview [1366x768]: GET http://localhost:4173/api/v1/stats - net::ERR_ABORTED",
+    "/overview [1366x768]: GET http://localhost:4173/api/v1/accounts?page_size=5&sort_by=score_desc - net::ERR_ABORTED"
+  ],
+  "overflows": [],
+  "axeViolations": [
+    {
+      "route": "/",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 64
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/overview",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/alerts",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 10
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 10
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/workspace/ACC-RING01-04",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 12
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/freezes",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/cases",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/data",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 15
+        }
+      ]
+    },
+    {
+      "route": "/rules",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 10
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 7
+        }
+      ]
+    },
+    {
+      "route": "/accuracy",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 64
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/activity",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 65
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/replay",
+      "viewport": "1440",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "button-name",
+          "impact": "critical",
+          "description": "Ensure buttons have discernible text",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 10
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 65
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/overview",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 13
+        }
+      ]
+    },
+    {
+      "route": "/alerts",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/workspace/ACC-RING01-04",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 12
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/freezes",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/cases",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 11
+        }
+      ]
+    },
+    {
+      "route": "/data",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 15
+        }
+      ]
+    },
+    {
+      "route": "/rules",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 10
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 7
+        }
+      ]
+    },
+    {
+      "route": "/accuracy",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 65
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/activity",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 65
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/replay",
+      "viewport": "1366x768",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "button-name",
+          "impact": "critical",
+          "description": "Ensure buttons have discernible text",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 10
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 53
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/overview",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 5
+        }
+      ]
+    },
+    {
+      "route": "/alerts",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 4
+        }
+      ]
+    },
+    {
+      "route": "/workspace/ACC-RING01-04",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 5
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/freezes",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 4
+        }
+      ]
+    },
+    {
+      "route": "/cases",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 4
+        }
+      ]
+    },
+    {
+      "route": "/data",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 8
+        }
+      ]
+    },
+    {
+      "route": "/rules",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 4
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 7
+        }
+      ]
+    },
+    {
+      "route": "/accuracy",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 53
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/activity",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 53
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/replay",
+      "viewport": "768",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "button-name",
+          "impact": "critical",
+          "description": "Ensure buttons have discernible text",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 4
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 51
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 3
+        }
+      ]
+    },
+    {
+      "route": "/overview",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 2
+        }
+      ]
+    },
+    {
+      "route": "/alerts",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 2
+        }
+      ]
+    },
+    {
+      "route": "/workspace/ACC-RING01-04",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require child roles contain them",
+          "nodesCount": 25
+        },
+        {
+          "id": "aria-required-parent",
+          "impact": "critical",
+          "description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+          "nodesCount": 25
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 1
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/freezes",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 1
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/cases",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 2
+        }
+      ]
+    },
+    {
+      "route": "/data",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 6
+        }
+      ]
+    },
+    {
+      "route": "/rules",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 2
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 7
+        }
+      ]
+    },
+    {
+      "route": "/accuracy",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 70
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 3
+        }
+      ]
+    },
+    {
+      "route": "/activity",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 51
+        },
+        {
+          "id": "scrollable-region-focusable",
+          "impact": "serious",
+          "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+          "nodesCount": 3
+        }
+      ]
+    },
+    {
+      "route": "/replay",
+      "viewport": "390",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "description": "Ensure an element's role supports its ARIA attributes",
+          "nodesCount": 1
+        },
+        {
+          "id": "button-name",
+          "impact": "critical",
+          "description": "Ensure buttons have discernible text",
+          "nodesCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodesCount": 2
+        },
+        {
+          "id": "label",
+          "impact": "critical",
+          "description": "Ensure every form element has a label",
+          "nodesCount": 1
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    "landing-1440.png",
+    "overview-1440.png",
+    "alerts-1440.png",
+    "workspace-1440.png",
+    "freezes-1440.png",
+    "cases-1440.png",
+    "data-1440.png",
+    "rules-1440.png",
+    "accuracy-1440.png",
+    "activity-1440.png",
+    "replay-1440.png",
+    "landing-1366x768.png",
+    "overview-1366x768.png",
+    "alerts-1366x768.png",
+    "workspace-1366x768.png",
+    "freezes-1366x768.png",
+    "cases-1366x768.png",
+    "data-1366x768.png",
+    "rules-1366x768.png",
+    "accuracy-1366x768.png",
+    "activity-1366x768.png",
+    "replay-1366x768.png",
+    "landing-768.png",
+    "overview-768.png",
+    "alerts-768.png",
+    "workspace-768.png",
+    "freezes-768.png",
+    "cases-768.png",
+    "data-768.png",
+    "rules-768.png",
+    "accuracy-768.png",
+    "activity-768.png",
+    "replay-768.png",
+    "landing-390.png",
+    "overview-390.png",
+    "alerts-390.png",
+    "workspace-390.png",
+    "freezes-390.png",
+    "cases-390.png",
+    "data-390.png",
+    "rules-390.png",
+    "accuracy-390.png",
+    "activity-390.png",
+    "replay-390.png",
+    "landing-reduced-motion-1440.png"
+  ],
+  "keyboardResults": {
+    "landingFocusableCount": 20,
+    "modalOpenedByShortcut": false,
+    "modalClosedByEsc": true
+  }
+}

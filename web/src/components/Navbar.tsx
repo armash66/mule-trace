@@ -204,6 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         aria-hidden={!isMenuOpen}
         role="dialog"
         aria-modal="true"
+        hidden={!isMenuOpen}
       >
         <div className="sheet-header">
           <div className="sheet-brand">

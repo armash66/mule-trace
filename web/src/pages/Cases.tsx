@@ -13,6 +13,7 @@ import {
   Lock,
   ArrowRight,
 } from 'lucide-react';
+import { DossierModal } from '../components/DossierModal';
 
 export const Cases: React.FC = () => {
   const { ringId: routeRingId } = useParams<{ ringId?: string }>();
@@ -23,6 +24,7 @@ export const Cases: React.FC = () => {
   const [caseReport, setCaseReport] = useState<CaseReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [dossierOpen, setDossierOpen] = useState(false);
 
   useEffect(() => {
     if (routeRingId && routeRingId !== activeRingId) {
@@ -90,6 +92,25 @@ export const Cases: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={() => setDossierOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              backgroundColor: '#FF9F1C',
+              color: '#07080A',
+              border: 'none',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            <FileText size={14} />
+            <span>Export notice & STR dossier</span>
+          </button>
+
           <button
             onClick={handleCopySTR}
             style={{
@@ -255,9 +276,30 @@ export const Cases: React.FC = () => {
 
         {/* Section 3: Draft STR Narrative */}
         <div>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', }}>
-            3. Regulatory Suspicious Transaction Report (STR / SAR) Draft
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
+              3. Regulatory Suspicious Transaction Report (STR / SAR) Draft
+            </h3>
+            <button
+              onClick={() => setDossierOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                backgroundColor: '#FF9F1C',
+                color: '#07080A',
+                border: 'none',
+                borderRadius: '3px',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <FileText size={14} />
+              <span>Export notice & STR dossier</span>
+            </button>
+          </div>
           <pre
             style={{
               backgroundColor: 'var(--paper-2)',
@@ -274,6 +316,13 @@ export const Cases: React.FC = () => {
           </pre>
         </div>
       </div>
+
+      {/* Legal Dossier Modal */}
+      <DossierModal
+        ringId={activeRingId}
+        open={dossierOpen}
+        onClose={() => setDossierOpen(false)}
+      />
     </div>
   );
 };

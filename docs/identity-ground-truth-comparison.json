@@ -1,0 +1,171 @@
+[
+  {
+    "account_id": "ACC-000003",
+    "ground_truth": {
+      "phone_shared_count": 5,
+      "phone_peers": [
+        "ACC-000564",
+        "ACC-000878",
+        "ACC-002261",
+        "ACC-002761",
+        "ACC-002843"
+      ],
+      "address_shared_count": 4,
+      "address_peers": [
+        "ACC-003711",
+        "ACC-003945",
+        "ACC-004326",
+        "ACC-004406"
+      ],
+      "device_shared_count": 30,
+      "device_peers": [
+        "ACC-000004",
+        "ACC-000009",
+        "ACC-000064",
+        "ACC-000206",
+        "ACC-000982",
+        "ACC-001042",
+        "ACC-001132",
+        "ACC-001295",
+        "ACC-001328",
+        "ACC-001425",
+        "ACC-001434",
+        "ACC-001845",
+        "ACC-001986",
+        "ACC-002186",
+        "ACC-002341",
+        "ACC-002455",
+        "ACC-002503",
+        "ACC-002561",
+        "ACC-002595",
+        "ACC-002644",
+        "ACC-003062",
+        "ACC-003071",
+        "ACC-003148",
+        "ACC-003288",
+        "ACC-003481",
+        "ACC-003531",
+        "ACC-004438",
+        "ACC-004475",
+        "ACC-004588",
+        "ACC-004642"
+      ],
+      "ip_shared_count": 14,
+      "ip_peers": [
+        "ACC-001464",
+        "ACC-001715",
+        "ACC-001918",
+        "ACC-001937",
+        "ACC-002466",
+        "ACC-002549",
+        "ACC-002628",
+        "ACC-002893",
+        "ACC-003078",
+        "ACC-003347",
+        "ACC-003433",
+        "ACC-003574",
+        "ACC-003974",
+        "ACC-004491"
+      ]
+    }
+  },
+  {
+    "account_id": "ACC-000000",
+    "ground_truth": {
+      "phone_shared_count": 2,
+      "phone_peers": [
+        "ACC-000498",
+        "ACC-004183"
+      ],
+      "address_shared_count": 5,
+      "address_peers": [
+        "ACC-000015",
+        "ACC-001779",
+        "ACC-002436",
+        "ACC-003901",
+        "ACC-004053"
+      ],
+      "device_shared_count": 27,
+      "device_peers": [
+        "ACC-000449",
+        "ACC-000812",
+        "ACC-000858",
+        "ACC-001170",
+        "ACC-001277",
+        "ACC-001403",
+        "ACC-001452",
+        "ACC-001475",
+        "ACC-001536",
+        "ACC-002541",
+        "ACC-002638",
+        "ACC-003025",
+        "ACC-003173",
+        "ACC-003366",
+        "ACC-003373",
+        "ACC-003498",
+        "ACC-003565",
+        "ACC-003652",
+        "ACC-003766",
+        "ACC-003822",
+        "ACC-003993",
+        "ACC-004283",
+        "ACC-004324",
+        "ACC-004443",
+        "ACC-004476",
+        "ACC-004708",
+        "ACC-004768"
+      ],
+      "ip_shared_count": 11,
+      "ip_peers": [
+        "ACC-000232",
+        "ACC-000610",
+        "ACC-000950",
+        "ACC-001728",
+        "ACC-001926",
+        "ACC-002637",
+        "ACC-002854",
+        "ACC-004086",
+        "ACC-004179",
+        "ACC-004362",
+        "ACC-004971"
+      ]
+    }
+  },
+  {
+    "account_id": "ACC-RING01-04",
+    "ground_truth": {
+      "phone_shared_count": 5,
+      "phone_peers": [
+        "ACC-RING01-00",
+        "ACC-RING01-01",
+        "ACC-RING01-02",
+        "ACC-RING01-03",
+        "ACC-RING01-05"
+      ],
+      "address_shared_count": 5,
+      "address_peers": [
+        "ACC-RING01-00",
+        "ACC-RING01-01",
+        "ACC-RING01-02",
+        "ACC-RING01-03",
+        "ACC-RING01-05"
+      ],
+      "device_shared_count": 5,
+      "device_peers": [
+        "ACC-RING01-00",
+        "ACC-RING01-01",
+        "ACC-RING01-02",
+        "ACC-RING01-03",
+        "ACC-RING01-05"
+      ],
+      "ip_shared_count": 5,
+      "ip_peers": [
+        "ACC-RING01-00",
+        "ACC-RING01-01",
+        "ACC-RING01-02",
+        "ACC-RING01-03",
+        "ACC-RING01-05"
+      ]
+    }
+  }
+]

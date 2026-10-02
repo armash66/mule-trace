@@ -5,6 +5,7 @@
 import { create } from 'zustand';
 import { api } from '../api/client';
 import type { RunItem } from '../api/types';
+import type { SimulationAlert, SimulationPayload, SimulationSummary } from '../lib/simulateEngine';
 
 interface ToastState {
   id: string;
@@ -38,6 +39,36 @@ interface AppState {
 
   whyScoreDrawerOpen: boolean;
   setWhyScoreDrawerOpen: (open: boolean) => void;
+
+  // Simulation State
+  simulateModalOpen: boolean;
+  setSimulateModalOpen: (open: boolean) => void;
+
+  summaryModalOpen: boolean;
+  setSummaryModalOpen: (open: boolean) => void;
+
+  isSimulating: boolean;
+  setIsSimulating: (isSim: boolean) => void;
+
+  simulationSpeed: number;
+  setSimulationSpeed: (speed: number) => void;
+
+  simulationPaused: boolean;
+  setSimulationPaused: (paused: boolean) => void;
+
+  activeScenarioId: string;
+  setActiveScenarioId: (id: string) => void;
+
+  simulationPayload: SimulationPayload | null;
+  setSimulationPayload: (payload: SimulationPayload | null) => void;
+
+  simulationAlerts: SimulationAlert[];
+  addSimulationAlert: (alert: SimulationAlert) => void;
+  dismissSimulationAlert: (alertId: string) => void;
+  clearSimulationAlerts: () => void;
+
+  simulationSummary: SimulationSummary | null;
+  setSimulationSummary: (summary: SimulationSummary | null) => void;
 
   // Runs & Data Intake
   runs: RunItem[];
@@ -92,6 +123,48 @@ export const useStore = create<AppState>((set, get) => ({
   whyScoreDrawerOpen: false,
   setWhyScoreDrawerOpen: (open) => set({ whyScoreDrawerOpen: open }),
 
+  // Simulation State
+  simulateModalOpen: false,
+  setSimulateModalOpen: (open) => set({ simulateModalOpen: open }),
+
+  summaryModalOpen: false,
+  setSummaryModalOpen: (open) => set({ summaryModalOpen: open }),
+
+  isSimulating: false,
+  setIsSimulating: (isSim) => set({ isSimulating: isSim }),
+
+  simulationSpeed: 1.0,
+  setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
+
+  simulationPaused: false,
+  setSimulationPaused: (paused) => set({ simulationPaused: paused }),
+
+  activeScenarioId: 'digital_arrest',
+  setActiveScenarioId: (id) => set({ activeScenarioId: id }),
+
+  simulationPayload: null,
+  setSimulationPayload: (payload) => set({ simulationPayload: payload }),
+
+  simulationAlerts: [],
+  addSimulationAlert: (alert) => {
+    set((state) => {
+      // Deduplicate by alert_id
+      if (state.simulationAlerts.some((a) => a.alert_id === alert.alert_id)) {
+        return state;
+      }
+      return { simulationAlerts: [...state.simulationAlerts, alert] };
+    });
+  },
+  dismissSimulationAlert: (alertId) => {
+    set((state) => ({
+      simulationAlerts: state.simulationAlerts.filter((a) => a.alert_id !== alertId),
+    }));
+  },
+  clearSimulationAlerts: () => set({ simulationAlerts: [] }),
+
+  simulationSummary: null,
+  setSimulationSummary: (summary) => set({ simulationSummary: summary }),
+
   // Runs state
   runs: [],
   activeRunId: null,
@@ -137,4 +210,3 @@ export const useStore = create<AppState>((set, get) => ({
   },
   clearToast: () => set({ toast: null }),
 }));
-

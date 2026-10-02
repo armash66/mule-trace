@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import type { ReplayResponse, ReplayEvent } from '../api/types';
@@ -11,6 +11,7 @@ import {
   FastForward,
   Lock,
   ShieldCheck,
+  ShieldAlert,
   AlertTriangle,
   ArrowRight,
 } from 'lucide-react';
@@ -35,12 +36,15 @@ export const HeistReplay: React.FC = () => {
     });
   }, [activeRing, applyFreeze]);
 
+  const events: ReplayEvent[] = replay?.events || [];
+  const currentEvent = events[currentStep] || null;
+
   // Animation player loop
   useEffect(() => {
-    if (isPlaying && replay) {
+    if (isPlaying && replay && events.length > 0) {
       timerRef.current = setInterval(() => {
         setCurrentStep((prev) => {
-          if (prev >= replay.events.length - 1) {
+          if (prev >= events.length - 1) {
             setIsPlaying(false);
             return prev;
           }
@@ -53,31 +57,65 @@ export const HeistReplay: React.FC = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPlaying, replay, speed]);
+  }, [isPlaying, replay, events.length, speed]);
 
-  const events: ReplayEvent[] = replay?.events || [];
-  const currentEvent = events[currentStep] || null;
+  const handleTogglePlay = () => {
+    if (!replay || events.length === 0) return;
+    if (!isPlaying && currentStep >= events.length - 1) {
+      setCurrentStep(0);
+      setIsPlaying(true);
+    } else {
+      setIsPlaying((prev) => !prev);
+    }
+  };
 
-  // Build active network up to current step
-  const activeNodes = (replay?.accounts || []).map((acc) => ({
-    id: acc,
-    score: acc === 'ACC_05001' ? 96 : 70,
-    patterns: ['fan'],
-    age_days: 20,
-  }));
+  const handleReset = () => {
+    setIsPlaying(false);
+    setCurrentStep(0);
+  };
 
-  const activeEdges = events.slice(0, currentStep + 1).map((e) => ({
-    src: e.src,
-    dst: e.dst,
-    total_amount: e.amount,
-    count: 1,
-    first_time: e.timestamp,
-  }));
+  // Build active network up to current step, including victim source nodes and mule receivers
+  const allAccountIds = useMemo(() => {
+    const ids = new Set<string>();
+    (replay?.accounts || []).forEach((a) => ids.add(a));
+    events.forEach((e) => {
+      if (e.src) ids.add(e.src);
+      if (e.dst) ids.add(e.dst);
+    });
+    return Array.from(ids);
+  }, [replay, events]);
+
+  const activeNodes = useMemo(() => {
+    return allAccountIds.map((acc) => {
+      const isHub = acc === 'ACC_05001' || acc.includes('05001');
+      const isVictim = acc.startsWith('ACC_01') || acc.startsWith('VIC');
+      return {
+        id: acc,
+        score: isHub ? 96 : isVictim ? 15 : 72,
+        patterns: ['fan'],
+        age_days: isVictim ? 380 : 20,
+      };
+    });
+  }, [allAccountIds]);
+
+  const activeEdges = useMemo(() => {
+    return events
+      .slice(0, currentStep + 1)
+      .filter((e) => e.src && e.dst && e.src !== e.dst)
+      .map((e, idx) => ({
+        id: `replay_e_${e.src}_${e.dst}_${idx}`,
+        src: e.src,
+        dst: e.dst,
+        total_amount: e.amount,
+        count: 1,
+        first_time: e.timestamp,
+      }));
+  }, [events, currentStep]);
 
   // Calculations for stopped vs escaped
   const totalVolume = replay?.total_amount || 424089.49;
-  const stoppable = applyFreeze ? totalVolume : 0;
-  const escaped = applyFreeze ? 0 : totalVolume;
+  const stoppable = applyFreeze ? (replay?.stoppable_rupees || totalVolume) : 0;
+  const escaped = applyFreeze ? Math.max(0, totalVolume - stoppable) : totalVolume;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
@@ -215,7 +253,22 @@ export const HeistReplay: React.FC = () => {
                     <span className="mono" style={{ fontWeight: 600, color: 'var(--ink)' }}>{ev.dst}</span>
                   </div>
 
-                  {ev.is_freeze_point && (
+                  {ev.status === 'stopped' ? (
+                    <div
+                      style={{
+                        marginTop: '6px',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: 'var(--signal)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <ShieldAlert size={12} />
+                      INTERCEPTED BY PROACTIVE FREEZE
+                    </div>
+                  ) : ev.is_freeze_point ? (
                     <div
                       style={{
                         marginTop: '6px',
@@ -230,7 +283,7 @@ export const HeistReplay: React.FC = () => {
                       <ShieldCheck size={12} />
                       FREEZE INTERVENTION POINT
                     </div>
-                  )}
+                  ) : null}
                 </div>
               );
             })}
@@ -252,7 +305,10 @@ export const HeistReplay: React.FC = () => {
         {/* Play/Pause & Reset */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
-            onClick={() => setIsPlaying(!isPlaying)}
+            type="button"
+            onClick={handleTogglePlay}
+            aria-label={isPlaying ? 'Pause simulation' : 'Play simulation'}
+            title={isPlaying ? 'Pause' : 'Play'}
             style={{
               width: '36px',
               height: '36px',
@@ -263,17 +319,17 @@ export const HeistReplay: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
+              borderRadius: '2px',
             }}
           >
             {isPlaying ? <Pause size={16} /> : <Play size={16} style={{ marginLeft: 2 }} />}
           </button>
 
           <button
-            onClick={() => {
-              setIsPlaying(false);
-              setCurrentStep(0);
-            }}
+            type="button"
+            onClick={handleReset}
             title="Reset to Beginning"
+            aria-label="Reset to Beginning"
             style={{
               background: 'transparent',
               border: '1px solid var(--rule)',
@@ -282,6 +338,7 @@ export const HeistReplay: React.FC = () => {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
+              borderRadius: '2px',
             }}
           >
             <RotateCcw size={15} />
@@ -296,11 +353,16 @@ export const HeistReplay: React.FC = () => {
             min={0}
             max={Math.max(0, events.length - 1)}
             value={currentStep}
-            onChange={(e) => setCurrentStep(Number(e.target.value))}
-            style={{ flex: 1, accentColor: 'var(--signal)', cursor: 'pointer' }}
+            disabled={events.length <= 1}
+            onChange={(e) => {
+              setCurrentStep(Number(e.target.value));
+              setIsPlaying(false);
+            }}
+            aria-label="Replay timeline scrubber"
+            style={{ flex: 1, accentColor: 'var(--signal)', cursor: events.length > 1 ? 'pointer' : 'default' }}
           />
-          <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)' }}>
-            Step {currentStep + 1}/{events.length}
+          <span className="mono" style={{ fontSize: '11px', color: 'var(--ink-2)', minWidth: '70px', textAlign: 'right' }}>
+            Step {events.length > 0 ? currentStep + 1 : 0}/{events.length}
           </span>
         </div>
 
@@ -317,7 +379,10 @@ export const HeistReplay: React.FC = () => {
           {[0.5, 1, 2, 4].map((s) => (
             <button
               key={s}
+              type="button"
               onClick={() => setSpeed(s)}
+              aria-label={`${s}x playback speed`}
+              aria-pressed={speed === s}
               style={{
                 padding: '2px 8px',
                 fontSize: '11px',

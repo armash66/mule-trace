@@ -29,5 +29,10 @@ services:
         source: /*
         destination: /index.html
     envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "true"
       - key: VITE_API_URL
         value: ""
+

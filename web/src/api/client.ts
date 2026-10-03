@@ -643,3 +643,19 @@ export const ringsApi = {
   get: (id: string) => apiClient.get(`/rings/${id}`),
 };
 
+// Backward-compatibility exports for FreezePlan and legacy helpers
+export type {
+  AccountListItem,
+  AccountListResponse,
+  FreezePlanResponse as FreezeRecommendation,
+} from './types';
+
+export const listAccounts = async (params?: { page?: number; page_size?: number; min_score?: number }) => {
+  return api.getAccounts(params);
+};
+
+export const getFreezeRecommendation = async (ringId: string) => {
+  return api.getRingFreezePlan(ringId);
+};
+
+

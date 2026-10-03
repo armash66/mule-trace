@@ -19,6 +19,9 @@ COPY scripts/ /app/scripts/
 COPY config.yaml /app/config.yaml
 COPY data/ /app/data/
 
+# Generate synthetic dataset for immediate startup availability
+RUN python scripts/generate_data.py --seed 42 --output-dir data --config config.yaml
+
 EXPOSE 8000
 
 ENV PORT=8000

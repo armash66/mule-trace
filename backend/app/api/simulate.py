@@ -69,10 +69,33 @@ def reset_demo(db: Session = Depends(get_db), user: TokenData | None = None) -> 
         acct_file = DATA_DIR / "accounts.csv"
 
         if not txn_file.exists():
-            raise HTTPException(
-                status_code=404,
-                detail="Synthetic data not found in data/ directory.",
-            )
+            script_path = PROJECT_ROOT / "scripts" / "generate_data.py"
+            config_path = PROJECT_ROOT / "config.yaml"
+            if script_path.exists() and config_path.exists():
+                import subprocess
+                import sys
+                DATA_DIR.mkdir(parents=True, exist_ok=True)
+                logger.info("Generating synthetic demo data at %s...", DATA_DIR)
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(script_path),
+                        "--seed",
+                        "42",
+                        "--output-dir",
+                        str(DATA_DIR),
+                        "--config",
+                        str(config_path),
+                    ],
+                    check=True,
+                    capture_output=True,
+                )
+            else:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Synthetic data not found in data/ directory.",
+                )
+
 
         with open(txn_file, "rb") as f:
             txn_bytes = f.read()
